@@ -1,2 +1,2 @@
 # jks-community
-JKS app
+JKS website for JKS south africa
