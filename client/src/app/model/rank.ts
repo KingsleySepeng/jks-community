@@ -1,0 +1,5 @@
+export enum Rank {
+SHIHANKAI,
+HEAD_INSTRUCTOR,
+SENIOR_INSTRUCTOR
+}
