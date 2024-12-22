@@ -1,7 +1,8 @@
 <div>
 <h1>Instructor/admin login</h1>
-
-<input type="text" placeholder = "Email"/>
-<input type="text" placeholder = "Password"/>
-<input type="submit" value="Login"/>
+<form (ngSubmit) = "login()">
+    <input type="text" name="email" placeholder = "Email" [(ngModel)] = "this.user.email"/>
+    <input type="password" name="password" placeholder = "Password"  [(ngModel)] = "this.user.password"/>
+    <input type="submit" value="Login"/>
+</form>
 </div>

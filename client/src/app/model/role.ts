@@ -2,4 +2,5 @@ export enum Role {
     ADMIN,
     STUDENT,
     INSTRUCTOR,
+    USER,
 }
