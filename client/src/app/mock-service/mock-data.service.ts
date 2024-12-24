@@ -21,7 +21,7 @@ export class MockDataService {
   }
 
   /**
-   * Initializes all mock data. 
+   * Initializes all mock data.
    * We create the clubs first, then the users,
    * and finally we attach users to clubs.
    */
@@ -31,24 +31,18 @@ export class MockDataService {
       id: '1',
       name: 'JKS Pretoria',
       address: '123 Karate St, Tokyo, Japan',
-      instructors: [],
-      students: [],
     };
 
     const clubHartebeesport: Club = {
       id: '2',
       name: 'JKS Hartebeesport',
       address: '456 Samurai Rd, Osaka, Japan',
-      instructors: [],
-      students: [],
     };
 
     const clubDurban: Club = {
       id:' 3',
       name: 'JKS Durban',
       address: '789 Dojo Ave, Durban, South Africa',
-      instructors: [],
-      students: [],
     };
 
     // Add all clubs to the array
@@ -62,7 +56,8 @@ export class MockDataService {
       password: 'king',
       firstName: 'Kingsley',
       lastName: 'Sepeng',
-      club: clubHartebeesport, // e.g., this user belongs to Hartebeesport
+      clubId:'1',
+      belt:Belt.WHITE,
       role: Role.INSTRUCTOR,
       rank: Rank.HEAD_INSTRUCTOR,
       isActive: true,
@@ -83,39 +78,41 @@ export class MockDataService {
       password: 'janeSmith',
       firstName: 'Jane',
       lastName: 'Smith',
-      club: clubHartebeesport,
+      clubId:'1',
       role: Role.STUDENT,
       rank: Rank.SENIOR_INSTRUCTOR,
+      belt:Belt.WHITE,
       isActive: true,
       attendance: [
         {date: new Date(),
         status: 'present',
         instructorId: 'I001',
-        comments: 'Good performance',}],
+        comments: 'Good performance Jane',}],
     };
 
     const user3: User = {
-      id: '2',
-      memberId: 'M002',
+      id: '3',
+      memberId: 'M003',
       email: 'instructor1@example.com',
       password: 'janeSmith',
       firstName: 'Jamy',
       lastName: 'Lee',
-      club: clubHartebeesport,
+      clubId:'1',
       role: Role.STUDENT,
       rank: Rank.SENIOR_INSTRUCTOR,
+      belt:Belt.WHITE,
       isActive: true,
-      attendance: [],
+      attendance: [ {date: new Date(),
+        status: 'present',
+        instructorId: 'I001',
+        comments: 'Good performance Jamy',}],
     };
 
     // Add all users to the array
     this.users = [user1, user2,user3];
 
-    // 3. Update clubs’ instructors/students arrays 
+    // 3. Update clubs’ instructors/students arrays
     //    so that they match the user objects’ club references.
-    clubHartebeesport.instructors.push(user1);
-    clubHartebeesport.students.push(user2);
-    clubHartebeesport.students.push(user3);
 
   }
 
@@ -126,6 +123,9 @@ export class MockDataService {
     return this.users;
   }
 
+  updateUsers(updatedUsers:User[]):void{
+    this.users = updatedUsers;
+  }
   /**
    * Returns all clubs.
    */

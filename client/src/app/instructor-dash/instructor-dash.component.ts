@@ -3,9 +3,9 @@ import { User } from '../model/user';
 import { MockServiceService } from '../mock-service/mock-service.service';
 import { Role } from '../model/role';
 import { CommonModule } from '@angular/common';
-import { timestamp, Timestamp } from 'rxjs';
 import { Attendence } from '../model/attendence';
 import { MockDataService } from '../mock-service/mock-data.service';
+import {Belt} from '../model/belt';
 
 @Component({
   selector: 'app-instructor-dash',
@@ -23,13 +23,8 @@ user: User = {
   lastName: '',
   id: '0',
   memberId: '',
-  club: {
-    id: '0',
-    name: '',
-    address: '',
-    instructors: [],
-    students: []
-  },
+  clubId:'',
+  belt:Belt.WHITE,
   role: Role.USER,
   isActive: false,
   attendance: [],
@@ -46,17 +41,18 @@ attendanceState:{
 selectedDate:Date = new Date(Date.now());
 selectedDateString = this.formatDateForInput(this.selectedDate);
 constructor(private mockService:MockServiceService,private mockDataService:MockDataService){
-  
+
 }
 
 ngOnInit() {
-  // debugger;
+  debugger;
   const loggedInUser = this.mockService.login(this.user);
   if(loggedInUser && loggedInUser.role === Role.INSTRUCTOR){
-    this.students = loggedInUser.club.students;
-}
-  // this.initializeAttendanceState();
-  this.mockDataService.getUsers().filter(user => user.role === Role.STUDENT);
+    this.students = this.mockDataService.getUsers().filter(u=>u.clubId && u.role == Role.STUDENT);
+}else{
+    this.students = [];
+  }
+  this.initializeAttendanceState();
 }
 
   private initializeAttendanceState() {
@@ -94,8 +90,8 @@ onDateChange(event:Event):void{
     this.attendanceState[userId].comment = comment;
 }
 
-onSaveAttendence():void{
-  // debugger;
+onSaveAttendance():void{
+  debugger;
   this.students.forEach(student =>{
     const state = this.attendanceState[student.id];
     if(state.status){
@@ -106,11 +102,9 @@ onSaveAttendence():void{
         comments: state.comment
       };
       student.attendance.push(newRecord);
-    } 
-    
+      console.log('Student attendance after save:', student.firstName, student.attendance);
+    }
+    this.mockDataService.updateUsers(this.students);
 });
-
-
-
 }
 }

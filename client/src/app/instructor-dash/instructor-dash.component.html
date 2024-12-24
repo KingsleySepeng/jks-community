@@ -1,8 +1,7 @@
-<hr/>
 <p>instructor-dash works!</p>
 <p>Can add, update,remove students!</p>
 
-<h2>Take atendence for Class for {{selectedDate | date: 'EEEE yyy-MM-dd'}}</h2>
+<h2>Take attendance for Class for {{selectedDate | date: 'EEEE yyy-MM-dd'}}</h2>
 <form>
 <input type="date" [value]="selectedDateString" (change)="onDateChange($event)"/>
 
@@ -13,13 +12,13 @@
 
 <div style="margin:0.5em 0;">
     <label>
-        <input type="radio" [name]="student.id + 'attendence'" value="present" (click)="$event.stopPropagation()"
-        [checked]="attendanceState[student.id]?.status==='present'" 
+        <input type="radio" [name]="student.id + 'attendance'" value="present" (click)="$event.stopPropagation()"
+        [checked]="attendanceState[student.id]?.status==='present'"
         (change)="onAttendanceRadioChange(student.id,'present')" />
         Present
     </label>
     <label>
-        <input type="radio" [name]="student.id + 'attendence'" value="absent" (click)="$event.stopPropagation()"
+        <input type="radio" [name]="student.id + 'attendance'" value="absent" (click)="$event.stopPropagation()"
          [checked]="attendanceState[student.id]?.status === 'absent'"
          (change)="onAttendanceRadioChange(student.id, 'absent')" />
         Absent
@@ -31,7 +30,7 @@
 
     <!-- Attendance History Dropdown -->
 <div *ngIf="attendanceState[student.id]?.showHistory" style="margin-top: 0.5em;">
-    <h4>Attendence History</h4>
+    <h4>Attendance History</h4>
     <ul>
         <li *ngFor="let record of student.attendance">
             {{record.date | date: 'yyy-MM-dd'}} -
@@ -44,7 +43,6 @@
 </div>
 </li>
 </ul>
-<button (click)="onSaveAttendence()">Save Attendence</button>
+<button (click)="onSaveAttendance()">Save Attendance</button>
 </form>
-<p>Can add take attendence of classes!</p>
-<hr/>
+<p>Can add take attendance of classes!</p>

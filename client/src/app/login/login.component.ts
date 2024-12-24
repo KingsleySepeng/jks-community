@@ -3,6 +3,7 @@ import { MockServiceService } from '../mock-service/mock-service.service';
 import { User } from '../model/user';
 import { FormsModule } from '@angular/forms'; // <-- Import FormsModule
 import { Role } from '../model/role';
+import {Belt} from '../model/belt';
 
 @Component({
   selector: 'app-login',
@@ -18,14 +19,9 @@ user: User = {
   firstName: '',
   lastName: '',
   id: '0',
+  belt:Belt.WHITE,
   memberId: '',
-  club: {
-    id: '0',
-    name: '',
-    address: '',
-    instructors: [],
-    students: []
-  },
+  clubId:'',
   role: Role.USER,
   isActive: false,
   attendance: []
