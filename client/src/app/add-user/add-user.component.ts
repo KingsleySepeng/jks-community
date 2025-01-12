@@ -18,28 +18,12 @@ import {Rank} from '../model/rank';
   styleUrl: './add-user.component.scss'
 })
 export class AddUserComponent {
-  user: User = {
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    id: '',
-    memberId: '',
-    clubId:'',
-    role: Role.USER,
-    isActive: true,
-    belt:Belt.WHITE,
-    attendance: [],
-  }
-  belts = Object.values(Belt);
-  ranks = Object.values(Rank);
+
   constructor() {
   }
 
   ngOnInit() {
   }
 
-  addStudent():void{
-    console.log("Add Student to club");
-  }
+
 }

@@ -1,8 +1,27 @@
-<div>
-<h1>Instructor/admin login</h1>
-<form (ngSubmit) = "login()">
-    <input type="text" name="email" placeholder = "Email" [(ngModel)] = "this.user.email"/>
-    <input type="password" name="password" placeholder = "Password"  [(ngModel)] = "this.user.password"/>
-    <input type="submit" value="Login"/>
-</form>
+<div class="login-container">
+  <h1>Instructor/admin login</h1>
+  <form [formGroup]="loginForm" (ngSubmit)="login()">
+    <div class="form-group">
+      <input type="text" formControlName="email" placeholder="Email" />
+      <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="error">
+        <div *ngIf="loginForm.get('email')?.errors?.['required']">Email is required.</div>
+        <div *ngIf="loginForm.get('email')?.errors?.['email']">Please enter a valid email.</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Password" />
+      <button type="button" (click)="togglePasswordVisibility()">
+        {{ showPassword ? 'Hide' : 'Show' }} Password
+      </button>
+      <div class="form-group">
+        <input type="checkbox" formControlName="rememberMe" /> Remember Me
+      </div>
+      <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error">
+        <div *ngIf="loginForm.get('password')?.errors?.['required']">Password is required.</div>
+        <div *ngIf="loginForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters long.</div>
+      </div>
+    </div>
+    <div *ngIf="isLoading" class="spinner"></div>
+    <input type="submit" value="Login" [disabled]="loginForm.invalid || isLoading" />
+  </form>
 </div>

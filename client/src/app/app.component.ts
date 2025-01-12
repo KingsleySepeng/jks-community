@@ -20,7 +20,7 @@ import {UserProfileComponent} from './user-profile/user-profile.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [LoginComponent, InstructorDashComponent, AddUserComponent, InstructorReportComponent, ClassPayComponent, GradingFormComponent, AdminDashComponent, AffiliationPayComponent, AffliationFormComponent, ClassNoticeBoardComponent, CreateEventComponent, AffliationReportComponent, ClubProfileComponent, GradingReportComponent, JksNoticeBoardComponent, UserProfileComponent],
+  imports: [LoginComponent, InstructorDashComponent, AddUserComponent, InstructorReportComponent, ClassPayComponent, GradingFormComponent, AdminDashComponent, AffiliationPayComponent, AffliationFormComponent, ClassNoticeBoardComponent, CreateEventComponent, AffliationReportComponent, ClubProfileComponent, GradingReportComponent, JksNoticeBoardComponent, UserProfileComponent, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

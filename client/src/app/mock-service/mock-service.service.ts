@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { User } from '../model/user';
+import {Instructor, User} from '../model/user';
 import { MockDataService } from './mock-data.service';
 import { Role } from '../model/role';
 import {Belt} from '../model/belt';
@@ -8,7 +8,19 @@ import {Belt} from '../model/belt';
   providedIn: 'root'
 })
 export class MockServiceService {
- loggedInUser: User = {
+ loggedInUser: {
+   email: string;
+   password: string;
+   firstName: string;
+   lastName: string;
+   id: string;
+   memberId: string;
+   belt: Belt;
+   clubId: string;
+   role: Role.INSTRUCTOR;
+   isActive: boolean;
+   attendance: any[]
+ } = {
    email: '',
    password: '',
    firstName: '',
@@ -17,18 +29,29 @@ export class MockServiceService {
    memberId: '',
    belt:Belt.WHITE,
    clubId:'',
-   role: Role.USER,
+   role: Role.INSTRUCTOR,
    isActive: false,
    attendance: []
  }; // Initialize with default values;
 
 constructor(private mockData:MockDataService) { }
-  public login(user:User):User | undefined {
-
+  public login(user: {
+    id: string;
+    memberId: string;
+    email: any;
+    password: any;
+    firstName: string;
+    lastName: string;
+    clubId: string;
+    belt: Belt;
+    role: any;
+    isActive: boolean;
+    attendance: any[]
+  }):User | undefined {
     const users = this.mockData.getUsers();
     const foundUser = users.find(u => u.email === user.email && u.password === user.password);
     if (foundUser && foundUser.role === Role.INSTRUCTOR) {
-      this.loggedInUser = user;
+      this.loggedInUser = foundUser;
       return foundUser;
     } else {
       return undefined;
@@ -38,8 +61,8 @@ constructor(private mockData:MockDataService) { }
     return undefined;
   }
 
-  public getLoggedInUser(): User | undefined {
-    return this.loggedInUser;
+  public getLoggedInUser(): Instructor {
+    return <Instructor>this.loggedInUser;
   }
 
 

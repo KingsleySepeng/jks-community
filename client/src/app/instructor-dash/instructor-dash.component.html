@@ -1,48 +1,76 @@
-<p>instructor-dash works!</p>
-<p>Can add, update,remove students!</p>
+<!-- instructor-dash.component.html -->
+<p>Instructor dashboard works!</p>
+<p>You can add, update, and remove students!</p>
 
-<h2>Take attendance for Class for {{selectedDate | date: 'EEEE yyy-MM-dd'}}</h2>
+<h2>Take attendance for Class on {{ selectedDate | date: 'EEEE yyy-MM-dd' }}</h2>
 <form>
-<input type="date" [value]="selectedDateString" (change)="onDateChange($event)"/>
+  <input type="date" [value]="selectedDateString" (change)="onDateChange($event)" />
 
-<h2>Students</h2>
-<ul>
-<li *ngFor="let student of students" style="margin-bottom: 1em;cursor:pointer;" (click)="toggleHistory(student.id)">
-  <strong> {{student.firstName}}  {{student.lastName}}</strong>
+  <h2>Students</h2>
+  <ul>
+    <li *ngFor="let student of students" style="margin-bottom: 1em; cursor:pointer;" (click)="toggleHistory(student.id)">
+      <strong>{{ student.firstName }} {{ student.lastName }}</strong>
 
-<div style="margin:0.5em 0;">
-    <label>
-        <input type="radio" [name]="student.id + 'attendance'" value="present" (click)="$event.stopPropagation()"
-        [checked]="attendanceState[student.id]?.status==='present'"
-        (change)="onAttendanceRadioChange(student.id,'present')" />
-        Present
-    </label>
-    <label>
-        <input type="radio" [name]="student.id + 'attendance'" value="absent" (click)="$event.stopPropagation()"
-         [checked]="attendanceState[student.id]?.status === 'absent'"
-         (change)="onAttendanceRadioChange(student.id, 'absent')" />
-        Absent
-    </label>
-</div>
-<textarea (click)="$event.stopPropagation()" (input)="onCommentChange(student.id,$event)" placeholder="Comment on Student">
-    {{ attendanceState[student.id]?.comment }}
-</textarea>
+      <div style="margin:0.5em 0;">
+        <label>
+          <input
+            type="radio"
+            [name]="student.id + 'attendance'"
+            value="present"
+            (click)="$event.stopPropagation()"
+            [checked]="attendanceState[student.id]?.status === 'present'"
+            (change)="onAttendanceRadioChange(student.id, 'present')"
+          />
+          Present
+        </label>
+        <label>
+          <input
+            type="radio"
+            [name]="student.id + 'attendance'"
+            value="absent"
+            (click)="$event.stopPropagation()"
+            [checked]="attendanceState[student.id]?.status === 'absent'"
+            (change)="onAttendanceRadioChange(student.id, 'absent')"
+          />
+          Absent
+        </label>
+        <label>
+          <input
+            type="radio"
+            [name]="student.id + 'attendance'"
+            value="excused"
+            (click)="$event.stopPropagation()"
+            [checked]="attendanceState[student.id]?.status === 'excused'"
+            (change)="onAttendanceRadioChange(student.id, 'excused')"
+          />
+          Excused
+        </label>
+      </div>
 
-    <!-- Attendance History Dropdown -->
-<div *ngIf="attendanceState[student.id]?.showHistory" style="margin-top: 0.5em;">
-    <h4>Attendance History</h4>
-    <ul>
-        <li *ngFor="let record of student.attendance">
-            {{record.date | date: 'yyy-MM-dd'}} -
-            {{record.status}}
+      <textarea
+        (click)="$event.stopPropagation()"
+        (input)="onCommentChange(student.id, $event)"
+        placeholder="Comment on Student"
+        [value]="attendanceState[student.id]?.comment">
+      </textarea>
+
+      <!-- Attendance History Dropdown -->
+      <div *ngIf="attendanceState[student.id]?.showHistory" style="margin-top: 0.5em;">
+        <h4>Attendance History</h4>
+        <ul>
+          <li *ngFor="let record of student.attendance">
+            {{ record.date | date: 'yyy-MM-dd' }} - {{ record.status }}
             <em *ngIf="record.comments">
-                ({{record.comments}})
+              ({{ record.comments }})
             </em>
-        </li>
-    </ul>
-</div>
-</li>
-</ul>
-<button (click)="onSaveAttendance()">Save Attendance</button>
+            <!-- Edit and Delete buttons -->
+            <button type="button" (click)="editAttendance(student, record)">Edit</button>
+            <button type="button" (click)="deleteAttendance(student, record)">Delete</button>
+          </li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+  <button type="button" (click)="onSaveAttendance()">Save Attendance</button>
 </form>
-<p>Can add take attendance of classes!</p>
+<p>You can take attendance for classes!</p>
