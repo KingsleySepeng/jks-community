@@ -5,6 +5,7 @@ import {Attendance, AttendanceStatus} from '../model/attendance ';
 import { Belt } from '../model/belt';
 import { Rank } from '../model/rank';
 import { Role } from '../model/role';
+import {Payment} from '../model/payment';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ export class MockDataService {
   private clubs: Club[] = [];
   private users: User[] = [];
   private attendances: Attendance[] = [];
+  private payments: Payment[] = [];
 
   constructor() {
     this.initializeMockData();
@@ -102,7 +104,7 @@ export class MockDataService {
       belt: Belt.BLACK,
       role: Role.INSTRUCTOR,
       rank: Rank.INSTRUCTOR,
-      password:'karate',
+      password: 'karate',
       isActive: true,
       createdAt: new Date('2010-05-15'),
       updatedAt: new Date('2024-01-01'),
@@ -119,7 +121,7 @@ export class MockDataService {
       belt: Belt.BLUE,
       role: Role.INSTRUCTOR,
       rank: Rank.INSTRUCTOR,
-      password:'karate',
+      password: 'karate',
       isActive: true,
       createdAt: new Date('2012-08-20'),
       updatedAt: new Date('2024-01-01'),
@@ -137,7 +139,7 @@ export class MockDataService {
       belt: Belt.YELLOW,
       role: Role.STUDENT,
       isActive: true,
-      password:'karate',
+      password: 'karate',
       createdAt: new Date('2015-03-10'),
       updatedAt: new Date('2024-01-01'),
       attendance: [],
@@ -152,7 +154,7 @@ export class MockDataService {
       clubId: '1',
       belt: Belt.GREEN,
       role: Role.STUDENT,
-      password:'karate',
+      password: 'karate',
       isActive: true,
       createdAt: new Date('2018-07-25'),
       updatedAt: new Date('2024-01-01'),
@@ -170,7 +172,7 @@ export class MockDataService {
       belt: Belt.BLACK,
       role: Role.INSTRUCTOR,
       rank: Rank.INSTRUCTOR,
-      password:'admin123',
+      password: 'admin123',
       isActive: true,
       createdAt: new Date('2015-03-10'),
       updatedAt: new Date('2024-01-01'),
@@ -188,7 +190,7 @@ export class MockDataService {
       role: Role.INSTRUCTOR,
       rank: Rank.DOJO_HEAD,
       isActive: true,
-      password:'karate',
+      password: 'karate',
       createdAt: new Date('2018-07-25'),
       updatedAt: new Date('2024-01-01'),
       attendance: [],
@@ -204,7 +206,7 @@ export class MockDataService {
       clubId: '2',
       belt: Belt.ORANGE,
       role: Role.STUDENT,
-      password:'karate',
+      password: 'karate',
       isActive: true,
       createdAt: new Date('2020-11-05'),
       updatedAt: new Date('2024-01-01'),
@@ -221,7 +223,7 @@ export class MockDataService {
       clubId: '1',
       belt: Belt.WHITE,
       role: Role.ADMIN,
-      password:'karate',
+      password: 'karate',
       isActive: true,
       createdAt: new Date('2010-05-15'),
       updatedAt: new Date('2024-01-01'),
@@ -355,6 +357,23 @@ export class MockDataService {
     });
   }
 
+  // 4. Initialize Payments (start with empty array)
+
+  // this.payments = [];
+// PAYMENTS
+  getPayments(): Payment[] {
+    return this.payments;
+  }
+
+  addPayment(payment: Payment): void {
+    this.payments.push(payment);
+  }
+
+  updatePayments(updatedPayments: Payment[]): void {
+    // For simplicity, we just overwrite the payments array (or update one by one as needed)
+    this.payments = updatedPayments;
+  }
+
   /**
    * Returns all users.
    */
@@ -421,7 +440,7 @@ export class MockDataService {
     this.users = this.users.filter(user => user.clubId !== clubId);
     this.attendances = this.attendances.filter(att => att.clubId !== clubId);
   }
-
+}
   // getAffiliations(): Affiliation[] {
   //   return [
   //     { id: 1, membershipNumber: 12345 },
@@ -451,4 +470,4 @@ export class MockDataService {
   //     }
   //   ];
   // }
-}
+

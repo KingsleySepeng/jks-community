@@ -1,0 +1,43 @@
+<div class="payment-container">
+  <h2>Log Cash Payment (Instructor Only)</h2>
+
+  <!-- Display Instructor Info (could be more detailed if needed) -->
+  <p><strong>Logged-in Instructor ID:</strong> {{ currentInstructorId }}</p>
+
+  <!-- Payment Form for logging cash payments for a student -->
+  <form (ngSubmit)="onSubmitPayment()">
+    <div class="form-group">
+      <label for="student">Select Student:</label>
+      <select id="student" [(ngModel)]="selectedStudentId" name="student" required>
+        <option value="">--Select Student--</option>
+        <option *ngFor="let s of students" [value]="s.id">
+          {{ s.firstName }} {{ s.lastName }} [ID: {{ s.id }}]
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="amount">Amount ($):</label>
+      <input id="amount" type="number" [(ngModel)]="amount" name="amount" required />
+    </div>
+
+    <div class="form-group">
+      <label for="paymentType">Payment Type:</label>
+      <select id="paymentType" [(ngModel)]="paymentType" name="paymentType" required>
+        <option value="Class Fee">Class Fee</option>
+        <option value="Affiliation">Affiliation</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description:</label>
+      <textarea id="description" [(ngModel)]="description" name="description"
+                placeholder="e.g., Class fees for January and February" required></textarea>
+    </div>
+
+    <button type="submit">Log Payment</button>
+  </form>
+
+  <p class="message" *ngIf="message">{{ message }}</p>
+</div>

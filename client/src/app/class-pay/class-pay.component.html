@@ -1,1 +1,41 @@
-<p>class-pay works!</p>
+<!-- src/app/components/payment/payment.component.html -->
+<div class="payment-container">
+  <h2>Pay Class Fees / Affiliation Fee</h2>
+
+  <!-- Display current user details -->
+  <div class="user-details" *ngIf="currentUser">
+    <p><strong>Logged-in User:</strong> {{ currentUser.firstName }} {{ currentUser.lastName }} [ID: {{ currentUser.id }}]</p>
+  </div>
+
+  <form (ngSubmit)="onSubmitPayment()">
+    <div class="form-group">
+      <label for="amount">Amount ($):</label>
+      <input id="amount" type="number" [(ngModel)]="amount" name="amount" required />
+    </div>
+
+    <div class="form-group">
+      <label for="paymentMethod">Payment Method:</label>
+      <select id="paymentMethod" [(ngModel)]="paymentMethod" name="paymentMethod">
+        <option>Credit Card</option>
+        <option>Bank Transfer</option>
+        <option>Cash</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="paymentType">Payment Type:</label>
+      <select id="paymentType" [(ngModel)]="paymentType" name="paymentType">
+        <option *ngFor="let type of paymentTypes" [value]="type">{{ type }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description:</label>
+      <textarea id="description" [(ngModel)]="description" name="description" placeholder="e.g., Class fees for January and February"></textarea>
+    </div>
+
+    <button type="submit">Submit Payment</button>
+  </form>
+
+  <p class="message" *ngIf="message">{{ message }}</p>
+</div>

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {RouterLink, RouterOutlet} from '@angular/router';
 import { LoginComponent } from "./login/login.component";
 import { InstructorDashComponent } from "./instructor-dash/instructor-dash.component";
 import {AddUserComponent} from './add-user/add-user.component';
@@ -20,7 +20,7 @@ import {UserProfileComponent} from './user-profile/user-profile.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [LoginComponent, InstructorDashComponent, AddUserComponent, InstructorReportComponent, ClassPayComponent, GradingFormComponent, AdminDashComponent, AffiliationPayComponent, AffliationFormComponent, ClassNoticeBoardComponent, CreateEventComponent, AffliationReportComponent, ClubProfileComponent, GradingReportComponent, JksNoticeBoardComponent, UserProfileComponent, RouterOutlet],
+  imports: [LoginComponent, InstructorDashComponent, AddUserComponent, InstructorReportComponent, ClassPayComponent, GradingFormComponent, AdminDashComponent, AffiliationPayComponent, AffliationFormComponent, ClassNoticeBoardComponent, CreateEventComponent, AffliationReportComponent, ClubProfileComponent, GradingReportComponent, JksNoticeBoardComponent, UserProfileComponent, RouterOutlet, RouterLink],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
