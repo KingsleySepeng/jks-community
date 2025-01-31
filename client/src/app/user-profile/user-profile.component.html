@@ -1,1 +1,42 @@
-<p>user-profile works!</p>
+<div class="user-profile">
+  <h2>User Profile</h2>
+
+  <div *ngIf="currentUser; else noUser">
+    <p><strong>ID:</strong> {{ currentUser.id }}</p>
+
+    <!-- If not editing, display read-only info -->
+    <div *ngIf="!isEditing">
+      <p><strong>Name:</strong> {{ currentUser.firstName }} {{ currentUser.lastName }}</p>
+      <p><strong>Email:</strong> {{ currentUser.email }}</p>
+      <p><strong>Belt:</strong> {{ currentUser.belt }}</p>
+      <!-- etc. -->
+      <button (click)="onEditToggle()">Edit Profile</button>
+    </div>
+
+    <!-- If editing, display form fields -->
+    <div *ngIf="isEditing">
+      <label>First Name:</label>
+      <input [(ngModel)]="currentUser.firstName" />
+
+      <label>Last Name:</label>
+      <input [(ngModel)]="currentUser.lastName" />
+
+      <label>Email:</label>
+      <input [(ngModel)]="currentUser.email" />
+
+      <label>Belt:</label>
+      <select [(ngModel)]="currentUser.belt">
+        <option *ngFor="let b of belts" [ngValue]="b">{{ b }}</option>
+      </select>
+      <!-- other fields as needed -->
+
+      <button (click)="onSaveChanges()">Save</button>
+      <button (click)="onEditToggle()">Cancel</button>
+    </div>
+
+  </div>
+
+  <ng-template #noUser>
+    <p>No user found or you are not logged in.</p>
+  </ng-template>
+</div>

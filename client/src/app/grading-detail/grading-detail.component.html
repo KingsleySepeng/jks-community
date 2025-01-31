@@ -1,0 +1,27 @@
+<div *ngIf="record">
+  <h2>Grading Record: {{ record.id }}</h2>
+  <p>Student: {{ record.studentId }}</p>
+  <p>Examiner: {{ record.examinerId }}</p>
+  <p>Current Belt: {{ record.currentBelt }}</p>
+  <p>Testing For: {{ record.testingForBelt }}</p>
+  <p>Decision: {{ record.overallDecision }}</p>
+  <p>Overall Comment: {{ record.overallComment }}</p>
+
+  <h3>Techniques</h3>
+  <table class="table table-bordered">
+    <thead>
+    <tr>
+      <th>Technique</th>
+      <th>Rating</th>
+      <th>Comment</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let eval of record.evaluations">
+      <td>{{ (eval.techniqueId) }}</td>
+      <td>{{ eval.rating }}</td>
+      <td>{{ eval.comment }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

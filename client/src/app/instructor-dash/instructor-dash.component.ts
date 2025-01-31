@@ -1,16 +1,18 @@
 import {Component, OnInit} from '@angular/core';
-import {Instructor, Student} from '../model/user';
+import {Instructor, Student, User} from '../model/user';
 import {MockServiceService} from '../mock-service/mock-service.service';
 import {CommonModule} from '@angular/common';
 import {Attendance, AttendanceStatus} from '../model/attendance ';
 import {MockDataService} from '../mock-service/mock-data.service';
 import {Role} from '../model/role';
 import {Belt} from '../model/belt';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {Payment} from '../model/payment';
 
 @Component({
   selector: 'app-instructor-dash',
   standalone: true,
-  imports:[CommonModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './instructor-dash.component.html',
   styleUrl: './instructor-dash.component.scss'
 })
@@ -54,6 +56,24 @@ export class InstructorDashComponent implements OnInit {
   selectedDate: Date = new Date();
   selectedDateString: string = this.formatDateForInput(this.selectedDate);
 
+  // For demo purposes, we assume the instructor is logged in with ID 'I001'
+  currentInstructorId: string = 'I001';
+  currentInstructor?: User;
+
+  // Students in the instructor's club
+  // students: Student[] = [];
+
+  // Collections from the mock service
+  payments: Payment[] = [];
+  attendances: Attendance[] = [];
+
+  // The selected month for which the report is generated (YYYY-MM format)
+  selectedMonth: string = new Date().toISOString().substr(0, 7);
+
+  // The final report: one record per student with payment status and attendance count
+  report: { student: Student; paid: boolean; attendanceCount: number }[] = [];
+
+
   constructor(
     private mockService: MockServiceService,
     private mockDataService: MockDataService
@@ -70,6 +90,11 @@ export class InstructorDashComponent implements OnInit {
     }
 
     this.initializeAttendanceState();
+    // Get payments and attendances from the mock service.
+    this.payments = this.mockDataService.getPayments();
+    this.attendances = this.mockDataService.getAttendances();
+
+    this.generateReport();
   }
 
   private initializeAttendanceState(): void {
@@ -167,4 +192,36 @@ export class InstructorDashComponent implements OnInit {
   private generateUniqueId(): string {
     return Math.random().toString(36).substr(2, 9);
   }
+  // Called when the month selection changes (using an <input type="month">)
+  onMonthChange(newMonth: string): void {
+    this.selectedMonth = newMonth;
+    this.generateReport();
+  }
+
+  generateReport(): void {
+    // For each student, check if they have a payment in the selected month and count their attendance records.
+    this.report = this.students.map(student => {
+      // Filter payments for this student for the selected month.
+      const studentPayments = this.payments.filter(p =>
+        p.userId === student.id && this.isDateInSelectedMonth(p.paymentDate)
+      );
+      // Assume if any payment is marked as 'PAID', the student is considered to have paid.
+      const paid = studentPayments.some(p => p.status === 'PAID');
+
+      // Similarly, filter attendance records for this student for the selected month.
+      const studentAttendances = this.attendances.filter(a =>
+        a.userId === student.id && this.isDateInSelectedMonth(a.date)
+      );
+      const attendanceCount = studentAttendances.length;
+
+      return { student, paid, attendanceCount };
+    });
+  }
+
+  // Helper function to check if a given date falls in the selected month.
+  private isDateInSelectedMonth(date: Date): boolean {
+    const d = new Date(date);
+    return d.toISOString().substr(0, 7) === this.selectedMonth;
+  }
+
 }

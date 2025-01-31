@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AffliationFormComponent } from './affliation-form.component';
+import { RegisterEventComponent } from './register-event.component';
 
-describe('AffliationFormComponent', () => {
-  let component: AffliationFormComponent;
-  let fixture: ComponentFixture<AffliationFormComponent>;
+describe('RegisterEventComponent', () => {
+  let component: RegisterEventComponent;
+  let fixture: ComponentFixture<RegisterEventComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AffliationFormComponent]
+      imports: [RegisterEventComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AffliationFormComponent);
+    fixture = TestBed.createComponent(RegisterEventComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { JksNoticeBoardComponent } from './jks-notice-board.component';
+import { EventListComponent } from './event-list.component';
 
-describe('JksNoticeBoardComponent', () => {
-  let component: JksNoticeBoardComponent;
-  let fixture: ComponentFixture<JksNoticeBoardComponent>;
+describe('EventListComponent', () => {
+  let component: EventListComponent;
+  let fixture: ComponentFixture<EventListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [JksNoticeBoardComponent]
+      imports: [EventListComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(JksNoticeBoardComponent);
+    fixture = TestBed.createComponent(EventListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -50,7 +50,7 @@ constructor(private mockData:MockDataService) { }
   }):User | undefined {
     const users = this.mockData.getUsers();
     const foundUser = users.find(u => u.email === user.email && u.password === user.password);
-    if (foundUser && foundUser.role === Role.INSTRUCTOR) {
+    if (foundUser && foundUser.role === Role.INSTRUCTOR || foundUser.role === Role.ADMIN) {
       this.loggedInUser = foundUser;
       return foundUser;
     } else {

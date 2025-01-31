@@ -1,1 +1,57 @@
-<p>club-profile works!</p>
+<div class="club-profile">
+  <h2>Club Profile</h2>
+
+  <div *ngIf="currentClub; else noClub">
+    <p><strong>ID:</strong> {{ currentClub.id }}</p>
+
+    <!-- read-only view -->
+    <div *ngIf="!isEditing">
+      <p><strong>Name:</strong> {{ currentClub.name }}</p>
+      <p><strong>Address:</strong> {{ currentClub.address }}</p>
+      <p><strong>Contact Info:</strong> {{ currentClub.contactNumber }}</p>
+      <p><strong>Description:</strong> {{ currentClub.description }}</p>
+      <!-- etc. -->
+
+      <p *ngIf="canEdit">
+        <button (click)="onEditToggle()">Edit Club Info</button>
+      </p>
+
+      <!-- Show instructors/students if you want -->
+      <h4>Instructors</h4>
+      <ul>
+        <li *ngFor="let instructor of currentClub.instructors">
+          {{ instructor.firstName }} {{ instructor.lastName }}
+        </li>
+      </ul>
+      <h4>Students</h4>
+      <ul>
+        <li *ngFor="let student of currentClub.students">
+          {{ student.firstName }} {{ student.lastName }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- editing mode -->
+    <div *ngIf="isEditing">
+      <label>Club Name:</label>
+      <input [(ngModel)]="currentClub.name" />
+
+      <label>Address:</label>
+      <input [(ngModel)]="currentClub.address" />
+
+      <label>Contact Number:</label>
+      <input [(ngModel)]="currentClub.contactNumber" />
+
+      <label>Description:</label>
+      <textarea [(ngModel)]="currentClub.description"></textarea>
+
+      <br/><br/>
+      <button (click)="onSaveChanges()">Save</button>
+      <button (click)="onEditToggle()">Cancel</button>
+    </div>
+  </div>
+
+  <ng-template #noClub>
+    <p>No club found for this user.</p>
+  </ng-template>
+</div>

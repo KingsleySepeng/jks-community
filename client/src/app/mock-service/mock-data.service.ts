@@ -6,6 +6,10 @@ import { Belt } from '../model/belt';
 import { Rank } from '../model/rank';
 import { Role } from '../model/role';
 import {Payment} from '../model/payment';
+import {Event} from '../model/event';
+import {GradingRecord} from '../model/grading-record';
+import {BeltRequirements} from '../model/belt-requirement';
+import {Resource} from '../model/resource';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +19,26 @@ export class MockDataService {
   private users: User[] = [];
   private attendances: Attendance[] = [];
   private payments: Payment[] = [];
-
+  private events: Event[] = [];
+  private resources: Resource[] = [
+    // Optionally seed some initial data
+    {
+      id: 'RES-1000',
+      title: 'Yellow Belt Syllabus PDF',
+      description: 'Full PDF of the yellow belt curriculum',
+      fileUrl: 'https://example.com/yellow-belt.pdf',
+      category: 'Syllabus',
+      dateCreated: new Date('2025-01-01')
+    },
+    {
+      id: 'RES-1001',
+      title: 'Seminar on Kata Basics',
+      description: 'Recorded Zoom session from last seminar',
+      videoUrl: 'https://youtube.com/some-video',
+      category: 'SeminarVideo',
+      dateCreated: new Date('2025-01-15')
+    }
+  ];
   constructor() {
     this.initializeMockData();
   }
@@ -339,8 +362,44 @@ export class MockDataService {
 
     // 5. Assign Users to Clubs
     this.assignUsersToClubs();
+
+    this.events = [
+      {
+        id: 'EVT-10001',
+        eventName: 'Karate Tournament',
+        location: 'Tokyo Dojo',
+        date: new Date('2025-03-10'),
+        cost: 100,
+        paymentDueDate: new Date('2025-02-25'),
+        interestedStudents: [],
+        finalRegistrations: []
+      }
+    ];
   }
 
+  getEvents(): Event[] {
+    return this.events;
+  }
+
+  addEvent(newEvent: Event) {
+    this.events.push(newEvent);
+  }
+
+  addStudentInterest(eventId: string, studentId: string) {
+    const evt = this.events.find(e => e.id === eventId);
+    if (evt && !evt.interestedStudents.includes(studentId)) {
+      evt.interestedStudents.push(studentId);
+    }
+  }
+
+  finalizeEventRegistration(eventId: string) {
+    const evt = this.events.find(e => e.id === eventId);
+    if (evt) {
+      // e.g. assume we finalize all who are 'interested'
+      evt.finalRegistrations = [...evt.interestedStudents];
+      // or do extra logic for payment
+    }
+  }
   /**
    * Assigns users to their respective clubs based on clubId.
    * Instructors are added to the club's instructors array.
@@ -440,34 +499,86 @@ export class MockDataService {
     this.users = this.users.filter(user => user.clubId !== clubId);
     this.attendances = this.attendances.filter(att => att.clubId !== clubId);
   }
-}
-  // getAffiliations(): Affiliation[] {
-  //   return [
-  //     { id: 1, membershipNumber: 12345 },
-  //     { id: 2, membershipNumber: 67890 }
-  //   ];
-  // }
 
-  // getActivities(): Activity[] {
-  //   return [
-  //     {
-  //       id: 1,
-  //       userId: 1,
-  //       type: ActivityType.GASSHKU,
-  //       name: 'Summer Gasshku',
-  //       description: 'Annual summer training camp',
-  //       location: 'Tokyo, Japan',
-  //       date: '2023-08-15'
-  //     },
-  //     {
-  //       id: 2,
-  //       userId: 2,
-  //       type: ActivityType.GRADING,
-  //       name: 'Belt Grading',
-  //       description: 'Quarterly belt grading',
-  //       location: 'Osaka, Japan',
-  //       date: '2023-09-10'
-  //     }
-  //   ];
-  // }
+  // in mock-data.service.ts
+  private gradingRecords: GradingRecord[] = [];
+
+  getAllGradingRecords(): GradingRecord[] {
+    return [...this.gradingRecords];
+  }
+
+  getGradingRecord(id: string): GradingRecord | undefined {
+    return this.gradingRecords.find(r => r.id === id);
+  }
+
+  saveGradingRecord(rec: GradingRecord) {
+    this.gradingRecords.push(rec);
+  }
+
+  isEligibleForBelt(student: Student, belt: Belt): boolean {
+    const req = BeltRequirements.find(r => r.belt === belt);
+    if (!req) return false; // if belt not found in the requirement map
+
+    // TODO: Implement the logic to check if the student is eligible for the belt
+    if (student.attendancePercentage < req.minAttendancePercentage) {
+      return false;
+    }
+
+    // Check waiting period
+    if (student.lastExamDate) {
+      const monthsSinceLast = this.monthDifference(student.lastExamDate, new Date());
+      if (monthsSinceLast < req.minWaitingPeriodMonths) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+
+  getUserById(userId: string): User | undefined {
+    return this.users.find(u => u.id === userId);
+  }
+
+  updateUser(updatedUser: User): void {
+    const idx = this.users.findIndex(u => u.id === updatedUser.id);
+    if (idx !== -1) {
+      this.users[idx] = {...updatedUser};
+    }
+  }
+
+  getClubById(clubId: string): Club | undefined {
+    return this.clubs.find(c => c.id === clubId);
+  }
+
+  updateClub(updatedClub: Club): void {
+    const idx = this.clubs.findIndex(c => c.id === updatedClub.id);
+    if (idx !== -1) {
+      this.clubs[idx] = { ...updatedClub };
+    }
+  }
+
+  private monthDifference(start: Date, end: Date): number {
+    const years = end.getFullYear() - start.getFullYear();
+    const months = end.getMonth() - start.getMonth() + 12*years;
+    return months;
+  }
+  getAllResources(): Resource[] {
+    // Return a copy
+    return [...this.resources];
+  }
+
+  addResource(res: Resource): void {
+    this.resources.push(res);
+  }
+
+  // If you need update or delete:
+  updateResource(updated: Resource): void {
+    const idx = this.resources.findIndex(r => r.id === updated.id);
+    if (idx >= 0) {
+      this.resources[idx] = { ...updated };
+    }
+  }
+
+}
 

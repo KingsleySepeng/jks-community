@@ -194,3 +194,45 @@ ul {
     padding: 12px;
   }
 }
+
+/* src/app/components/instructor-report/instructor-report.component.scss */
+.instructor-report {
+  max-width: 800px;
+  margin: 2em auto;
+
+  h2 {
+    text-align: center;
+  }
+
+  .report-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 1em;
+
+    label {
+      margin-right: 0.5em;
+      font-weight: bold;
+    }
+
+    input[type="month"] {
+      padding: 0.5em;
+      font-size: 1em;
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead {
+      background-color: #f0f0f0;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.75em;
+      text-align: center;
+    }
+  }
+}

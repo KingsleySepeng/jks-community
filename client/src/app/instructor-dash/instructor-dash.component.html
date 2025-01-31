@@ -73,3 +73,31 @@
   </ul>
   <button type="button" (click)="onSaveAttendance()">Save Attendance</button>
 </form>
+
+<hr/>
+<!-- src/app/components/instructor-report/instructor-report.component.html -->
+<div class="instructor-report">
+  <h2>Instructor Report</h2>
+
+  <div class="report-controls">
+    <label for="reportMonth">Select Month:</label>
+    <input id="reportMonth" type="month" [(ngModel)]="selectedMonth" (change)="onMonthChange(selectedMonth)" />
+  </div>
+
+  <table>
+    <thead>
+    <tr>
+      <th>Student Name [ID]</th>
+      <th>Payment Status</th>
+      <th>Attendance Count</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let item of report">
+      <td>{{ item.student.firstName }} {{ item.student.lastName }} [{{ item.student.id }}]</td>
+      <td>{{ item.paid ? 'Paid' : 'Not Paid' }}</td>
+      <td>{{ item.attendanceCount }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

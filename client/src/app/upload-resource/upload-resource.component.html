@@ -1,0 +1,38 @@
+<div class="resource-upload-container">
+  <h2>Upload/Create Resource</h2>
+
+  <form (ngSubmit)="onUploadResource()">
+    <div>
+      <label>Title:</label>
+      <input type="text" [(ngModel)]="title" name="title" required />
+    </div>
+
+    <div>
+      <label>Description:</label>
+      <textarea [(ngModel)]="description" name="description"></textarea>
+    </div>
+
+    <div>
+      <label>Category:</label>
+      <select [(ngModel)]="category" name="category">
+        <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+      </select>
+    </div>
+
+    <!-- If uploading a PDF or doc link -->
+    <div>
+      <label>File URL (PDF/Doc Link):</label>
+      <input type="text" [(ngModel)]="fileUrl" name="fileUrl" placeholder="https://..." />
+    </div>
+
+    <!-- If referencing a video link or embed -->
+    <div>
+      <label>Video URL (YouTube, etc.):</label>
+      <input type="text" [(ngModel)]="videoUrl" name="videoUrl" placeholder="https://..." />
+    </div>
+
+    <!-- If you want actual file uploading, you'd handle it differently with an <input type="file">, etc. -->
+
+    <button type="submit">Create Resource</button>
+  </form>
+</div>

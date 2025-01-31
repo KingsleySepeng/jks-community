@@ -1,1 +1,58 @@
-<p>grading-form works!</p>
+<div>
+  <h2>Batch Grading</h2>
+
+  <label>Belt:</label>
+  <select (change)="onBeltChange($event.target.value)">
+    <option *ngFor="let b of allBelts" [value]="b">{{ b }}</option>
+  </select>
+
+  <div *ngIf="belt">
+    <h3>Eligible Students for {{ belt }}:</h3>
+    <div *ngFor="let s of eligibleStudents">
+      <label>
+        <input type="checkbox" (change)="toggleStudentSelection(s.id)" />
+        {{ s.firstName }} {{ s.lastName }} ({{ s.belt }})
+      </label>
+    </div>
+  </div>
+
+  <div *ngIf="selectedStudentIds.size > 0 && techniques.length > 0">
+    <h3>Evaluation Matrix</h3>
+    <table>
+      <thead>
+      <tr>
+        <th>Technique</th>
+        <th *ngFor="let sid of selectedStudentIds">{{ getStudentName(sid) }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let tech of techniques">
+        <td>{{ tech.name }}</td>
+        <td *ngFor="let sid of selectedStudentIds">
+          <div>
+            <label>
+              <input type="radio" [value]="'good'"
+                     [(ngModel)]="findEvaluation(sid, tech.id)?.rating" />
+              Good
+            </label>
+            <label>
+              <input type="radio" [value]="'average'"
+                     [(ngModel)]="findEvaluation(sid, tech.id)?.rating" />
+              Avg
+            </label>
+            <label>
+              <input type="radio" [value]="'bad'"
+                     [(ngModel)]="findEvaluation(sid, tech.id)?.rating" />
+              Bad
+            </label>
+            <input type="text" placeholder="Comment"
+                   [(ngModel)]="findEvaluation(sid, tech.id)?.comment" />
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <button (click)="submitGrading()">Submit Batch Grading</button>
+</div>

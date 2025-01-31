@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AffiliationPayComponent } from './affiliation-pay.component';
+import { ResourceListComponent } from './resource-list.component';
 
-describe('AffiliationPayComponent', () => {
-  let component: AffiliationPayComponent;
-  let fixture: ComponentFixture<AffiliationPayComponent>;
+describe('ResourceListComponent', () => {
+  let component: ResourceListComponent;
+  let fixture: ComponentFixture<ResourceListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AffiliationPayComponent]
+      imports: [ResourceListComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AffiliationPayComponent);
+    fixture = TestBed.createComponent(ResourceListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
