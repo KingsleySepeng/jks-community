@@ -1,40 +1,33 @@
 import { Injectable } from '@angular/core';
-import {Instructor, User} from '../model/user';
+import {Admin, Instructor, Student, User} from '../model/user';
 import { MockDataService } from './mock-data.service';
 import { Role } from '../model/role';
 import {Belt} from '../model/belt';
+import {Rank} from '../model/rank';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MockServiceService {
- loggedInUser: {
-   email: string;
-   password: string;
-   firstName: string;
-   lastName: string;
-   id: string;
-   memberId: string;
-   belt: Belt;
-   clubId: string;
-   role: Role.INSTRUCTOR;
-   isActive: boolean;
-   attendance: any[]
- } = {
-   email: '',
-   password: '',
-   firstName: '',
-   lastName: '',
-   id: '0',
-   memberId: '',
-   belt:Belt.WHITE,
-   clubId:'',
-   role: Role.INSTRUCTOR,
-   isActive: false,
-   attendance: []
- }; // Initialize with default values;
+  loggedInUser: Instructor | Student | Admin = {
+    email: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    id: '0',
+    memberId: '',
+    belt: Belt.WHITE,
+    clubId: '',
+    role: Role.INSTRUCTOR,
+    isActive: false,
+    attendance: [],
+    rank: Rank.INSTRUCTOR, // Add rank (specific to Instructor)
+    createdAt: new Date(), // Add createdAt
+    updatedAt: new Date(), // Add updatedAt
+  };
 
-constructor(private mockData:MockDataService) { }
+
+  constructor(private mockData:MockDataService) { }
   public login(user: {
     id: string;
     memberId: string;
@@ -50,7 +43,7 @@ constructor(private mockData:MockDataService) { }
   }):User | undefined {
     const users = this.mockData.getUsers();
     const foundUser = users.find(u => u.email === user.email && u.password === user.password);
-    if (foundUser && foundUser.role === Role.INSTRUCTOR || foundUser.role === Role.ADMIN) {
+    if (foundUser) {
       this.loggedInUser = foundUser;
       return foundUser;
     } else {

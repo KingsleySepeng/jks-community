@@ -12,10 +12,14 @@ import {UserProfileComponent} from './user-profile/user-profile.component';
 import {ClubProfileComponent} from './club-profile/club-profile.component';
 import {UploadResourceComponent} from './upload-resource/upload-resource.component';
 import {ResourceListComponent} from './resource-list/resource-list.component';
+import {AdminDashComponent} from './admin-dash/admin-dash.component';
+import {AddUserComponent} from './add-user/add-user.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'instructor-dash', component: InstructorDashComponent },
+  {path:'admin-dashboard',component:AdminDashComponent},
+  {path:'add-user',component:AddUserComponent},
   { path: 'payment', component: ClassPayComponent },
   { path: 'instructor-payment', component: InstructorPaymentComponent },
   { path: 'create-event', component: CreateEventComponent },

@@ -1,1 +1,19 @@
-<p>nav works!</p>
+<nav class="navbar">
+  <div class="navbar-container">
+    <a class="navbar-brand" [routerLink]="'/'">Martial Arts System</a>
+    <button class="navbar-toggler" (click)="toggleMenu()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <ul class="navbar-links" [class.active]="menuOpen">
+      <li class="nav-item" *ngFor="let route of appRoutes">
+        <a
+          class="nav-link"
+          [routerLink]="route.path"
+          routerLinkActive="active"
+        >{{ route.name }}</a
+        >
+      </li>
+    </ul>
+  </div>
+</nav>
+<router-outlet></router-outlet>

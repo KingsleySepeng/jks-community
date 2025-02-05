@@ -520,17 +520,17 @@ export class MockDataService {
     if (!req) return false; // if belt not found in the requirement map
 
     // TODO: Implement the logic to check if the student is eligible for the belt
-    if (student.attendancePercentage < req.minAttendancePercentage) {
-      return false;
-    }
+    // if (student.attendancePercentage < req.minAttendancePercentage) {
+    //   return false;
+    // }
 
     // Check waiting period
-    if (student.lastExamDate) {
-      const monthsSinceLast = this.monthDifference(student.lastExamDate, new Date());
-      if (monthsSinceLast < req.minWaitingPeriodMonths) {
-        return false;
-      }
-    }
+    // if (student.lastExamDate) {
+    //   const monthsSinceLast = this.monthDifference(student.lastExamDate, new Date());
+    //   if (monthsSinceLast < req.minWaitingPeriodMonths) {
+    //     return false;
+    //   }
+    // }
 
     return true;
   }

@@ -4,6 +4,7 @@ import {MockDataService} from '../mock-service/mock-data.service';
 import {NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {MockServiceService} from '../mock-service/mock-service.service';
+import {Role} from '../model/role';
 
 @Component({
   selector: 'app-club-profile',
@@ -33,7 +34,7 @@ export class ClubProfileComponent implements OnInit {
       this.currentClub = this.mockData.getClubById(user.clubId);
     }
     // If user is an admin/instructor, allow edit
-    this.canEdit = user?.role === 'ADMIN' || user?.role === 'INSTRUCTOR';
+    this.canEdit = user?.role as Role === Role.ADMIN || user?.role as Role === Role.INSTRUCTOR;
   }
 
   onEditToggle() {

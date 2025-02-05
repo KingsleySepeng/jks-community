@@ -4,6 +4,7 @@ import {Belt} from '../model/belt';
 import {MockDataService} from '../mock-service/mock-data.service';
 import {NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
+import {MockServiceService} from '../mock-service/mock-service.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -23,15 +24,15 @@ export class UserProfileComponent  implements OnInit {
 
   constructor(
     private mockData: MockDataService,
-    private auth: AuthService
+    private auth: MockServiceService
   ) {}
 
   ngOnInit(): void {
     // Retrieve current user ID from AuthService
-    const userId = this.auth.getCurrentUserId();
-    if (userId) {
-      this.currentUser = this.mockData.getUserById(userId);
-    }
+    const userId = this.auth.getLoggedInUser();
+    // if (userId) {
+    //   this.currentUser = this.mockData.getUserById(userId);
+    // }
   }
 
   onEditToggle() {
