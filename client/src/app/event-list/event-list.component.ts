@@ -51,7 +51,7 @@ export class EventListComponent {
   }
 
   onNotifyChange(event: Event): void {
-    this.notify = (event.target as HTMLInputElement).checked;
+    this.notify = (event.currentTarget as HTMLInputElement).checked;
   }
 
   onSubmitEventList(): void {

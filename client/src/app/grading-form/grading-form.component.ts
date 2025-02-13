@@ -10,6 +10,7 @@ import {SyllabusMap} from '../model/SyllabusMap';
 import {GradingRecord} from '../model/grading-record';
 import {FormsModule} from '@angular/forms';
 import {NgForOf, NgIf} from '@angular/common';
+import {MultiStudentEvaluation} from '../model/multi-student-evaluation';
 
 @Component({
   selector: 'app-grading-form',
