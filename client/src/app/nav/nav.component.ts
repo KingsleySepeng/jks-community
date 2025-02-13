@@ -47,4 +47,17 @@ export class NavComponent {
   logout() {
     this.mockService.logout();
   }
+
+  getUserRole(): string {
+    const user = this.mockService.getLoggedInUser();
+    return user ? user.role : '';
+  }
+
+  shouldShowLink(route: { path: string, name: string }): boolean {
+    const role = this.getUserRole();
+    if (role === 'INSTRUCTOR' || role === 'ADMIN') {
+      return route.path !== '' && route.path !== 'payment' && route.path !== 'club-profile';
+    }
+    return true;
+  }
 }

@@ -13,6 +13,12 @@
         >{{ route.name }}</a
         >
       </li>
+      <li class="nav-item" *ngIf="isLoggedIn()">
+        <a class="nav-link" [routerLink]="'/logout'" (click)="logout()">Logout</a>
+      </li>
+      <li class="nav-item" *ngIf="!isLoggedIn()">
+        <a class="nav-link" [routerLink]="'/'">Login</a>
+      </li>
     </ul>
   </div>
 </nav>

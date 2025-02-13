@@ -24,4 +24,5 @@
     <div *ngIf="isLoading" class="spinner"></div>
     <input type="submit" value="Login" [disabled]="loginForm.invalid || isLoading" />
   </form>
+  <button (click)="logout()">Logout</button>
 </div>
