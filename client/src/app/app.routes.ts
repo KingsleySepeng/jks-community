@@ -31,4 +31,5 @@ export const routes: Routes = [
   { path: 'club-profile', component: ClubProfileComponent },
   { path: 'resource-upload', component: UploadResourceComponent },
   { path: 'resource-list', component: ResourceListComponent },
+  { path: 'logout', component: LoginComponent } // Add logout route
 ];

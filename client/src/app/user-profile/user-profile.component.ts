@@ -29,10 +29,10 @@ export class UserProfileComponent  implements OnInit {
 
   ngOnInit(): void {
     // Retrieve current user ID from AuthService
-    const userId = this.auth.getLoggedInUser();
-    // if (userId) {
-    //   this.currentUser = this.mockData.getUserById(userId);
-    // }
+    const userId = this.auth.getLoggedInUser().id;
+    if (userId) {
+      this.currentUser = this.mockData.getUserById(userId);
+    }
   }
 
   onEditToggle() {

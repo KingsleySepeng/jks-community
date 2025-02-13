@@ -82,5 +82,6 @@ user: User | undefined;
 
  logout():void{
   this.mockService.logout();
+  this.router.navigate(['/']); // Redirect to login page after logout
  }
 }

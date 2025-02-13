@@ -16,8 +16,9 @@ import {Router} from '@angular/router';
 export class GradingReportComponent implements OnInit {
   gradingRecords: GradingRecord[] = [];
   groupedRecords: { [belt: string]: GradingRecord[] } = {};
+  notify: boolean = false; // New field for notification settings
 
-  constructor(private mockData: MockDataService,private router:Router) {}
+  constructor(private mockData: MockDataService, private router: Router) {}
 
   ngOnInit(): void {
     this.gradingRecords = this.mockData.getAllGradingRecords();
@@ -45,5 +46,21 @@ export class GradingReportComponent implements OnInit {
     // navigate to a detail page, e.g. /grading-detail/:id
     // or open a modal
     this.router.navigate(['/grading-detail', record.id]);
+  }
+
+  sendNotification(): void {
+    // Placeholder for notification logic
+    console.log(`Notification sent for grading results`);
+  }
+
+  onNotifyChange(event: Event): void {
+    this.notify = (event.target as HTMLInputElement).checked;
+  }
+
+  onSubmitGradingReport(): void {
+    // Send notification if the user opted in
+    if (this.notify) {
+      this.sendNotification();
+    }
   }
 }

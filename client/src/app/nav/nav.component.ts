@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {NgForOf} from '@angular/common';
+import { MockServiceService } from '../mock-service/mock-service.service';
 
 @Component({
   selector: 'app-nav',
@@ -31,10 +32,19 @@ export class NavComponent {
     { path: 'club-profile', name: 'Club Profile' },
     { path: 'resource-upload', name: 'Upload Resource' },
     { path: 'resource-list', name: 'Resource List' },
-
   ];
+
+  constructor(private mockService: MockServiceService) {}
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.mockService.getLoggedInUser();
+  }
+
+  logout() {
+    this.mockService.logout();
   }
 }

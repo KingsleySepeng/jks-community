@@ -31,9 +31,13 @@ export class InstructorPaymentComponent implements OnInit{
   paymentMethod: string = 'Cash';  // In manual logging, you usually mark as "Cash"
   paymentType: string = 'Class Fee'; // Could also be "Affiliation" etc.
   description: string = '';         // e.g., "Cash payment for class fees for Jan and Feb"
+  notify: boolean = false;          // New field for notification settings
 
   // Payment confirmation message
   message: string = '';
+
+  // Payment history
+  paymentHistory: Payment[] = [];
 
   constructor(private mockService: MockDataService) { }
 
@@ -41,6 +45,7 @@ export class InstructorPaymentComponent implements OnInit{
     // For simplicity, we assume that students are users with the role "STUDENT"
     // In your actual implementation, you might filter by clubId etc.
     this.students = this.mockService.getUsers().filter(user => user.role === 'STUDENT') as Student[];
+    this.loadPaymentHistory();
   }
 
   onSubmitPayment(): void {
@@ -70,16 +75,39 @@ export class InstructorPaymentComponent implements OnInit{
     this.mockService.addPayment(newPayment);
 
     this.message = `Payment of $${this.amount} for ${this.paymentType} successfully logged for ${reference}.`;
+
+    // Send notification if the user opted in
+    if (this.notify) {
+      this.sendNotification();
+    }
+
     // Reset form fields
     this.amount = 0;
     this.paymentMethod = 'Cash';
     this.paymentType = 'Class Fee';
     this.description = '';
     this.selectedStudentId = '';
+
+    // Reload payment history
+    this.loadPaymentHistory();
   }
 
   private generatePaymentId(): string {
     // Simple unique ID generator for demonstration
     return 'PAY-' + Math.floor(Math.random() * 100000).toString().padStart(5, '0');
+  }
+
+  private sendNotification(): void {
+    // Placeholder for notification logic
+    console.log(`Notification sent for payment of $${this.amount}`);
+  }
+
+  private loadPaymentHistory(): void {
+    this.paymentHistory = this.mockService.getPayments().filter(payment => payment.userId === this.selectedStudentId);
+  }
+
+  downloadInvoice(payment: Payment): void {
+    // Placeholder for invoice download logic
+    console.log(`Invoice downloaded for payment ID: ${payment.id}`);
   }
 }

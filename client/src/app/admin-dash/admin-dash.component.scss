@@ -1,0 +1,23 @@
+/* Add styles for mobile responsiveness */
+@media (max-width: 768px) {
+  .admin-dash-container {
+    padding: 1rem;
+  }
+
+  .admin-dash-item {
+    margin-bottom: 1rem;
+  }
+
+  .admin-dash-label {
+    font-size: 1rem;
+  }
+
+  .admin-dash-control {
+    font-size: 1rem;
+  }
+
+  .btn {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+}
