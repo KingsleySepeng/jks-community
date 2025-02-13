@@ -50,8 +50,8 @@ export class EventListComponent {
     console.log(`Notification sent for event registration`);
   }
 
-  onNotifyChange(event: Event): void {
-    this.notify = (event.target as HTMLInputElement).checked;
+  onNotifyChange(event: Event & { target: HTMLInputElement }): void {
+    this.notify = event.target.checked;
   }
 
   onSubmitEventList(): void {
