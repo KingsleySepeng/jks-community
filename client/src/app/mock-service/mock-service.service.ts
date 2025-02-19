@@ -26,8 +26,8 @@ export class MockServiceService {
     updatedAt: new Date(), // Add updatedAt
   };
 
+  constructor(private mockData: MockDataService) { }
 
-  constructor(private mockData:MockDataService) { }
   public login(user: {
     id: string;
     memberId: string;
@@ -40,7 +40,7 @@ export class MockServiceService {
     role: any;
     isActive: boolean;
     attendance: any[]
-  }):User | undefined {
+  }): User | undefined {
     const users = this.mockData.getUsers();
     const foundUser = users.find(u => u.email === user.email && u.password === user.password);
     if (foundUser) {
@@ -50,14 +50,27 @@ export class MockServiceService {
       return undefined;
     }
   }
+
   public logout(): void {
-    return undefined;
+    this.loggedInUser = {
+      email: '',
+      password: '',
+      firstName: '',
+      lastName: '',
+      id: '0',
+      memberId: '',
+      belt: Belt.WHITE,
+      clubId: '',
+      role: Role.INSTRUCTOR,
+      isActive: false,
+      attendance: [],
+      rank: Rank.INSTRUCTOR,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
   }
 
-  public getLoggedInUser(): Instructor {
-    return <Instructor>this.loggedInUser;
+  public getLoggedInUser(): Instructor | Student | Admin {
+    return this.loggedInUser;
   }
-
-
-  }
-
+}

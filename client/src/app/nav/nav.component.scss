@@ -89,3 +89,20 @@
     }
   }
 }
+
+/* Dark mode styles */
+body.dark-mode .navbar {
+  background-color: #1f1f1f;
+  border-bottom-color: #333333;
+}
+
+body.dark-mode .navbar .navbar-brand,
+body.dark-mode .navbar .navbar-toggler,
+body.dark-mode .navbar .nav-link {
+  color: #ffffff;
+}
+
+body.dark-mode .navbar .nav-link:hover,
+body.dark-mode .navbar .nav-link.active {
+  color: #0d6efd;
+}

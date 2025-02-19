@@ -26,6 +26,7 @@ export class ClassPayComponent implements OnInit{
   paymentMethod: string = 'Credit Card'; // default option
   paymentType: string = 'Class Fee';       // default, can be changed to other values such as "Affiliation"
   description: string = '';                // e.g., "Class fees for Jan and Feb"
+  notify: boolean = false;                 // New field for notification settings
 
   // Payment success message
   message: string = '';
@@ -76,15 +77,26 @@ export class ClassPayComponent implements OnInit{
 
     this.message = `Payment of $${this.amount} for ${this.paymentType} was successful!`;
 
+    // Send notification if the user opted in
+    if (this.notify) {
+      this.sendNotification();
+    }
+
     // Reset form fields if desired
     this.amount = 0;
     this.paymentMethod = 'Credit Card';
     this.paymentType = 'Class Fee';
     this.description = '';
+    this.notify = false;
   }
 
   private generatePaymentId(): string {
     // A simple unique ID generator for MVP purposes
     return 'PAY-' + Math.floor(Math.random() * 100000).toString().padStart(5, '0');
+  }
+
+  private sendNotification(): void {
+    // Placeholder for notification logic
+    console.log(`Notification sent to ${this.currentUser?.email} for payment of $${this.amount}`);
   }
 }

@@ -81,7 +81,7 @@ export class InstructorDashComponent implements OnInit {
 
   ngOnInit(): void {
     debugger;
-    this.loggedInInstructor = this.mockService.getLoggedInUser();
+    this.loggedInInstructor = this.mockService.getLoggedInUser() as Instructor;
     if(this.loggedInInstructor){
       const users = this.mockDataService.getUsers();
       this.students = users.filter(user=>user.clubId === this.loggedInInstructor!.clubId && user.role === Role.STUDENT) as Student[];

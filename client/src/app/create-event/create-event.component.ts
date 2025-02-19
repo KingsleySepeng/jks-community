@@ -19,6 +19,7 @@ export class CreateEventComponent {
   date: string = new Date().toISOString().split('T')[0]; // default to today
   cost: number = 0;
   paymentDueDate: string = new Date().toISOString().split('T')[0];
+  notify: boolean = false; // New field for notification settings
 
   constructor(private mockData: MockDataService, private router: Router) {}
 
@@ -35,11 +36,20 @@ export class CreateEventComponent {
     };
 
     this.mockData.addEvent(newEvent);
+    // Send notification if the user opted in
+    if (this.notify) {
+      this.sendNotification();
+    }
     // navigate to event list or show success
     this.router.navigate(['/event-list']);
   }
 
   private generateId(): string {
     return 'EVT-' + Math.floor(Math.random()*100000);
+  }
+
+  private sendNotification(): void {
+    // Placeholder for notification logic
+    console.log(`Notification sent for event: ${this.eventName}`);
   }
 }

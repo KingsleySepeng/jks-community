@@ -18,7 +18,7 @@
             [name]="student.id + 'attendance'"
             value="present"
             (click)="$event.stopPropagation()"
-            [checked]="attendanceState[student.id]?.status === 'present'"
+            [checked]="attendanceState[student.id].status === 'present'"
             (change)="onAttendanceRadioChange(student.id, 'present')"
           />
           Present
@@ -29,7 +29,7 @@
             [name]="student.id + 'attendance'"
             value="absent"
             (click)="$event.stopPropagation()"
-            [checked]="attendanceState[student.id]?.status === 'absent'"
+            [checked]="attendanceState[student.id].status === 'absent'"
             (change)="onAttendanceRadioChange(student.id, 'absent')"
           />
           Absent
@@ -40,7 +40,7 @@
             [name]="student.id + 'attendance'"
             value="excused"
             (click)="$event.stopPropagation()"
-            [checked]="attendanceState[student.id]?.status === 'excused'"
+            [checked]="attendanceState[student.id].status === 'excused'"
             (change)="onAttendanceRadioChange(student.id, 'excused')"
           />
           Excused
@@ -51,7 +51,7 @@
         (click)="$event.stopPropagation()"
         (input)="onCommentChange(student.id, $event)"
         placeholder="Comment on Student"
-        [value]="attendanceState[student.id]?.comment">
+        [value]="attendanceState[student.id].comment">
       </textarea>
 
       <!-- Attendance History Dropdown -->

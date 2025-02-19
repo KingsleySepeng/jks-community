@@ -19,6 +19,7 @@ import {MockServiceService} from '../mock-service/mock-service.service';
 export class EventListComponent {
   events: Event[] = [];
   isInstructor: boolean = false; // or isAdmin
+  notify: boolean = false; // New field for notification settings
 
   constructor(
     private mockData: MockDataService,
@@ -42,5 +43,21 @@ export class EventListComponent {
   onFinalizeRegistration(evt: Event) {
     // Possibly show a modal or direct method
     this.mockData.finalizeEventRegistration(evt.id);
+  }
+
+  sendNotification(): void {
+    // Placeholder for notification logic
+    console.log(`Notification sent for event registration`);
+  }
+
+  onNotifyChange(event: Event & { target: HTMLInputElement }): void {
+    this.notify = event.target.checked;
+  }
+
+  onSubmitEventList(): void {
+    // Send notification if the user opted in
+    if (this.notify) {
+      this.sendNotification();
+    }
   }
 }
