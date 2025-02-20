@@ -1,13 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {Instructor, Student, User} from '../model/user';
-import {MockServiceService} from '../mock-service/mock-service.service';
 import {CommonModule} from '@angular/common';
 import {Attendance, AttendanceStatus} from '../model/attendance ';
-import {MockDataService} from '../mock-service/mock-data.service';
 import {Role} from '../model/role';
 import {Belt} from '../model/belt';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {Payment} from '../model/payment';
+import {MockDataService} from '../mock-service/mock-data.service';
 
 @Component({
   selector: 'app-instructor-dash',
@@ -75,13 +74,12 @@ export class InstructorDashComponent implements OnInit {
 
 
   constructor(
-    private mockService: MockServiceService,
     private mockDataService: MockDataService
   ) { }
 
   ngOnInit(): void {
     debugger;
-    this.loggedInInstructor = this.mockService.getLoggedInUser() as Instructor;
+    this.loggedInInstructor = this.mockDataService.getLoggedInUser() as Instructor;
     if(this.loggedInInstructor){
       const users = this.mockDataService.getUsers();
       this.students = users.filter(user=>user.clubId === this.loggedInInstructor!.clubId && user.role === Role.STUDENT) as Student[];
@@ -131,7 +129,7 @@ export class InstructorDashComponent implements OnInit {
   onCommentChange(userId: string, event: Event): void {
     const comment = (event.target as HTMLTextAreaElement).value;
     this.attendanceState[userId].comment = comment;
-    alert('Comment added successfully')
+    // alert('Comment added successfully')
   }
 
   onSaveAttendance(): void {

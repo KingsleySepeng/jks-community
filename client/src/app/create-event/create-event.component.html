@@ -1,6 +1,10 @@
 <div class="create-event-container">
   <h2>Create New Event</h2>
 
+  <div *ngIf="loggedInUser && userClub; else unauthorized">
+    <p><strong>Host:</strong> {{ loggedInUser.firstName }} {{ loggedInUser.lastName }}</p>
+    <p><strong>Club:</strong> {{ userClub.name }}</p>
+
   <form (ngSubmit)="onCreateEvent()">
     <div>
       <label>Event Name:</label>
@@ -27,6 +31,26 @@
       <input type="date" [(ngModel)]="paymentDueDate" name="paymentDueDate" required />
     </div>
 
+    <div>
+      <label>Max Entries:</label>
+      <input type="number" [(ngModel)]="maxEntries" name="maxEntries" min="1" required />
+    </div>
+
+    <div>
+      <label>Description:</label>
+      <textarea  [(ngModel)]="description" name="description" required ></textarea>
+    </div>
+
+
+    <div>
+      <input type="checkbox" [(ngModel)]="notify" name="notify" /> Notify Students
+    </div>
+
     <button type="submit">Create Event</button>
   </form>
+</div>
+
+<ng-template #unauthorized>
+  <p>Error: Only instructors can create events.</p>
+</ng-template>
 </div>

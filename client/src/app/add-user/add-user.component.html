@@ -1,15 +1,42 @@
-<!--<div>-->
+<div>
   <h1>Instructor Add Student</h1>
-<!--  <form (ngSubmit) = "addStudent()">-->
-<!--    <input type="text" name="name" placeholder = "Name" [(ngModel)] = "this.user.firstName"/>-->
-<!--    <input type="text" name="surname" placeholder = "Name" [(ngModel)] = "this.user.lastName"/>-->
-<!--    <input type="text" name="email" placeholder = "Name" [(ngModel)] = "this.user.email"/>-->
-<!--    <select name="belt" [(ngModel)]="this.user.rank">-->
-<!--      <option *ngFor="let rank of ranks" [value]="rank">{{ rank }}</option>-->
-<!--    </select>-->
-<!--    <select name="belt" [(ngModel)]="this.user.belt">-->
-<!--    <option *ngFor="let belt of belts" [value]="belt">{{ belt }}</option>-->
-<!--    </select>-->
-<!--    <input type="submit" value="Add Student"/>-->
-<!--  </form>-->
-<!--</div>-->
+  <form (ngSubmit)="addStudent()">
+    <input
+      type="text"
+      name="firstName"
+      placeholder="First Name"
+      [(ngModel)]="user.firstName"
+    />
+    <input
+      type="text"
+      name="lastName"
+      placeholder="Last Name"
+      [(ngModel)]="user.lastName"
+    />
+    <input
+      type="text"
+      name="email"
+      placeholder="Email"
+      [(ngModel)]="user.email"
+    />
+
+    <!-- Rank selection -->
+    <select name="rank" [(ngModel)]="user.rank">
+      <option *ngFor="let rank of ranks" [value]="rank">
+        {{ rank }}
+      </option>
+    </select>
+
+    <!-- Belt selection -->
+    <select name="belt" [(ngModel)]="user.belt">
+      <option *ngFor="let belt of belts" [value]="belt">
+        {{ belt }}
+      </option>
+    </select>
+
+    <input
+      type="submit"
+      value="Add Student"
+    />
+  </form>
+</div>

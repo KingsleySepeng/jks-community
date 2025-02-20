@@ -1,27 +1,32 @@
 import { Injectable } from '@angular/core';
+import { Admin, Instructor, Student, User } from '../model/user';
 import { Club } from '../model/club';
-import {Admin, Instructor, Student, User} from '../model/user';
-import {Attendance, AttendanceStatus} from '../model/attendance ';
+import { Attendance, AttendanceStatus } from '../model/attendance ';
 import { Belt } from '../model/belt';
 import { Rank } from '../model/rank';
 import { Role } from '../model/role';
-import {Payment} from '../model/payment';
-import {Event} from '../model/event';
-import {GradingRecord} from '../model/grading-record';
-import {BeltRequirements} from '../model/belt-requirement';
-import {Resource} from '../model/resource';
+import { Payment } from '../model/payment';
+import { Event } from '../model/event';
+import { GradingRecord } from '../model/grading-record';
+import { BeltRequirements } from '../model/belt-requirement';
+import { Resource } from '../model/resource';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MockDataService {
+  // -------------------------------------------------------
+  // 1. Private Fields (Data & Logged-In User)
+  // -------------------------------------------------------
   private clubs: Club[] = [];
   private users: User[] = [];
   private attendances: Attendance[] = [];
   private payments: Payment[] = [];
   private events: Event[] = [];
+  private gradingRecords: GradingRecord[] = [];
+  private loggedInUser: User | null = null;
+
   private resources: Resource[] = [
-    // Optionally seed some initial data
     {
       id: 'RES-1000',
       title: 'Yellow Belt Syllabus PDF',
@@ -39,17 +44,20 @@ export class MockDataService {
       dateCreated: new Date('2025-01-15')
     }
   ];
+
+  // -------------------------------------------------------
+  // 2. Constructor & Initialization
+  // -------------------------------------------------------
   constructor() {
     this.initializeMockData();
   }
 
   /**
-   * Initializes all mock data.
-   * We create the clubs first, then the users,
-   * and finally we attach users to clubs.
+   * initializeMockData
+   * Populates clubs, users, attendance, etc. and assigns relationships.
    */
   private initializeMockData(): void {
-    // 1. Initialize Clubs
+    // ------------ 2.1 Initialize Clubs ------------
     const clubPretoria: Club = {
       id: '1',
       name: 'JKS Pretoria',
@@ -58,7 +66,7 @@ export class MockDataService {
       establishedDate: new Date('2010-05-15'),
       description: 'Leading the way in martial arts excellence.',
       createdAt: new Date('2010-05-15'),
-      updatedAt: new Date('2024-01-01'),
+      updatedAt: new Date('2024-01-01')
     };
 
     const clubHartebeesport: Club = {
@@ -69,7 +77,7 @@ export class MockDataService {
       establishedDate: new Date('2012-08-20'),
       description: 'Dedicated to empowering individuals through martial arts.',
       createdAt: new Date('2012-08-20'),
-      updatedAt: new Date('2024-01-01'),
+      updatedAt: new Date('2024-01-01')
     };
 
     const clubDurban: Club = {
@@ -80,7 +88,7 @@ export class MockDataService {
       establishedDate: new Date('2015-03-10'),
       description: 'Fostering discipline and respect in martial arts.',
       createdAt: new Date('2015-03-10'),
-      updatedAt: new Date('2024-01-01'),
+      updatedAt: new Date('2024-01-01')
     };
 
     const clubJohannesburg: Club = {
@@ -91,7 +99,7 @@ export class MockDataService {
       establishedDate: new Date('2018-07-25'),
       description: 'Promoting fitness and self-defense through martial arts.',
       createdAt: new Date('2018-07-25'),
-      updatedAt: new Date('2024-01-01'),
+      updatedAt: new Date('2024-01-01')
     };
 
     const clubCapeTown: Club = {
@@ -102,21 +110,18 @@ export class MockDataService {
       establishedDate: new Date('2020-11-05'),
       description: 'Cultivating champions in the world of martial arts.',
       createdAt: new Date('2020-11-05'),
-      updatedAt: new Date('2024-01-01'),
+      updatedAt: new Date('2024-01-01')
     };
 
-    // Add all clubs to the array
     this.clubs = [
       clubPretoria,
       clubHartebeesport,
       clubDurban,
       clubJohannesburg,
-      clubCapeTown,
+      clubCapeTown
     ];
 
-    // 2. Initialize Users
-
-    // Instructors for Club Pretoria
+    // ------------ 2.2 Initialize Users ------------
     const instructor1: Instructor = {
       id: 'I001',
       memberId: 'M001',
@@ -131,7 +136,7 @@ export class MockDataService {
       isActive: true,
       createdAt: new Date('2010-05-15'),
       updatedAt: new Date('2024-01-01'),
-      attendance: [], // To be populated later
+      attendance: []
     };
 
     const instructor2: Instructor = {
@@ -148,10 +153,9 @@ export class MockDataService {
       isActive: true,
       createdAt: new Date('2012-08-20'),
       updatedAt: new Date('2024-01-01'),
-      attendance: [],
+      attendance: []
     };
 
-    // Students for Club Pretoria
     const student1: Student = {
       id: 'S001',
       memberId: 'M003',
@@ -165,7 +169,7 @@ export class MockDataService {
       password: 'karate',
       createdAt: new Date('2015-03-10'),
       updatedAt: new Date('2024-01-01'),
-      attendance: [],
+      attendance: []
     };
 
     const student2: Student = {
@@ -181,10 +185,9 @@ export class MockDataService {
       isActive: true,
       createdAt: new Date('2018-07-25'),
       updatedAt: new Date('2024-01-01'),
-      attendance: [],
+      attendance: []
     };
 
-    // Instructors for Club Hartebeesport
     const instructor3: Instructor = {
       id: 'I003',
       memberId: 'M005',
@@ -199,7 +202,7 @@ export class MockDataService {
       isActive: true,
       createdAt: new Date('2015-03-10'),
       updatedAt: new Date('2024-01-01'),
-      attendance: [],
+      attendance: []
     };
 
     const instructor4: Instructor = {
@@ -216,10 +219,9 @@ export class MockDataService {
       password: 'karate',
       createdAt: new Date('2018-07-25'),
       updatedAt: new Date('2024-01-01'),
-      attendance: [],
+      attendance: []
     };
 
-    // Students for Club Hartebeesport
     const student3: Student = {
       id: 'S003',
       memberId: 'M007',
@@ -233,10 +235,9 @@ export class MockDataService {
       isActive: true,
       createdAt: new Date('2020-11-05'),
       updatedAt: new Date('2024-01-01'),
-      attendance: [],
+      attendance: []
     };
 
-    // Admin User
     const admin1: Admin = {
       id: 'A001',
       memberId: 'M008',
@@ -249,25 +250,17 @@ export class MockDataService {
       password: 'karate',
       isActive: true,
       createdAt: new Date('2010-05-15'),
-      updatedAt: new Date('2024-01-01'),
+      updatedAt: new Date('2024-01-01')
     };
 
-    // Add all users to the array
     this.users = [
-      instructor1,
-      instructor2,
-      student1,
-      student2,
-      instructor3,
-      instructor4,
-      student3,
-      admin1,
-      // Additional users can be added here
+      instructor1, instructor2,
+      student1,    student2,
+      instructor3, instructor4,
+      student3,    admin1
     ];
 
-    // 3. Initialize Attendances
-
-    // Sample Attendances for Instructors
+    // ------------ 2.3 Initialize Attendances ------------
     const attendanceI001A001: Attendance = {
       id: 'A001',
       date: new Date('2024-12-01'),
@@ -277,7 +270,7 @@ export class MockDataService {
       clubId: '1',
       comments: 'Attended staff meeting.',
       createdAt: new Date('2024-12-01'),
-      updatedAt: new Date('2024-12-01'),
+      updatedAt: new Date('2024-12-01')
     };
 
     const attendanceI002A002: Attendance = {
@@ -289,10 +282,9 @@ export class MockDataService {
       clubId: '1',
       comments: 'Conducted advanced class.',
       createdAt: new Date('2024-12-02'),
-      updatedAt: new Date('2024-12-02'),
+      updatedAt: new Date('2024-12-02')
     };
 
-    // Sample Attendances for Students
     const attendanceS001A003: Attendance = {
       id: 'A003',
       date: new Date('2024-12-01'),
@@ -302,7 +294,7 @@ export class MockDataService {
       clubId: '1',
       comments: 'Participated actively.',
       createdAt: new Date('2024-12-01'),
-      updatedAt: new Date('2024-12-01'),
+      updatedAt: new Date('2024-12-01')
     };
 
     const attendanceS002A004: Attendance = {
@@ -314,7 +306,7 @@ export class MockDataService {
       clubId: '1',
       comments: 'Absent due to illness.',
       createdAt: new Date('2024-12-01'),
-      updatedAt: new Date('2024-12-01'),
+      updatedAt: new Date('2024-12-01')
     };
 
     const attendanceS003A005: Attendance = {
@@ -326,10 +318,9 @@ export class MockDataService {
       clubId: '2',
       comments: 'Family emergency.',
       createdAt: new Date('2024-12-02'),
-      updatedAt: new Date('2024-12-02'),
+      updatedAt: new Date('2024-12-02')
     };
 
-    // Sample Attendances for Admin
     const attendanceA001A006: Attendance = {
       id: 'A006',
       date: new Date('2024-12-03'),
@@ -339,30 +330,26 @@ export class MockDataService {
       clubId: '1',
       comments: 'Reviewed monthly reports.',
       createdAt: new Date('2024-12-03'),
-      updatedAt: new Date('2024-12-03'),
+      updatedAt: new Date('2024-12-03')
     };
 
-    // Add all attendances to the array
     this.attendances = [
-      attendanceI001A001,
-      attendanceI002A002,
-      attendanceS001A003,
-      attendanceS002A004,
-      attendanceS003A005,
-      attendanceA001A006,
-      // Additional attendances can be added here
+      attendanceI001A001, attendanceI002A002,
+      attendanceS001A003, attendanceS002A004,
+      attendanceS003A005, attendanceA001A006
     ];
 
-    // 4. Assign Attendances to Users
+    // Assign each user's attendance, except Admin if desired
     this.users.forEach(user => {
-      if (user.role !== Role.ADMIN) { // Assuming admins might not have attendance records
+      if (user.role !== Role.ADMIN) {
         user.attendance = this.attendances.filter(att => att.userId === user.id);
       }
     });
 
-    // 5. Assign Users to Clubs
+    // ------------ 2.4 Assign Users to Clubs ------------
     this.assignUsersToClubs();
 
+    // ------------ 2.5 Sample Events ------------
     this.events = [
       {
         id: 'EVT-10001',
@@ -372,213 +359,204 @@ export class MockDataService {
         cost: 100,
         paymentDueDate: new Date('2025-02-25'),
         interestedStudents: [],
-        finalRegistrations: []
+        finalRegistrations: [],
+        maxEntries: 1,
+        description: "Freindly Tournament",
+        instructorId:"I004",
+        clubId:"4",
       }
     ];
   }
 
-  getEvents(): Event[] {
-    return this.events;
-  }
-
-  addEvent(newEvent: Event) {
-    this.events.push(newEvent);
-  }
-
-  addStudentInterest(eventId: string, studentId: string) {
-    const evt = this.events.find(e => e.id === eventId);
-    if (evt && !evt.interestedStudents.includes(studentId)) {
-      evt.interestedStudents.push(studentId);
-    }
-  }
-
-  finalizeEventRegistration(eventId: string) {
-    const evt = this.events.find(e => e.id === eventId);
-    if (evt) {
-      // e.g. assume we finalize all who are 'interested'
-      evt.finalRegistrations = [...evt.interestedStudents];
-      // or do extra logic for payment
-    }
-  }
-  /**
-   * Assigns users to their respective clubs based on clubId.
-   * Instructors are added to the club's instructors array.
-   * Students are added to the club's students array.
-   */
+  // -------------------------------------------------------
+  // 3. Relationship Helpers
+  // -------------------------------------------------------
   private assignUsersToClubs(): void {
     this.clubs.forEach(club => {
+      // Instructors
       club.instructors = this.users.filter(
         user => user.clubId === club.id && user.role === Role.INSTRUCTOR
       ) as Instructor[];
+
+      // Students
       club.students = this.users.filter(
         user => user.clubId === club.id && user.role === Role.STUDENT
       ) as Student[];
     });
   }
 
-  // 4. Initialize Payments (start with empty array)
-
-  // this.payments = [];
-// PAYMENTS
-  getPayments(): Payment[] {
-    return this.payments;
+  // -------------------------------------------------------
+  // 4. Authentication Methods
+  // -------------------------------------------------------
+  public authenticate(email: string, password: string): User | null {
+    const user = this.findUserByCredentials(email, password);
+    if (user) {
+      this.loggedInUser = user;
+      return user;
+    }
+    return null;
   }
 
-  addPayment(payment: Payment): void {
-    this.payments.push(payment);
+  private findUserByCredentials(email: string, password: string): User | null {
+    const found = this.users.find(u => u.email === email && u.password === password);
+    return found || null;
   }
 
-  updatePayments(updatedPayments: Payment[]): void {
-    // For simplicity, we just overwrite the payments array (or update one by one as needed)
-    this.payments = updatedPayments;
+  public login(user: User): User | undefined {
+    const foundUser = this.users.find(
+      u => u.email === user.email && u.password === user.password
+    );
+    if (foundUser) {
+      this.loggedInUser = foundUser;
+      return foundUser;
+    }
+    return undefined;
   }
 
-  /**
-   * Returns all users.
-   */
-  getUsers(): User[] {
+  public logout(): void {
+    this.loggedInUser = null;
+  }
+
+  public getLoggedInUser(): User | undefined {
+    return this.loggedInUser ?? undefined;
+  }
+
+  // -------------------------------------------------------
+  // 5. Clubs, Users, Attendance CRUD
+  // -------------------------------------------------------
+  public getUsers(): User[] {
     return this.users;
   }
-
-  /**
-   * Returns all clubs.
-   */
-  getClubs(): Club[] {
-    return this.clubs;
-  }
-
-  /**
-   * Returns all attendance records.
-   */
-  getAttendances(): Attendance[] {
-    return this.attendances.sort((a, b) => a.date.getTime() - b.date.getTime());
-  }
-
-  /**
-   * Updates the users array with the provided updatedUsers.
-   * @param updatedUsers Array of updated User objects.
-   */
-  updateUsers(updatedUsers: User[]): void {
-    this.users = updatedUsers;
-    this.assignUsersToClubs();
-  }
-
-  /**
-   * Adds a new user to the service.
-   * @param newUser The User object to be added.
-   */
-  addUser(newUser: User): void {
+  public addUser(newUser: User): void {
     this.users.push(newUser);
     this.assignUsersToClubs();
   }
-
-  /**
-   * Adds a new club to the service.
-   * @param newClub The Club object to be added.
-   */
-  addClub(newClub: Club): void {
-    this.clubs.push(newClub);
+  public updateUsers(updatedUsers: User[]): void {
+    this.users = updatedUsers;
+    this.assignUsersToClubs();
   }
-
-  /**
-   * Removes a user by their ID.
-   * @param userId The ID of the user to remove.
-   */
-  removeUser(userId: string): void {
-    this.users = this.users.filter(user => user.id !== userId);
-    this.attendances = this.attendances.filter(att => att.userId !== userId);
+  public removeUser(userId: string): void {
+    this.users = this.users.filter(u => u.id !== userId);
+    this.attendances = this.attendances.filter(a => a.userId !== userId);
     this.assignUsersToClubs();
   }
 
-  /**
-   * Removes a club by its ID.
-   * @param clubId The ID of the club to remove.
-   */
-  removeClub(clubId: string): void {
-    this.clubs = this.clubs.filter(club => club.id !== clubId);
-    this.users = this.users.filter(user => user.clubId !== clubId);
-    this.attendances = this.attendances.filter(att => att.clubId !== clubId);
-  }
-
-  // in mock-data.service.ts
-  private gradingRecords: GradingRecord[] = [];
-
-  getAllGradingRecords(): GradingRecord[] {
-    return [...this.gradingRecords];
-  }
-
-  getGradingRecord(id: string): GradingRecord | undefined {
-    return this.gradingRecords.find(r => r.id === id);
-  }
-
-  saveGradingRecord(rec: GradingRecord) {
-    this.gradingRecords.push(rec);
-  }
-
-  isEligibleForBelt(student: Student, belt: Belt): boolean {
-    const req = BeltRequirements.find(r => r.belt === belt);
-    if (!req) return false; // if belt not found in the requirement map
-
-    // TODO: Implement the logic to check if the student is eligible for the belt
-    // if (student.attendancePercentage < req.minAttendancePercentage) {
-    //   return false;
-    // }
-
-    // Check waiting period
-    // if (student.lastExamDate) {
-    //   const monthsSinceLast = this.monthDifference(student.lastExamDate, new Date());
-    //   if (monthsSinceLast < req.minWaitingPeriodMonths) {
-    //     return false;
-    //   }
-    // }
-
-    return true;
-  }
-
-
-  getUserById(userId: string): User | undefined {
+  public getUserById(userId: string): User | undefined {
     return this.users.find(u => u.id === userId);
   }
-
-  updateUser(updatedUser: User): void {
+  public updateUser(updatedUser: User): void {
     const idx = this.users.findIndex(u => u.id === updatedUser.id);
     if (idx !== -1) {
-      this.users[idx] = {...updatedUser};
+      this.users[idx] = { ...updatedUser };
     }
   }
 
-  getClubById(clubId: string): Club | undefined {
-    return this.clubs.find(c => c.id === clubId);
+  public getClubs(): Club[] {
+    return this.clubs;
+  }
+  public addClub(newClub: Club): void {
+    this.clubs.push(newClub);
+  }
+  public removeClub(clubId: string): void {
+    this.clubs = this.clubs.filter(c => c.id !== clubId);
+    this.users = this.users.filter(u => u.clubId !== clubId);
+    this.attendances = this.attendances.filter(a => a.clubId !== clubId);
   }
 
-  updateClub(updatedClub: Club): void {
+  public getClubById(clubId: string): Club | undefined {
+    return this.clubs.find(c => c.id === clubId);
+  }
+  public updateClub(updatedClub: Club): void {
     const idx = this.clubs.findIndex(c => c.id === updatedClub.id);
     if (idx !== -1) {
       this.clubs[idx] = { ...updatedClub };
     }
   }
 
+  public getAttendances(): Attendance[] {
+    // Sort by date ascending
+    return this.attendances.sort((a, b) => a.date.getTime() - b.date.getTime());
+  }
+
+  // -------------------------------------------------------
+  // 6. Payments
+  // -------------------------------------------------------
+  public getPayments(): Payment[] {
+    return this.payments;
+  }
+  public addPayment(payment: Payment): void {
+    this.payments.push(payment);
+  }
+  public updatePayments(updatedPayments: Payment[]): void {
+    this.payments = updatedPayments;
+  }
+
+  // -------------------------------------------------------
+  // 7. Events
+  // -------------------------------------------------------
+  public getEvents(): Event[] {
+    return this.events;
+  }
+  public addEvent(newEvent: Event) {
+    this.events.push(newEvent);
+  }
+  public addStudentInterest(eventId: string, studentId: string) {
+    const evt = this.events.find(e => e.id === eventId);
+    if (evt && !evt.interestedStudents.includes(studentId)) {
+      evt.interestedStudents.push(studentId);
+    }
+  }
+  public finalizeEventRegistration(eventId: string) {
+    const evt = this.events.find(e => e.id === eventId);
+    if (evt) {
+      // Example: finalize all interested
+      evt.finalRegistrations = [...evt.interestedStudents];
+      // or handle payment logic
+    }
+  }
+
+  // -------------------------------------------------------
+  // 8. Grading Records
+  // -------------------------------------------------------
+  public getAllGradingRecords(): GradingRecord[] {
+    return [...this.gradingRecords];
+  }
+  public getGradingRecord(id: string): GradingRecord | undefined {
+    return this.gradingRecords.find(r => r.id === id);
+  }
+  public saveGradingRecord(rec: GradingRecord) {
+    this.gradingRecords.push(rec);
+  }
+
+  // -------------------------------------------------------
+  // 9. Belt Requirements & Eligibility
+  // -------------------------------------------------------
+  public isEligibleForBelt(student: Student, belt: Belt): boolean {
+    const req = BeltRequirements.find(r => r.belt === belt);
+    if (!req) return false; // no belt requirement found
+    // TODO: implement real logic for attendance, waiting period, etc.
+    return true;
+  }
+
   private monthDifference(start: Date, end: Date): number {
     const years = end.getFullYear() - start.getFullYear();
-    const months = end.getMonth() - start.getMonth() + 12*years;
+    const months = end.getMonth() - start.getMonth() + 12 * years;
     return months;
   }
-  getAllResources(): Resource[] {
-    // Return a copy
+
+  // -------------------------------------------------------
+  // 10. Resources
+  // -------------------------------------------------------
+  public getAllResources(): Resource[] {
     return [...this.resources];
   }
-
-  addResource(res: Resource): void {
+  public addResource(res: Resource): void {
     this.resources.push(res);
   }
-
-  // If you need update or delete:
-  updateResource(updated: Resource): void {
+  public updateResource(updated: Resource): void {
     const idx = this.resources.findIndex(r => r.id === updated.id);
     if (idx >= 0) {
       this.resources[idx] = { ...updated };
     }
   }
-
 }
-

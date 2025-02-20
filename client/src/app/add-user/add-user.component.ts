@@ -1,10 +1,11 @@
 import {Component} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {User} from '../model/user';
+import {Student, User} from '../model/user';
 import {Role} from '../model/role';
 import {Belt} from '../model/belt';
 import {NgForOf} from '@angular/common';
 import {Rank} from '../model/rank';
+import {MockDataService} from '../mock-service/mock-data.service';
 
 @Component({
   selector: 'app-add-user',
@@ -19,11 +20,57 @@ import {Rank} from '../model/rank';
 })
 export class AddUserComponent {
 
-  constructor() {
+
+  // Arrays for the select dropdowns
+  belts = Object.values(Belt);
+  ranks = Object.values(Rank);
+
+  // Local user object.
+  // Pre-fill basic defaults (role=STUDENT, isActive=true, etc.).
+  user: Student = {
+    id: '',
+    memberId: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    clubId: '',
+    belt: Belt.WHITE,
+    role: Role.STUDENT,   // Ensures we create a student
+    password: 'karate',   // Default password or blank
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    attendance: [],
+    rank: Rank.JUNIOR    // Or use an appropriate rank for students
+  };
+
+  constructor(private mockData: MockDataService) {}
+
+  ngOnInit(): void {
+    // Any init logic, if needed
   }
 
-  ngOnInit() {
+  addStudent(): void {
+    // For a real app, you'd probably generate a unique ID & memberId.
+    // For now, just do something simple:
+    this.user.id = 'S' + Math.floor(Math.random() * 1000);
+    this.user.memberId = 'M' + Math.floor(Math.random() * 1000);
+
+    // Add to the mock data
+    this.mockData.addUser(this.user);
+
+    console.log(`Added student: ${this.user.firstName} ${this.user.lastName}`);
+
+    // Optionally reset the form
+    this.user = {
+      ...this.user,
+      id: '',
+      memberId: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      belt: Belt.WHITE,
+      rank: Rank.JUNIOR
+    };
   }
-
-
 }

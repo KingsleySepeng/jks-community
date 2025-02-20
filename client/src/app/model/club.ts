@@ -11,4 +11,5 @@ export interface Club {
   students?: Student[];       // Optional, populated as needed
   createdAt: Date;
   updatedAt: Date;
+  logoUrl?: string;
 }

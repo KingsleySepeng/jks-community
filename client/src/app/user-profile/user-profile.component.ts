@@ -4,7 +4,6 @@ import {Belt} from '../model/belt';
 import {MockDataService} from '../mock-service/mock-data.service';
 import {NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {MockServiceService} from '../mock-service/mock-service.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -23,15 +22,14 @@ export class UserProfileComponent  implements OnInit {
   belts = Object.values(Belt); // if Belt is an enum
 
   constructor(
-    private mockData: MockDataService,
-    private auth: MockServiceService
+    private mockDataService: MockDataService,
   ) {}
 
   ngOnInit(): void {
-    // Retrieve current user ID from AuthService
-    const userId = this.auth.getLoggedInUser().id;
+
+    const userId = this.mockDataService.getLoggedInUser()?.id;
     if (userId) {
-      this.currentUser = this.mockData.getUserById(userId);
+      this.currentUser = this.mockDataService.getUserById(userId);
     }
   }
 
@@ -42,7 +40,7 @@ export class UserProfileComponent  implements OnInit {
   onSaveChanges() {
     if (!this.currentUser) return;
     // Pass updated user to the service
-    this.mockData.updateUser(this.currentUser);
+    this.mockDataService.updateUser(this.currentUser);
     this.isEditing = false;
   }
 }

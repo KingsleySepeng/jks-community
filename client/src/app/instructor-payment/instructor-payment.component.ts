@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {MockDataService} from '../mock-service/mock-data.service';
-import {Student} from '../model/user';
+import {Student, User} from '../model/user';
 import {Payment} from '../model/payment';
 import {FormsModule} from '@angular/forms';
-import {NgForOf, NgIf} from '@angular/common';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
+import {MockDataService} from '../mock-service/mock-data.service';
+import {Event} from '../model/event';
 
 @Component({
   selector: 'app-instructor-payment',
@@ -11,72 +12,81 @@ import {NgForOf, NgIf} from '@angular/common';
   imports: [
     FormsModule,
     NgForOf,
-    NgIf
+    NgIf,
+    DatePipe
   ],
   templateUrl: './instructor-payment.component.html',
   styleUrl: './instructor-payment.component.scss'
 })
 export class InstructorPaymentComponent implements OnInit{
-  // Assuming instructor is already logged in. This component is only for instructors.
-  currentInstructorId: string = 'I001'; // Example: instructor's ID (logged in instructor)
+  currentInstructor?: User; // Logged-in instructor
+  students: Student[] = []; // Students from instructor's club
+  events: Event[] = []; // Available events for payment
 
-  // List of students to choose from (could be fetched based on instructor's club)
-  students: Student[] = [];
-
-  // Selected student for whom the payment is being logged
   selectedStudentId: string = '';
-
-  // Payment form fields
+  selectedEventId: string = '';
   amount: number = 0;
-  paymentMethod: string = 'Cash';  // In manual logging, you usually mark as "Cash"
-  paymentType: string = 'Class Fee'; // Could also be "Affiliation" etc.
-  description: string = '';         // e.g., "Cash payment for class fees for Jan and Feb"
-  notify: boolean = false;          // New field for notification settings
+  paymentMethod: string = 'Cash';
+  paymentType: string = 'Class Fee';
+  description: string = '';
 
-  // Payment confirmation message
-  message: string = '';
-
-  // Payment history
+  message: string = ''; // Feedback message
+  notify: boolean = false; // Send notification toggle
   paymentHistory: Payment[] = [];
 
-  constructor(private mockService: MockDataService) { }
+  constructor(private mockService: MockDataService) {}
 
   ngOnInit(): void {
-    // For simplicity, we assume that students are users with the role "STUDENT"
-    // In your actual implementation, you might filter by clubId etc.
-    this.students = this.mockService.getUsers().filter(user => user.role === 'STUDENT') as Student[];
+    this.currentInstructor = this.mockService.getLoggedInUser();
+
+    if (this.currentInstructor && this.currentInstructor.role === 'INSTRUCTOR') {
+      // Load students belonging to this instructor's club
+      this.students = this.mockService.getUsers().filter(
+        (user:User) => user.role === 'STUDENT' && user.clubId === this.currentInstructor?.clubId
+      ) as Student[];
+
+      // Load available events
+      this.events = this.mockService.getEvents();
+    }
+
     this.loadPaymentHistory();
   }
 
+  /** 🔹 Update amount when an event is selected */
+  onEventChange(): void {
+    const event = this.events.find((e) => e.id === this.selectedEventId);
+    this.amount = event ? event.cost : 0;
+    this.paymentType = event ? 'Event Registration' : 'Class Fee';
+  }
+
+  /** 🔹 Handle Payment Submission */
   onSubmitPayment(): void {
-    if (this.amount <= 0 || !this.selectedStudentId || !this.description.trim()) {
-      this.message = 'Please complete all fields with valid values.';
+    if (!this.selectedStudentId || this.amount <= 0 || !this.description.trim()) {
+      this.message = 'Please complete all required fields.';
       return;
     }
 
-    // Create a reference string from the student's details
-    const student = this.students.find(s => s.id === this.selectedStudentId);
+    // Get selected student details
+    const student = this.students.find((s) => s.id === this.selectedStudentId);
     const reference = student ? `${student.firstName} ${student.lastName} [ID: ${student.id}]` : '';
 
-    // Build a new payment record
+    // Create a new payment record
     const newPayment: Payment = {
       id: this.generatePaymentId(),
       userId: this.selectedStudentId,
       amount: this.amount,
       paymentDate: new Date(),
       method: this.paymentMethod,
-      status: 'PAID', // For MVP we mark as paid on logging a cash payment
+      status: 'PAID',
       reference: reference,
       paymentType: this.paymentType,
       description: this.description
     };
 
-    // Save the payment using the mock service
+    // Save payment
     this.mockService.addPayment(newPayment);
-
     this.message = `Payment of $${this.amount} for ${this.paymentType} successfully logged for ${reference}.`;
 
-    // Send notification if the user opted in
     if (this.notify) {
       this.sendNotification();
     }
@@ -87,27 +97,30 @@ export class InstructorPaymentComponent implements OnInit{
     this.paymentType = 'Class Fee';
     this.description = '';
     this.selectedStudentId = '';
+    this.selectedEventId = '';
 
-    // Reload payment history
     this.loadPaymentHistory();
   }
 
+  /** 🔹 Generate Payment ID */
   private generatePaymentId(): string {
-    // Simple unique ID generator for demonstration
     return 'PAY-' + Math.floor(Math.random() * 100000).toString().padStart(5, '0');
   }
 
+  /** 🔹 Send Notification */
   private sendNotification(): void {
-    // Placeholder for notification logic
     console.log(`Notification sent for payment of $${this.amount}`);
   }
 
+  /** 🔹 Load Payment History */
   private loadPaymentHistory(): void {
-    this.paymentHistory = this.mockService.getPayments().filter(payment => payment.userId === this.selectedStudentId);
+    this.paymentHistory = this.mockService.getPayments().filter(payment =>
+      this.students.some(student => student.id === payment.userId)
+    );
   }
 
+  /** 🔹 Download Invoice (Placeholder) */
   downloadInvoice(payment: Payment): void {
-    // Placeholder for invoice download logic
     console.log(`Invoice downloaded for payment ID: ${payment.id}`);
   }
 }

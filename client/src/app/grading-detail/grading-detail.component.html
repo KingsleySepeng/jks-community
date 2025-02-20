@@ -1,27 +1,79 @@
-<div *ngIf="record">
+<div *ngIf="record; else noRecord">
   <h2>Grading Record: {{ record.id }}</h2>
-  <p>Student: {{ record.studentId }}</p>
-  <p>Examiner: {{ record.examinerId }}</p>
-  <p>Current Belt: {{ record.currentBelt }}</p>
-  <p>Testing For: {{ record.testingForBelt }}</p>
-  <p>Decision: {{ record.overallDecision }}</p>
-  <p>Overall Comment: {{ record.overallComment }}</p>
+  <p><strong>Student:</strong> {{ student?.firstName }} {{ student?.lastName }} (ID: {{ record.studentId }})</p>
+  <p><strong>Examiner:</strong> {{ examiner?.firstName }} {{ examiner?.lastName }} (ID: {{ record.examinerId }})</p>
+  <p><strong>Current Belt:</strong> {{ record.currentBelt }}</p>
+  <p><strong>Testing For:</strong> {{ record.testingForBelt }}</p>
+  <p><strong>Date:</strong> {{ record.date | date: 'fullDate' }}</p>
+  <p><strong>Decision:</strong> {{ record.overallDecision }}</p>
+  <p><strong>Overall Comment:</strong> {{ record.overallComment }}</p>
 
   <h3>Techniques</h3>
-  <table class="table table-bordered">
-    <thead>
-    <tr>
-      <th>Technique</th>
-      <th>Rating</th>
-      <th>Comment</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let eval of record.evaluations">
-      <td>{{ (eval.techniqueId) }}</td>
-      <td>{{ eval.rating }}</td>
-      <td>{{ eval.comment }}</td>
-    </tr>
-    </tbody>
-  </table>
+
+  <!-- Kihon Section -->
+  <ng-container *ngIf="kihonEvals.length > 0">
+    <h4>Kihon (Basic Techniques)</h4>
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th>Technique</th>
+        <th>Rating</th>
+        <th>Comment</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let eval of kihonEvals">
+        <td>{{ findTechniqueName(eval.techniqueId) }}</td>
+        <td>{{ eval.rating }}</td>
+        <td>{{ eval.comment }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </ng-container>
+
+  <!-- Kata Section -->
+  <ng-container *ngIf="kataEvals.length > 0">
+    <h4>Kata (Forms)</h4>
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th>Kata</th>
+        <th>Rating</th>
+        <th>Comment</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let eval of kataEvals">
+        <td>{{ findTechniqueName(eval.techniqueId) }}</td>
+        <td>{{ eval.rating }}</td>
+        <td>{{ eval.comment }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </ng-container>
+
+  <!-- Kumite Section -->
+  <ng-container *ngIf="kumiteEvals.length > 0">
+    <h4>Kumite (Sparring)</h4>
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th>Technique</th>
+        <th>Rating</th>
+        <th>Comment</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let eval of kumiteEvals">
+        <td>{{ findTechniqueName(eval.techniqueId) }}</td>
+        <td>{{ eval.rating }}</td>
+        <td>{{ eval.comment }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </ng-container>
 </div>
+
+<ng-template #noRecord>
+  <p>No grading record found.</p>
+</ng-template>

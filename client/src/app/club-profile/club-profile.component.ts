@@ -1,10 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {Club} from '../model/club';
-import {MockDataService} from '../mock-service/mock-data.service';
 import {NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {MockServiceService} from '../mock-service/mock-service.service';
 import {Role} from '../model/role';
+import {MockDataService} from '../mock-service/mock-data.service';
 
 @Component({
   selector: 'app-club-profile',
@@ -20,21 +19,19 @@ import {Role} from '../model/role';
 export class ClubProfileComponent implements OnInit {
   currentClub?: Club;
   isEditing = false;
-  canEdit = false; // if only certain roles can edit
+  canEdit = false;
 
-  constructor(
-    private mockData: MockDataService,
-    private mockService:MockServiceService
-  ) {}
+  constructor(private mockDataService: MockDataService) {}
 
   ngOnInit(): void {
-    // For example, the user belongs to a certain club
-    const user = this.mockService.getLoggedInUser();
-    if (user && user.clubId) {
-      this.currentClub = this.mockData.getClubById(user.clubId);
+    // Get logged-in user
+    const user = this.mockDataService.getLoggedInUser();
+    if (user?.clubId) {
+      this.currentClub = this.mockDataService.getClubById(user.clubId);
     }
-    // If user is an admin/instructor, allow edit
-    this.canEdit = user?.role as Role === Role.ADMIN || user?.role as Role === Role.INSTRUCTOR;
+
+    // Only Admins & Instructors can edit
+    this.canEdit = user?.role === Role.ADMIN || user?.role === Role.INSTRUCTOR;
   }
 
   onEditToggle() {
@@ -45,7 +42,7 @@ export class ClubProfileComponent implements OnInit {
 
   onSaveChanges() {
     if (!this.currentClub) return;
-    this.mockData.updateClub(this.currentClub);
+    this.mockDataService.updateClub(this.currentClub);
     this.isEditing = false;
   }
 }
