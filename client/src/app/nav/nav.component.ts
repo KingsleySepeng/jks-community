@@ -3,6 +3,8 @@ import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {NgClass, NgForOf, NgIf} from '@angular/common';
 import {MockDataService} from '../mock-service/mock-data.service';
 import { Role } from '../model/role';
+import {User} from '../model/user';
+import {Club} from '../model/club';
 
 @Component({
   selector: 'app-nav',
@@ -13,22 +15,23 @@ import { Role } from '../model/role';
     RouterOutlet,
     NgForOf,
     NgIf,
-    NgClass
   ],
   templateUrl: './nav.component.html',
   styleUrl: './nav.component.scss'
 })
 export class NavComponent {
   menuOpen = false;
-
+  loggedInUser?: User;
+  userProfileLabel: string = 'User Profile';
+  clubProfileLabel: string = 'Club Profile';
   // Add a "roles" array to each route. This controls which roles can see the link.
   // Use a special "GUEST" role for users who are not logged in.
   appRoutes = [
     { path: '', name: 'Login', roles: [Role.STUDENT, Role.INSTRUCTOR, Role.ADMIN] },
     { path: 'instructor-dash', name: 'Instructor Dashboard', roles: [Role.INSTRUCTOR] },
-    { path: 'admin-dash', name: 'Admin Dashboard', roles: [Role.ADMIN] },
-    { path: 'payment', name: 'Class Payment', roles: [Role.STUDENT] },
-    { path: 'instructor-payment', name: 'Instructor Payment', roles: [Role.INSTRUCTOR] },
+    { path: 'admin-dash', name: 'Admin Dashboard',  roles: [Role.STUDENT, Role.INSTRUCTOR, Role.ADMIN] }, // TODO: ADMIN DOESNT WORK
+    { path: 'payment', name: 'Class Payment', roles: [Role.STUDENT, Role.INSTRUCTOR, Role.ADMIN] },
+    { path: 'add-user', name: 'Add New User', roles: [Role.STUDENT, Role.INSTRUCTOR, Role.ADMIN] },
     { path: 'create-event', name: 'Create Event', roles: [Role.INSTRUCTOR, Role.ADMIN] },
     { path: 'event-list', name: 'Event List', roles: [Role.INSTRUCTOR, Role.ADMIN] },
     { path: 'grading-form', name: 'Grading Form', roles: [Role.INSTRUCTOR] },
@@ -64,5 +67,20 @@ export class NavComponent {
 
   logout() {
     this.mockDataService.logout();
+  }
+
+  updateNavLabels(): void {
+    this.loggedInUser = this.mockDataService.getLoggedInUser();
+
+    if (this.loggedInUser) {
+      // Update User Profile Label
+      this.userProfileLabel = `${this.loggedInUser.firstName}'s Profile`;
+
+      // Fetch Club Details and Update Label
+      const userClub: Club | undefined = this.mockDataService.getClubById(this.loggedInUser.clubId);
+      if (userClub) {
+        this.clubProfileLabel = `${userClub.name} Club`;
+      }
+    }
   }
 }

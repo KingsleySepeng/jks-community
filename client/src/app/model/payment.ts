@@ -9,4 +9,7 @@ export interface Payment {
   reference?: string;      // e.g., student's full name and/or ID
   paymentType?: string;    // e.g., "Class Fee", "Affiliation"
   description?: string;    // description (e.g., "Class fees for Jan & Feb")
+  proofOfPaymentUrl?: string | null; // Optional file upload
+  paidBy: string; // Name of the payer
+  recipient: string; // Who receives the payment (Admin, Instructor, etc.)
 }

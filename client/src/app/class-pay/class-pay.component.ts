@@ -4,6 +4,7 @@ import {Payment} from '../model/payment';
 import {FormsModule} from '@angular/forms';
 import {User} from '../model/user';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
+import {Events} from '../model/events';
 
 @Component({
   selector: 'app-class-pay',
@@ -12,7 +13,6 @@ import {DatePipe, NgForOf, NgIf} from '@angular/common';
     FormsModule,
     NgForOf,
     NgIf,
-    DatePipe
   ],
   templateUrl: './class-pay.component.html',
   styleUrl: './class-pay.component.scss'
@@ -20,13 +20,18 @@ import {DatePipe, NgForOf, NgIf} from '@angular/common';
 export class ClassPayComponent implements OnInit{
   currentUser: User | null = null;
   payments: Payment[] = []; // Holds payment history
-
+  users:User[] =[];
+  events: Events[] = []; // Available events for payment
+  selectedEventId: string = '';
   // Payment form fields
   amount: number = 0;
   paymentMethod: string = 'Credit Card';
   paymentType: string = 'Class Fee';
   description: string = '';
   notify: boolean = false;
+  proofOfPayment?: File;
+  payOnBehalfId: string = ''; // For paying on behalf of someone
+  recipient: string = 'Admin'; // Default to admin
 
   // Payment success message
   message: string = '';
@@ -38,11 +43,26 @@ export class ClassPayComponent implements OnInit{
   ngOnInit(): void {
     // Retrieve the currently logged-in user
     this.currentUser = this.mockService.getLoggedInUser() ?? null;
-
+    this.users = this.mockService.getUsers();
+    this.events = this.mockService.getEvents();
     if (this.currentUser) {
       // Fetch payment history for the logged-in user
       this.payments = this.mockService.getPayments().filter(p => p.userId === this.currentUser?.id);
     }
+  }
+
+  onFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) {
+      this.proofOfPayment = input.files[0];
+    }
+  }
+
+  /** 🔹 Update amount when an event is selected */
+  onEventChange(): void {
+    const event = this.events.find((e) => e.id === this.selectedEventId);
+    this.amount = event ? event.cost : 0;
+    this.paymentType = event ? 'Event Registration' : 'Class Fee';
   }
 
   onSubmitPayment(): void {
@@ -63,7 +83,7 @@ export class ClassPayComponent implements OnInit{
       this.message = 'Error: No logged-in user detected.';
       return;
     }
-
+    const payer = this.payOnBehalfId ? this.users.find(u => u.id === this.payOnBehalfId) : this.currentUser;
     const reference = `${this.currentUser.firstName} ${this.currentUser.lastName} [ID: ${this.currentUser.id}]`;
 
     // Create a new payment record
@@ -76,7 +96,10 @@ export class ClassPayComponent implements OnInit{
       status: 'PAID',
       reference: reference,
       paymentType: this.paymentType,
-      description: this.description
+      description: this.description,
+      proofOfPaymentUrl: this.proofOfPayment ? URL.createObjectURL(this.proofOfPayment) : null,
+      paidBy: this.currentUser?.firstName + ' ' + this.currentUser?.lastName || 'Anonymous',
+      recipient: this.recipient,
     };
 
     // Add the payment and refresh the history
@@ -95,6 +118,8 @@ export class ClassPayComponent implements OnInit{
     this.paymentType = 'Class Fee';
     this.description = '';
     this.notify = false;
+    this.proofOfPayment = undefined;
+    this.payOnBehalfId = '';
   }
 
   private generatePaymentId(): string {

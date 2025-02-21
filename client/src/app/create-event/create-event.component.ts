@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import {MockDataService} from '../mock-service/mock-data.service';
 import {Router} from '@angular/router';
 import {FormsModule} from '@angular/forms';
-import {Event} from '../model/event';
+import {Events} from '../model/events';
 import {User} from '../model/user';
 import {Club} from '../model/club';
 import {Role} from '../model/role';
@@ -52,7 +52,7 @@ export class CreateEventComponent {
       return;
     }
 
-    const newEvent: Event = {
+    const newEvent: Events = {
       id: this.generateId(),
       eventName: this.eventName,
       location: this.location,

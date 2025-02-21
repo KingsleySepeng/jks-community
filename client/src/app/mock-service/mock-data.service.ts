@@ -6,7 +6,7 @@ import { Belt } from '../model/belt';
 import { Rank } from '../model/rank';
 import { Role } from '../model/role';
 import { Payment } from '../model/payment';
-import { Event } from '../model/event';
+import { Events } from '../model/events';
 import { GradingRecord } from '../model/grading-record';
 import { BeltRequirements } from '../model/belt-requirement';
 import { Resource } from '../model/resource';
@@ -22,7 +22,7 @@ export class MockDataService {
   private users: User[] = [];
   private attendances: Attendance[] = [];
   private payments: Payment[] = [];
-  private events: Event[] = [];
+  private events: Events[] = [];
   private gradingRecords: GradingRecord[] = [];
   private loggedInUser: User | null = null;
 
@@ -494,10 +494,10 @@ export class MockDataService {
   // -------------------------------------------------------
   // 7. Events
   // -------------------------------------------------------
-  public getEvents(): Event[] {
+  public getEvents(): Events[] {
     return this.events;
   }
-  public addEvent(newEvent: Event) {
+  public addEvent(newEvent: Events) {
     this.events.push(newEvent);
   }
   public addStudentInterest(eventId: string, studentId: string) {
@@ -534,7 +534,6 @@ export class MockDataService {
   public isEligibleForBelt(student: Student, belt: Belt): boolean {
     const req = BeltRequirements.find(r => r.belt === belt);
     if (!req) return false; // no belt requirement found
-    // TODO: implement real logic for attendance, waiting period, etc.
     return true;
   }
 

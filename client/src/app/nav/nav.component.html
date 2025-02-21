@@ -1,36 +1,33 @@
-<!-- nav.component.html -->
 <nav class="navbar">
   <div class="navbar-container">
     <a class="navbar-brand" [routerLink]="'/'">Martial Arts System</a>
     <button class="navbar-toggler" (click)="toggleMenu()">
       <span class="navbar-toggler-icon"></span>
     </button>
-
     <ul class="navbar-links" [class.active]="menuOpen">
-      <!-- Show 'Login' if not logged in -->
-      <li class="nav-item" *ngIf="!isLoggedIn()">
-        <a class="nav-link" [routerLink]="'/'" (click)="toggleMenu()">
-          Login
-        </a>
+      <li class="nav-item" *ngFor="let route of appRoutes">
+        <a class="nav-link" [routerLink]="route.path" routerLinkActive="active">{{ route.name }}</a>
       </li>
 
-      <!-- If logged in, display routes user can access -->
-      <ng-container *ngIf="isLoggedIn()">
-        <li class="nav-item"
-            *ngFor="let route of appRoutes"
-            [ngClass]="{'active': menuOpen}">
-          <a *ngIf="canAccess(route.roles)"
-             class="nav-link"
-             [routerLink]="route.path"
-             routerLinkActive="active"
-             (click)="toggleMenu()">
-            {{ route.name }}
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" (click)="logout()">Logout</a>
-        </li>
-      </ng-container>
+      <!-- Dynamic User Profile Link -->
+      <li class="nav-item" *ngIf="isLoggedIn()">
+        <a class="nav-link" [routerLink]="'/user-profile'">{{ userProfileLabel }}</a>
+      </li>
+
+      <!-- Dynamic Club Profile Link -->
+      <li class="nav-item" *ngIf="isLoggedIn()">
+        <a class="nav-link" [routerLink]="'/club-profile'">{{ clubProfileLabel }}</a>
+      </li>
+
+      <!-- Logout -->
+      <li class="nav-item" *ngIf="isLoggedIn()">
+        <a class="nav-link" [routerLink]="'/logout'" (click)="logout()">Logout</a>
+      </li>
+
+      <!-- Login (if not logged in) -->
+      <li class="nav-item" *ngIf="!isLoggedIn()">
+        <a class="nav-link" [routerLink]="'/'">Login</a>
+      </li>
     </ul>
   </div>
 </nav>

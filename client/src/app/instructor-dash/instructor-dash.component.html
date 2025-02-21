@@ -1,103 +1,54 @@
-<!-- instructor-dash.component.html -->
-<p>Instructor dashboard</p>
+<h1>Instructor Dashboard</h1>
 
+<!-- Tabs for Navigation -->
+<div class="dashboard-tabs">
+  <button (click)="selectedTab = 'attendance'" [class.active]="selectedTab === 'attendance'">Attendance</button>
+  <button (click)="selectedTab = 'report'" [class.active]="selectedTab === 'report'">Instructor Report</button>
+  <button (click)="selectedTab = 'events'" [class.active]="selectedTab === 'events'">Dojo Events</button>
+  <button (click)="selectedTab = 'grading'" [class.active]="selectedTab === 'grading'">Grading Records</button>
+  <button (click)="selectedTab = 'resources'" [class.active]="selectedTab === 'resources'">Resources</button>
+</div>
 
-<h2>Take attendance for Class on {{ selectedDate | date: 'EEEE yyy-MM-dd' }}</h2>
-<form>
-  <input type="date" [value]="selectedDateString" (change)="onDateChange($event)" />
+<!-- Attendance Section -->
+<div *ngIf="selectedTab === 'attendance'">
+  <ng-container *ngIf="loggedInInstructor as instructor">
+    <app-attendance [instructor]="instructor"></app-attendance>
+  </ng-container>
+</div>
 
-  <h2>Students</h2>
+<!-- Instructor Report -->
+<div *ngIf="selectedTab === 'report'">
+  <app-instructor-report></app-instructor-report>
+</div>
+
+<!-- Dojo Events Section -->
+<div *ngIf="selectedTab === 'events'">
+  <h2>Upcoming Events</h2>
   <ul>
-    <li *ngFor="let student of students" style="margin-bottom: 1em; cursor:pointer;" (click)="toggleHistory(student.id)">
-      <strong>{{ student.firstName }} {{ student.lastName }}</strong>
-
-      <div style="margin:0.5em 0;">
-        <label>
-          <input
-            type="radio"
-            [name]="student.id + 'attendance'"
-            value="present"
-            (click)="$event.stopPropagation()"
-            [checked]="attendanceState[student.id].status === 'present'"
-            (change)="onAttendanceRadioChange(student.id, 'present')"
-          />
-          Present
-        </label>
-        <label>
-          <input
-            type="radio"
-            [name]="student.id + 'attendance'"
-            value="absent"
-            (click)="$event.stopPropagation()"
-            [checked]="attendanceState[student.id].status === 'absent'"
-            (change)="onAttendanceRadioChange(student.id, 'absent')"
-          />
-          Absent
-        </label>
-        <label>
-          <input
-            type="radio"
-            [name]="student.id + 'attendance'"
-            value="excused"
-            (click)="$event.stopPropagation()"
-            [checked]="attendanceState[student.id].status === 'excused'"
-            (change)="onAttendanceRadioChange(student.id, 'excused')"
-          />
-          Excused
-        </label>
-      </div>
-
-      <textarea
-        (click)="$event.stopPropagation()"
-        (input)="onCommentChange(student.id, $event)"
-        placeholder="Comment on Student"
-        [value]="attendanceState[student.id].comment">
-      </textarea>
-
-      <!-- Attendance History Dropdown -->
-      <div *ngIf="attendanceState[student.id]?.showHistory" style="margin-top: 0.5em;">
-        <h4>Attendance History</h4>
-        <ul>
-          <li *ngFor="let record of student.attendance">
-            {{ record.date | date: 'yyy-MM-dd' }} - {{ record.status }}
-            <em *ngIf="record.comments">
-              ({{ record.comments }})
-            </em>
-            <!-- Edit and Delete buttons -->
-            <button type="button" (click)="editAttendance(student, record)">Edit</button>
-            <button type="button" (click)="deleteAttendance(student, record)">Delete</button>
-          </li>
-        </ul>
-      </div>
+    <li *ngFor="let evt of events">
+      {{ evt.eventName }} - {{ evt.date | date: 'yyyy-MM-dd' }}
+      <button (click)="onFinalizeRegistration(evt)">Finalize Registration</button>
     </li>
   </ul>
-  <button type="button" (click)="onSaveAttendance()">Save Attendance</button>
-</form>
+</div>
 
-<hr/>
-<!-- src/app/components/instructor-report/instructor-report.component.html -->
-<div class="instructor-report">
-  <h2>Instructor Report</h2>
+<!-- Grading Records Section-->
+<div *ngIf="selectedTab === 'grading'">
+  <h2>Grading Report</h2>
+  <ul>
+    <li *ngFor="let record of gradingRecords">
+      {{ record.studentId }} - {{ record.testingForBelt }}
+      <button (click)="viewGradingDetail(record)">View</button>
+    </li>
+  </ul>
+</div>
 
-  <div class="report-controls">
-    <label for="reportMonth">Select Month:</label>
-    <input id="reportMonth" type="month" [(ngModel)]="selectedMonth" (change)="onMonthChange(selectedMonth)" />
-  </div>
-
-  <table>
-    <thead>
-    <tr>
-      <th>Student Name [ID]</th>
-      <th>Payment Status</th>
-      <th>Attendance Count</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let item of report">
-      <td>{{ item.student.firstName }} {{ item.student.lastName }} [{{ item.student.id }}]</td>
-      <td>{{ item.paid ? 'Paid' : 'Not Paid' }}</td>
-      <td>{{ item.attendanceCount }}</td>
-    </tr>
-    </tbody>
-  </table>
+<!-- Resource Management Section -->
+<div *ngIf="selectedTab === 'resources'">
+  <h2>Training Resources</h2>
+  <ul>
+    <li *ngFor="let resource of resources">
+      <a [href]="resource.fileUrl" target="_blank">{{ resource.title }}</a>
+    </li>
+  </ul>
 </div>

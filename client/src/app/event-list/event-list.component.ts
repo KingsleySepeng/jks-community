@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {CurrencyPipe, DatePipe, NgForOf, NgIf} from '@angular/common';
-import {Event} from '../model/event';
+import {Events} from '../model/events';
 import {MockDataService} from '../mock-service/mock-data.service';
 import {User} from '../model/user';
 
@@ -17,10 +17,10 @@ import {User} from '../model/user';
   styleUrl: './event-list.component.scss'
 })
 export class EventListComponent {
-  events: Event[] = [];
+  events: Events[] = [];
   isInstructor: boolean = false;
   loggedInUser?: User;
-  selectedEvent?: Event;
+  selectedEvent?: Events;
   clubStudents: User[] = [];
   selectedStudents: Set<string> = new Set();
 
@@ -42,19 +42,19 @@ export class EventListComponent {
     return club ? club.name : 'Unknown Club';
   }
 
-  getRemainingSpots(evt: Event): string {
+  getRemainingSpots(evt: Events): string {
     if (evt.maxEntries === undefined) return 'Unlimited';
     const spotsLeft = evt.maxEntries - evt.finalRegistrations.length;
     return spotsLeft > 0 ? `${spotsLeft} spots left` : 'Fully booked';
   }
 
-  onStudentInterest(evt: Event): void {
+  onStudentInterest(evt: Events): void {
     if (this.loggedInUser) {
       this.mockDataService.addStudentInterest(evt.id, this.loggedInUser.id);
     }
   }
 
-  onOpenFinalizeRegistration(evt: Event): void {
+  onOpenFinalizeRegistration(evt: Events): void {
     if (!this.loggedInUser) return;
 
     this.selectedEvent = evt;

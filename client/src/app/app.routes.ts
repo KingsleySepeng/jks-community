@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import {LoginComponent} from './login/login.component';
 import {InstructorDashComponent} from './instructor-dash/instructor-dash.component';
 import {ClassPayComponent} from './class-pay/class-pay.component';
-import {InstructorPaymentComponent} from './instructor-payment/instructor-payment.component';
 import {CreateEventComponent} from './create-event/create-event.component';
 import {EventListComponent} from './event-list/event-list.component';
 import {GradingFormComponent} from './grading-form/grading-form.component';
@@ -21,7 +20,6 @@ export const routes: Routes = [
   {path:'admin-dashboard',component:AdminDashComponent},
   {path:'add-user',component:AddUserComponent},
   { path: 'payment', component: ClassPayComponent },
-  { path: 'instructor-payment', component: InstructorPaymentComponent },
   { path: 'create-event', component: CreateEventComponent },
   { path: 'event-list', component: EventListComponent },
   { path: 'grading-form', component: GradingFormComponent },
