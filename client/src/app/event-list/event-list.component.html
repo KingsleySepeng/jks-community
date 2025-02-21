@@ -1,0 +1,48 @@
+<div class="event-list-container">
+  <h2>Upcoming Events</h2>
+
+  <div *ngFor="let evt of events" class="event-item">
+    <h3>{{ evt.eventName }} ({{ evt.location }})</h3>
+    <p><strong>Date:</strong> {{ evt.date | date }}</p>
+    <p><strong>Cost:</strong> {{ evt.cost | currency }}</p>
+    <p><strong>Payment Due:</strong> {{ evt.paymentDueDate | date }}</p>
+    <p><strong>Instructor:</strong> {{ getInstructorName(evt.instructorId) }}</p>
+    <p><strong>Club:</strong> {{ getClubName(evt.clubId) }}</p>
+    <p><strong>Description:</strong> {{ evt.description }}</p>
+    <p><strong>Availability:</strong> {{ getRemainingSpots(evt) }}</p>
+
+    <!-- If user is an instructor, open finalize registration -->
+    <button *ngIf="isInstructor" (click)="onOpenFinalizeRegistration(evt)">
+      Finalize Registration
+    </button>
+
+    <!-- Show interest button for students -->
+    <button *ngIf="!isInstructor" (click)="onStudentInterest(evt)">
+      I'm Interested
+    </button>
+
+    <hr />
+  </div>
+</div>
+
+<!-- Finalize Registration Section (Shows when clicked) -->
+<div *ngIf="selectedEvent" class="finalize-registration">
+  <h2>Finalize Registration for {{ selectedEvent.eventName }}</h2>
+  <p>Select students from your club to register for this event:</p>
+
+  <ul>
+    <li *ngFor="let student of clubStudents">
+      <label>
+        <input
+          type="checkbox"
+          [checked]="selectedStudents.has(student.id)"
+          (change)="toggleStudentSelection(student.id)"
+        />
+        {{ student.firstName }} {{ student.lastName }}
+      </label>
+    </li>
+  </ul>
+
+  <button (click)="onConfirmFinalRegistration()">Confirm Registration</button>
+  <button (click)="onCancelFinalRegistration()">Cancel</button>
+</div>

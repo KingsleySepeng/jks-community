@@ -1,0 +1,35 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <a class="navbar-brand" [routerLink]="'/'">Martial Arts System</a>
+    <button class="navbar-toggler" (click)="toggleMenu()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <ul class="navbar-links" [class.active]="menuOpen">
+      <li class="nav-item" *ngFor="let route of appRoutes">
+        <a class="nav-link" [routerLink]="route.path" routerLinkActive="active">{{ route.name }}</a>
+      </li>
+
+      <!-- Dynamic User Profile Link -->
+      <li class="nav-item" *ngIf="isLoggedIn()">
+        <a class="nav-link" [routerLink]="'/user-profile'">{{ userProfileLabel }}</a>
+      </li>
+
+      <!-- Dynamic Club Profile Link -->
+      <li class="nav-item" *ngIf="isLoggedIn()">
+        <a class="nav-link" [routerLink]="'/club-profile'">{{ clubProfileLabel }}</a>
+      </li>
+
+      <!-- Logout -->
+      <li class="nav-item" *ngIf="isLoggedIn()">
+        <a class="nav-link" [routerLink]="'/logout'" (click)="logout()">Logout</a>
+      </li>
+
+      <!-- Login (if not logged in) -->
+      <li class="nav-item" *ngIf="!isLoggedIn()">
+        <a class="nav-link" [routerLink]="'/'">Login</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<router-outlet></router-outlet>

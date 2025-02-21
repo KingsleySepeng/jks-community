@@ -1,0 +1,31 @@
+<div class="resource-list-container">
+  <h2>Available Resources</h2>
+
+  <!-- Category Filter -->
+  <div>
+    <label>Filter by Category:</label>
+    <select [(ngModel)]="selectedCategory" (change)="onCategoryChange()">
+      <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+    </select>
+  </div>
+
+  <div *ngIf="filteredResources.length > 0; else noResources">
+    <ul>
+      <li *ngFor="let res of filteredResources">
+        <strong>{{ res.title }}</strong>
+        <span>({{ res.category }})</span>
+        <p>{{ res.description }}</p>
+        <!-- If there's a fileUrl, link to it -->
+        <a *ngIf="res.fileUrl" [href]="res.fileUrl" target="_blank">Open PDF/Doc</a>
+        <br/>
+        <!-- If there's a videoUrl, link or embed it -->
+        <a *ngIf="res.videoUrl" [href]="res.videoUrl" target="_blank">Watch Video</a>
+        <hr/>
+      </li>
+    </ul>
+  </div>
+
+  <ng-template #noResources>
+    <p>No resources found.</p>
+  </ng-template>
+</div>

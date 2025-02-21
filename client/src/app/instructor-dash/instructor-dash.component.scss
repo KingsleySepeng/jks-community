@@ -1,0 +1,238 @@
+/* Variables for colors, spacing, and fonts */
+$primary-color: #3498db;
+$secondary-color: #2ecc71;
+$accent-color: #e74c3c;
+$background-color: #f9f9f9;
+$text-color: #333;
+$font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$border-radius: 8px;
+$transition-speed: 0.3s;
+
+/* Global Styles */
+body {
+  font-family: $font-family;
+  background-color: $background-color;
+  color: $text-color;
+  margin: 0;
+  padding: 20px;
+}
+
+p {
+  margin-bottom: 1em;
+  line-height: 1.6;
+}
+
+h2, h4 {
+  color: $primary-color;
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+}
+
+h4 {
+  font-size: 1.2em;
+}
+
+/* Form Styles */
+form {
+  background: #fff;
+  padding: 20px;
+  border-radius: $border-radius;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  /* Date Input */
+  input[type="date"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: $border-radius;
+    font-size: 1em;
+    margin-bottom: 1.5em;
+    width: 100%;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: $primary-color;
+      outline: none;
+      box-shadow: 0 0 5px rgba($primary-color, 0.5);
+    }
+  }
+
+  /* Save Button */
+  button {
+    background-color: $secondary-color;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: $border-radius;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color $transition-speed ease;
+
+    &:hover {
+      background-color: darken($secondary-color, 10%);
+    }
+  }
+}
+
+/* Students List Styles */
+ul {
+  list-style: none;
+  padding: 0;
+
+  li {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: $border-radius;
+    padding: 15px;
+    margin-bottom: 1em;
+    cursor: pointer;
+    transition: background-color $transition-speed ease, box-shadow $transition-speed ease;
+
+    &:hover {
+      background-color: #f0f8ff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Student Name */
+    strong {
+      display: block;
+      font-size: 1.1em;
+      margin-bottom: 0.75em;
+      color: $text-color;
+    }
+
+    /* Attendance Options */
+    .attendance-options {
+      display: flex;
+      gap: 1.5em;
+      margin-bottom: 0.75em;
+
+      label {
+        display: flex;
+        align-items: center;
+        font-size: 0.95em;
+        cursor: pointer;
+
+        input[type="radio"] {
+          margin-right: 0.5em;
+          cursor: pointer;
+        }
+
+        &:hover {
+          color: $primary-color;
+        }
+      }
+    }
+
+    /* Comment Textarea */
+    textarea {
+      width: 100%;
+      min-height: 60px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: $border-radius;
+      resize: vertical;
+      font-size: 0.95em;
+      box-sizing: border-box;
+      transition: border-color $transition-speed ease, box-shadow $transition-speed ease;
+
+      &:focus {
+        border-color: $primary-color;
+        outline: none;
+        box-shadow: 0 0 5px rgba($primary-color, 0.5);
+      }
+
+      &::placeholder {
+        color: #999;
+      }
+    }
+
+    /* Attendance History */
+    .attendance-history {
+      margin-top: 1em;
+      padding-top: 1em;
+      border-top: 1px solid #ddd;
+
+      ul {
+        list-style: disc inside;
+        padding-left: 1em;
+
+        li {
+          font-size: 0.9em;
+          margin-bottom: 0.5em;
+
+          em {
+            color: $accent-color;
+            font-style: normal;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  form {
+    padding: 15px;
+  }
+
+  ul li {
+    padding: 12px;
+  }
+
+  .attendance-options {
+    flex-direction: column;
+    gap: 1em;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+  }
+}
+
+/* src/app/components/instructor-report/instructor-report.component.scss */
+.instructor-report {
+  max-width: 800px;
+  margin: 2em auto;
+
+  h2 {
+    text-align: center;
+  }
+
+  .report-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 1em;
+
+    label {
+      margin-right: 0.5em;
+      font-weight: bold;
+    }
+
+    input[type="month"] {
+      padding: 0.5em;
+      font-size: 1em;
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead {
+      background-color: #f0f0f0;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.75em;
+      text-align: center;
+    }
+  }
+}

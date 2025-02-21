@@ -1,0 +1,84 @@
+<div>
+  <h2>Batch Grading</h2>
+
+  <label>Belt:</label>
+  <select (change)="onBeltChange($event)">
+    <option *ngFor="let b of allBelts" [value]="b">{{ b }}</option>
+  </select>
+
+  <div *ngIf="belt">
+    <h3>Eligible Students for {{ belt }}:</h3>
+    <div *ngFor="let s of eligibleStudents">
+      <label>
+        <input type="checkbox" (change)="toggleStudentSelection(s.id)" />
+        {{ s.firstName }} {{ s.lastName }} ({{ s.belt }})
+      </label>
+    </div>
+  </div>
+
+  <div *ngIf="selectedStudentIds.size > 0">
+    <h3>Evaluation Matrix</h3>
+
+    <!-- Kihon Techniques -->
+    <div *ngIf="techniques.kihon.length > 0">
+      <h4>Kihon (Basic Techniques)</h4>
+      <table>
+        <thead>
+        <tr>
+          <th>Technique</th>
+          <th *ngFor="let sid of selectedStudentIds">{{ sid }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let tech of techniques.kihon">
+          <td>{{ tech.name }}</td>
+          <td *ngFor="let sid of selectedStudentIds">
+            <input type="radio" [value]="'good'" [checked]="getEvaluation(sid, tech.id).rating === 'good'" (change)="updateRating(sid, tech.id, 'good')" />
+            <input type="radio" [value]="'average'" [checked]="getEvaluation(sid, tech.id).rating === 'average'" (change)="updateRating(sid, tech.id, 'average')" />
+            <input type="radio" [value]="'bad'" [checked]="getEvaluation(sid, tech.id).rating === 'bad'" (change)="updateRating(sid, tech.id, 'bad')" />
+            <!-- Text Input -->
+            <input type="text" [value]="getEvaluation(sid, tech.id)?.comment" (input)="updateComment(sid, tech.id, $event)" />
+
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Kata -->
+    <div *ngIf="techniques.kata.length > 0">
+      <h4>Kata (Forms)</h4>
+      <table>
+        <tr *ngFor="let tech of techniques.kata">
+          <td>{{ tech.name }}</td>
+          <td *ngFor="let sid of selectedStudentIds">
+            <input type="radio" [value]="'good'" [checked]="getEvaluation(sid, tech.id).rating === 'good'" (change)="updateRating(sid, tech.id, 'good')" />
+            <input type="radio" [value]="'average'" [checked]="getEvaluation(sid, tech.id).rating === 'average'" (change)="updateRating(sid, tech.id, 'average')" />
+            <input type="radio" [value]="'bad'" [checked]="getEvaluation(sid, tech.id).rating === 'bad'" (change)="updateRating(sid, tech.id, 'bad')" />
+            <!-- Text Input -->
+            <input type="text" [value]="getEvaluation(sid, tech.id)?.comment" (input)="updateComment(sid, tech.id, $event)" />
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Kumite -->
+    <div *ngIf="techniques.kumite.length > 0">
+      <h4>Kumite (Sparring)</h4>
+      <table>
+        <tr *ngFor="let tech of techniques.kumite">
+          <td>{{ tech.name }}</td>
+          <td *ngFor="let sid of selectedStudentIds">
+            <input type="radio" [value]="'good'" [checked]="getEvaluation(sid, tech.id).rating === 'good'" (change)="updateRating(sid, tech.id, 'good')" />
+            <input type="radio" [value]="'average'" [checked]="getEvaluation(sid, tech.id).rating === 'average'" (change)="updateRating(sid, tech.id, 'average')" />
+            <input type="radio" [value]="'bad'" [checked]="getEvaluation(sid, tech.id).rating === 'bad'" (change)="updateRating(sid, tech.id, 'bad')" />
+            <!-- Text Input -->
+            <input type="text" [value]="getEvaluation(sid, tech.id)?.comment" (input)="updateComment(sid, tech.id, $event)" />
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+    <button (click)="submitGrading()">Submit Batch Grading</button>
+</div>

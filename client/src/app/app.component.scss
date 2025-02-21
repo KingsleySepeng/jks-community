@@ -1,0 +1,38 @@
+/* Dark mode styles */
+body.dark-mode {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.dark-mode .navbar {
+  background-color: #1f1f1f;
+  border-bottom-color: #333333;
+}
+
+.dark-mode .form-container,
+.dark-mode .admin-dash-container,
+.dark-mode .payment-container {
+  background-color: #1f1f1f;
+  border-color: #333333;
+}
+
+.dark-mode .form-label,
+.dark-mode .admin-dash-label,
+.dark-mode .form-control,
+.dark-mode .admin-dash-control,
+.dark-mode .btn {
+  color: #ffffff;
+}
+
+.dark-mode .btn {
+  background-color: #333333;
+  border-color: #444444;
+}
+
+.dark-mode .btn:hover {
+  background-color: #444444;
+}
+
+.dark-mode .message {
+  color: #00ff00;
+}

@@ -1,0 +1,6 @@
+export enum Rank {
+  JUNIOR = 'JUNIOR',
+  SENIOR = 'SENIOR',
+  INSTRUCTOR = 'INSTRUCTOR',
+  DOJO_HEAD = 'DOJO_HEAD',
+}

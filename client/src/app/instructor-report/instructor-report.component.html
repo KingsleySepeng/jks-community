@@ -1,0 +1,78 @@
+<div class="instructor-report">
+  <h2>Instructor Report Dashboard</h2>
+
+  <!-- Grading Report -->
+  <div class="report-section">
+    <h3>Grading Report</h3>
+    <table>
+      <thead>
+      <tr>
+        <th>Student</th>
+        <th>Current Belt</th>
+        <th>Examiner</th>
+        <th>Decision</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let record of gradingRecords">
+        <td>{{ record.studentId }}</td>
+        <td>{{ record.currentBelt }}</td>
+        <td>{{ record.examinerId }}</td>
+        <td>{{ record.overallDecision }}</td>
+        <td>
+          <button (click)="viewGradingDetail(record)">View</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Attendance Report -->
+  <div class="report-section">
+    <h3>Attendance Report</h3>
+    <table>
+      <thead>
+      <tr>
+        <th>Student</th>
+        <th>Date</th>
+        <th>Status</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let record of attendanceRecords">
+        <td>{{ record.userId }}</td>
+        <td>{{ record.date | date }}</td>
+        <td>{{ record.status }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Financial Report -->
+  <div class="report-section">
+    <h3>Financial Summary</h3>
+    <p><strong>Total Income:</strong> R{{ financialSummary.totalIncome }}</p>
+    <p><strong>Total Expense:</strong> R{{ financialSummary.totalExpense }}</p>
+    <p><strong>Net Balance:</strong> R{{ financialSummary.netBalance }}</p>
+  </div>
+
+  <!-- Outstanding Payments -->
+  <div class="report-section">
+    <h3>Outstanding Payments</h3>
+    <table>
+      <thead>
+      <tr>
+        <th>Student</th>
+        <th>Amount Due</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let entry of outstandingPayments">
+        <td>{{ entry.student.firstName }} {{ entry.student.lastName }}</td>
+        <td>R{{ entry.amountDue }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

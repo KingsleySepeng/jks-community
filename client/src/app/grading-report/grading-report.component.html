@@ -1,0 +1,29 @@
+<div class="grading-report">
+  <h2>Grading Report</h2>
+
+  <div *ngFor="let dateKey of getGroupKeys()">
+    <h3>Grading Date: {{ dateKey | date: 'fullDate' }}</h3>
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th>Student</th>
+        <th>Current Belt</th>
+        <th>Examiner</th>
+        <th>Decision</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let rec of groupedRecords[dateKey]">
+        <td>{{ getStudentName(rec.studentId) }}</td>
+        <td>{{ rec.currentBelt }}</td>
+        <td>{{ getExaminerName(rec.examinerId) }}</td>
+        <td>{{ rec.overallDecision }}</td>
+        <td>
+          <button (click)="viewGradingDetail(rec)">View</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

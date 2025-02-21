@@ -1,0 +1,66 @@
+<div class="club-profile">
+  <h2>Club Profile</h2>
+
+  <div *ngIf="currentClub; else noClub">
+    <!-- Club Logo -->
+    <div class="club-logo">
+      <img [src]="currentClub.logoUrl || 'assets/default-club-logo.png'" alt="Club Logo" />
+    </div>
+
+    <p><strong>ID:</strong> {{ currentClub.id }}</p>
+
+    <!-- Read-Only View -->
+    <div *ngIf="!isEditing">
+      <p><strong>Name:</strong> {{ currentClub.name }}</p>
+      <p><strong>Address:</strong> {{ currentClub.address }}</p>
+      <p><strong>Contact Info:</strong> {{ currentClub.contactNumber }}</p>
+      <p><strong>Description:</strong> {{ currentClub.description }}</p>
+
+      <p *ngIf="canEdit">
+        <button (click)="onEditToggle()">Edit Club Info</button>
+      </p>
+
+      <!-- Show instructors -->
+      <h4>Instructors</h4>
+      <ul>
+        <li *ngFor="let instructor of currentClub.instructors">
+          {{ instructor.firstName }} {{ instructor.lastName }}
+        </li>
+      </ul>
+
+      <!-- Show students -->
+      <h4>Students</h4>
+      <ul>
+        <li *ngFor="let student of currentClub.students">
+          {{ student.firstName }} {{ student.lastName }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- Editing Mode -->
+    <div *ngIf="isEditing">
+      <label>Club Name:</label>
+      <input [(ngModel)]="currentClub.name" />
+
+      <label>Address:</label>
+      <input [(ngModel)]="currentClub.address" />
+
+      <label>Contact Number:</label>
+      <input [(ngModel)]="currentClub.contactNumber" />
+
+      <label>Description:</label>
+      <textarea [(ngModel)]="currentClub.description"></textarea>
+
+      <label>Logo URL:</label>
+      <input [(ngModel)]="currentClub.logoUrl" placeholder="Paste club logo URL here" />
+
+      <br /><br />
+      <button (click)="onSaveChanges()">Save</button>
+      <button (click)="onEditToggle()">Cancel</button>
+    </div>
+  </div>
+
+  <ng-template #noClub>
+    <p>No club found for this user.</p>
+  </ng-template>
+</div>

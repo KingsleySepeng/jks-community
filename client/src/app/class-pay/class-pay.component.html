@@ -1,0 +1,98 @@
+<div class="payment-container">
+  <h2>Class Payment</h2>
+
+  <div class="user-details" *ngIf="currentUser">
+    <p><strong>Logged-in User:</strong> {{ currentUser.firstName }} {{ currentUser.lastName }} [ID: {{ currentUser.id }}]</p>
+  </div>
+
+  <form (ngSubmit)="onSubmitPayment()">
+    <div class="form-group">
+      <label for="amount">Amount ($):</label>
+      <input id="amount" type="number" [(ngModel)]="amount" name="amount" required />
+    </div>
+
+    <!-- Select Event (Optional) -->
+    <div class="form-group">
+      <label for="event">Select Event (Optional):</label>
+      <select id="event" [(ngModel)]="selectedEventId" name="event" (change)="onEventChange()">
+        <option value="">--No Event--</option>
+        <option *ngFor="let event of events" [value]="event.id">
+          {{ event.eventName }} - ${{ event.cost }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="paymentMethod">Payment Method:</label>
+      <select id="paymentMethod" [(ngModel)]="paymentMethod" name="paymentMethod">
+        <option>Credit Card</option>
+        <option>Bank Transfer</option>
+        <option>Cash</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="paymentType">Payment Type:</label>
+      <select id="paymentType" [(ngModel)]="paymentType" name="paymentType">
+        <option *ngFor="let type of paymentTypes" [value]="type">{{ type }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="recipient">Pay To:</label>
+      <select id="recipient" [(ngModel)]="recipient" name="recipient">
+        <option value="Admin">Admin</option>
+        <option value="Event Host">Event Host</option>
+        <option value="Instructor">Instructor</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="payOnBehalf">Pay on Behalf of:</label>
+      <select id="payOnBehalf" [(ngModel)]="payOnBehalfId" name="payOnBehalf">
+        <option value="">-- Select Person --</option>
+        <option *ngFor="let user of users" [value]="user.id">{{ user.firstName }} {{ user.lastName }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description:</label>
+      <textarea id="description" [(ngModel)]="description" name="description"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="proofOfPayment">Attach Proof of Payment:</label>
+      <input id="proofOfPayment" type="file" (change)="onFileChange($event)" />
+    </div>
+
+    <button type="submit">Submit Payment</button>
+  </form>
+
+  <p class="message" *ngIf="message">{{ message }}</p>
+
+  <h3>Payment History</h3>
+  <table>
+    <thead>
+    <tr>
+      <th>Payer</th>
+      <th>Amount</th>
+      <th>Payment Type</th>
+      <th>Status</th>
+      <th>Recipient</th>
+      <th>Proof</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let payment of payments">
+      <td>{{ payment.paidBy }}</td>
+      <td>{{ payment.amount }}</td>
+      <td>{{ payment.paymentType }}</td>
+      <td>{{ payment.status }}</td>
+      <td>{{ payment.recipient }}</td>
+      <td>
+        <a *ngIf="payment.proofOfPaymentUrl" [href]="payment.proofOfPaymentUrl" target="_blank">View</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
