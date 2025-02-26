@@ -11,7 +11,35 @@
     <p><strong>Description:</strong> {{ evt.description }}</p>
     <p><strong>Availability:</strong> {{ getRemainingSpots(evt) }}</p>
 
-<!--     Update the template to disable registration if the event date has passed-->
+    <p *ngIf="isInstructor && evt.instructorId === loggedInUser?.id">
+      <strong>Registrations:</strong> {{ getRegistrationsCount(evt.id) }}
+    </p>
+    <p *ngIf="isInstructor && evt.instructorId === loggedInUser?.id">
+      <strong>Payments:</strong> {{ getPaymentsCount(evt.id) }}
+    </p>
+
+    <div *ngIf="isInstructor && evt.instructorId === loggedInUser?.id">
+      <h4>Participants</h4>
+      <table>
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Surname</th>
+          <th>Club</th>
+          <th>Registration Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let participant of getParticipants(evt.id)">
+          <td>{{ participant.name }}</td>
+          <td>{{ participant.surname }}</td>
+          <td>{{ participant.club }}</td>
+          <td>{{ participant.date | date }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
     <button *ngIf="!isInstructor && !isEventDatePassed(evt)" (click)="onStudentInterest(evt)">
       I'm Interested
     </button>
@@ -24,7 +52,6 @@
   </div>
 </div>
 
-<!-- Finalize Registration Section (Shows when clicked) -->
 <div *ngIf="selectedEvent" class="finalize-registration">
   <h2>Finalize Registration for {{ selectedEvent.eventName }}</h2>
   <p>Select students from your club to register for this event:</p>

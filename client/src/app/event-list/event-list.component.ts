@@ -111,4 +111,29 @@ export class EventListComponent {
     this.selectedEvent = undefined;
     this.selectedStudents.clear();
   }
+
+  getRegistrationsCount(eventId: string): number {
+    const event = this.mockDataService.getEvents().find(e => e.id === eventId);
+    return event ? event.finalRegistrations.length : 0;
+  }
+
+  getPaymentsCount(eventId: string): number {
+    return this.mockDataService.getPaymentsForEvent(eventId).length;
+  }
+
+  getParticipants(eventId: string): { name: string, surname: string, club: string, date: Date }[] {
+    const event = this.mockDataService.getEvents().find(e => e.id === eventId);
+    if (!event) return [];
+
+    return event.finalRegistrations.map(studentId => {
+      const student = this.mockDataService.getUserById(studentId);
+      const club = student ? this.mockDataService.getClubById(student.clubId) : undefined;
+      return {
+        name: student?.firstName || 'Unknown',
+        surname: student?.lastName || 'Unknown',
+        club: club?.name || 'Unknown Club',
+        date: new Date() // Assuming registration date is now, adjust as needed
+      };
+    });
+  }
 }
