@@ -61,12 +61,12 @@ export class LoginComponent implements OnInit {
 
       // Navigate based on role (optional)
       if (user.role === Role.INSTRUCTOR) {
-        this.router.navigate(['/instructor-dash']);
+        this.router.navigate(['/instructor-dashboard']);
       } else if (user.role === Role.ADMIN) {
-        this.router.navigate(['/admin-dash']);
+        this.router.navigate(['/admin-dashboard']);
       } else {
         // fallback for students
-        this.router.navigate(['/student-dash']);
+        this.router.navigate(['/student-dashboard']);
       }
     } else {
       console.log('Login failed: invalid credentials');

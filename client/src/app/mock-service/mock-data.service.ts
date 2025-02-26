@@ -558,4 +558,20 @@ export class MockDataService {
       this.resources[idx] = { ...updated };
     }
   }
+
+  public getOutstandingFees(userId: string): number {
+    const userPayments = this.payments.filter(p => p.userId === userId);
+    const totalPaid = userPayments.reduce((sum, p) => sum + p.amount, 0);
+
+    // Assume a fixed training fee per student
+    const totalDue = 5000; // Example total fees for a term
+
+    return totalDue - totalPaid > 0 ? totalDue - totalPaid : 0;
+  }
+
+  // Add a method to get payments for a specific event
+  public getPaymentsForEvent(eventId: string): Payment[] {
+    return this.payments.filter(p => p.id === eventId);
+  }
+
 }

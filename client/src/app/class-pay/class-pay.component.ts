@@ -5,6 +5,7 @@ import {FormsModule} from '@angular/forms';
 import {User} from '../model/user';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {Events} from '../model/events';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-class-pay',
@@ -38,15 +39,29 @@ export class ClassPayComponent implements OnInit{
 
   paymentTypes: string[] = ['Class Fee', 'Affiliation', 'Other'];
 
-  constructor(private mockService: MockDataService) { }
+  constructor(private mockService: MockDataService,private route:ActivatedRoute) { }
 
   ngOnInit(): void {
     // Retrieve the currently logged-in user
     this.currentUser = this.mockService.getLoggedInUser() ?? null;
     this.users = this.mockService.getUsers();
     this.events = this.mockService.getEvents();
+
+    this.route.queryParams.subscribe(params => {
+      this.selectedEventId = params['eventId'] || '';
+      this.amount = +params['eventCost'] || 0;
+      this.paymentType = 'Event Registration';
+      this.recipient = params['eventCreator'] || 'Admin';
+      this.payOnBehalfId = params['selectedStudents'] || '';
+      this.description = params['eventDescription'] || '';
+
+      const student = this.users.find((user=>user.id === this.payOnBehalfId));
+      if(student){
+        this.payOnBehalfId = `${student.firstName} ${student.lastName}`;
+      }
+    });
+
     if (this.currentUser) {
-      // Fetch payment history for the logged-in user
       this.payments = this.mockService.getPayments().filter(p => p.userId === this.currentUser?.id);
     }
   }

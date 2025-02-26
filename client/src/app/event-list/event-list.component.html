@@ -11,15 +11,14 @@
     <p><strong>Description:</strong> {{ evt.description }}</p>
     <p><strong>Availability:</strong> {{ getRemainingSpots(evt) }}</p>
 
-    <!-- If user is an instructor, open finalize registration -->
-    <button *ngIf="isInstructor" (click)="onOpenFinalizeRegistration(evt)">
-      Finalize Registration
-    </button>
-
-    <!-- Show interest button for students -->
-    <button *ngIf="!isInstructor" (click)="onStudentInterest(evt)">
+<!--     Update the template to disable registration if the event date has passed-->
+    <button *ngIf="!isInstructor && !isEventDatePassed(evt)" (click)="onStudentInterest(evt)">
       I'm Interested
     </button>
+    <button *ngIf="isInstructor && !isEventDatePassed(evt)" (click)="onOpenFinalizeRegistration(evt)">
+      Finalize Registration
+    </button>
+    <p *ngIf="isEventDatePassed(evt)" class="event-closed">Registration Closed</p>
 
     <hr />
   </div>

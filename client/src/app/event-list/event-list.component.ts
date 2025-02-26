@@ -3,6 +3,7 @@ import {CurrencyPipe, DatePipe, NgForOf, NgIf} from '@angular/common';
 import {Events} from '../model/events';
 import {MockDataService} from '../mock-service/mock-data.service';
 import {User} from '../model/user';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-event-list',
@@ -24,7 +25,7 @@ export class EventListComponent {
   clubStudents: User[] = [];
   selectedStudents: Set<string> = new Set();
 
-  constructor(private mockDataService: MockDataService) {}
+  constructor(private mockDataService: MockDataService,private router:Router) {}
 
   ngOnInit(): void {
     this.loggedInUser = this.mockDataService.getLoggedInUser();
@@ -75,12 +76,35 @@ export class EventListComponent {
   onConfirmFinalRegistration(): void {
     if (!this.selectedEvent) return;
 
-    this.selectedStudents.forEach((studentId) => {
-      this.mockDataService.addStudentInterest(this.selectedEvent!.id, studentId);
-    });
+    const selectedStudentsArray = Array.from(this.selectedStudents);
+    const eventCreator = this.mockDataService.getUserById(this.selectedEvent.instructorId);
 
+    if (eventCreator) {
+      const selectedStudentNames = selectedStudentsArray.map(id => {
+        const student = this.mockDataService.getUserById(id);
+        return student ? `${student.firstName} ${student.lastName}` : '';
+      }).join(', ');
+
+      const totalCost = this.selectedEvent.cost * selectedStudentsArray.length;
+
+      this.router.navigate(['/payment'], {
+        queryParams: {
+          eventId: this.selectedEvent.id,
+          eventName: this.selectedEvent.eventName,
+          eventCost: totalCost,
+          eventDescription:this.selectedEvent.description,
+          eventCreator: `${eventCreator.firstName} ${eventCreator.lastName}`,
+          selectedStudents: selectedStudentNames
+        }
+      });
+    }
     alert(`Students added to event: ${this.selectedEvent.eventName}`);
     this.selectedEvent = undefined;
+  }
+
+  // Add a method to check if the event date has passed
+  isEventDatePassed(event: Events): boolean {
+    return new Date(event.date) < new Date();
   }
 
   onCancelFinalRegistration(): void {

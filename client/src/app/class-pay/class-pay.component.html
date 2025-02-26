@@ -11,17 +11,6 @@
       <input id="amount" type="number" [(ngModel)]="amount" name="amount" required />
     </div>
 
-    <!-- Select Event (Optional) -->
-    <div class="form-group">
-      <label for="event">Select Event (Optional):</label>
-      <select id="event" [(ngModel)]="selectedEventId" name="event" (change)="onEventChange()">
-        <option value="">--No Event--</option>
-        <option *ngFor="let event of events" [value]="event.id">
-          {{ event.eventName }} - ${{ event.cost }}
-        </option>
-      </select>
-    </div>
-
     <div class="form-group">
       <label for="paymentMethod">Payment Method:</label>
       <select id="paymentMethod" [(ngModel)]="paymentMethod" name="paymentMethod">
@@ -40,19 +29,12 @@
 
     <div class="form-group">
       <label for="recipient">Pay To:</label>
-      <select id="recipient" [(ngModel)]="recipient" name="recipient">
-        <option value="Admin">Admin</option>
-        <option value="Event Host">Event Host</option>
-        <option value="Instructor">Instructor</option>
-      </select>
+      <input id="recipient" type="text" [(ngModel)]="recipient" name="recipient" readonly />
     </div>
 
     <div class="form-group">
       <label for="payOnBehalf">Pay on Behalf of:</label>
-      <select id="payOnBehalf" [(ngModel)]="payOnBehalfId" name="payOnBehalf">
-        <option value="">-- Select Person --</option>
-        <option *ngFor="let user of users" [value]="user.id">{{ user.firstName }} {{ user.lastName }}</option>
-      </select>
+      <input id="payOnBehalf" type="text" [(ngModel)]="payOnBehalfId" name="payOnBehalf" readonly />
     </div>
 
     <div class="form-group">

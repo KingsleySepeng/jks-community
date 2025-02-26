@@ -13,11 +13,13 @@ import {UploadResourceComponent} from './upload-resource/upload-resource.compone
 import {ResourceListComponent} from './resource-list/resource-list.component';
 import {AdminDashComponent} from './admin-dash/admin-dash.component';
 import {AddUserComponent} from './add-user/add-user.component';
+import {StudentDashComponent} from './student-dash/student-dash.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
-  { path: 'instructor-dash', component: InstructorDashComponent },
+  { path: 'instructor-dashboard', component: InstructorDashComponent },
   {path:'admin-dashboard',component:AdminDashComponent},
+  {path:'student-dashboard',component:StudentDashComponent},
   {path:'add-user',component:AddUserComponent},
   { path: 'payment', component: ClassPayComponent },
   { path: 'create-event', component: CreateEventComponent },
