@@ -1,54 +1,78 @@
-<div class="dashboard">
-  <h2>Student Dashboard</h2>
+<div class="container mt-4">
+  <h2 class="mb-4">Student Dashboard</h2>
 
   <!-- User Profile Section -->
   <app-user-profile></app-user-profile>
 
-  <div class="dashboard-grid">
+  <div class="row">
     <!-- Grading Results -->
-    <div class="card">
-      <h3>Grading Results</h3>
-      <ul *ngIf="gradingRecords.length; else noGrades">
-        <li *ngFor="let record of gradingRecords">
-          {{ record.testingForBelt }} - {{ record.overallDecision }} ({{ record.date | date:'mediumDate' }})
-        </li>
-      </ul>
-      <ng-template #noGrades>
-        <p>No grading records available.</p>
-      </ng-template>
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title">Grading Results</h5>
+        </div>
+        <div class="card-body">
+          <ul *ngIf="gradingRecords.length; else noGrades">
+            <li *ngFor="let record of gradingRecords">
+              {{ record.testingForBelt }} - {{ record.overallDecision }} ({{ record.date | date:'mediumDate' }})
+            </li>
+          </ul>
+          <ng-template #noGrades>
+            <p>No grading records available.</p>
+          </ng-template>
+        </div>
+      </div>
     </div>
 
     <!-- Attended Events -->
-    <div class="card">
-      <h3>Attended Events</h3>
-      <ul *ngIf="attendedEvents.length; else noEvents">
-        <li *ngFor="let event of attendedEvents">
-          {{ event.eventName }} ({{ event.date | date:'mediumDate' }})
-        </li>
-      </ul>
-      <ng-template #noEvents>
-        <p>No events attended yet.</p>
-      </ng-template>
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title">Attended Events</h5>
+        </div>
+        <div class="card-body">
+          <ul *ngIf="attendedEvents.length; else noEvents">
+            <li *ngFor="let event of attendedEvents">
+              {{ event.eventName }} ({{ event.date | date:'mediumDate' }})
+            </li>
+          </ul>
+          <ng-template #noEvents>
+            <p>No events attended yet.</p>
+          </ng-template>
+        </div>
+      </div>
     </div>
 
     <!-- Outstanding Fees -->
-    <div class="card">
-      <h3>Outstanding Fees</h3>
-      <p *ngIf="outstandingFees > 0">R{{ outstandingFees }} due.</p>
-      <p *ngIf="outstandingFees === 0">All fees are paid.</p>
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title">Outstanding Fees</h5>
+        </div>
+        <div class="card-body">
+          <p *ngIf="outstandingFees > 0">R{{ outstandingFees }} due.</p>
+          <p *ngIf="outstandingFees === 0">All fees are paid.</p>
+        </div>
+      </div>
     </div>
 
     <!-- Payment History -->
-    <div class="card">
-      <h3>Payment History</h3>
-      <ul *ngIf="paymentHistory.length; else noPayments">
-        <li *ngFor="let payment of paymentHistory">
-          {{ payment.paymentDate | date:'mediumDate' }} - Paid R{{ payment.amount }}
-        </li>
-      </ul>
-      <ng-template #noPayments>
-        <p>No payment history available.</p>
-      </ng-template>
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title">Payment History</h5>
+        </div>
+        <div class="card-body">
+          <ul *ngIf="paymentHistory.length; else noPayments">
+            <li *ngFor="let payment of paymentHistory">
+              {{ payment.paymentDate | date:'mediumDate' }} - Paid R{{ payment.amount }}
+            </li>
+          </ul>
+          <ng-template #noPayments>
+            <p>No payment history available.</p>
+          </ng-template>
+        </div>
+      </div>
     </div>
   </div>
 </div>

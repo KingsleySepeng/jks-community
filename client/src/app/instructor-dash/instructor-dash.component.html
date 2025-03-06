@@ -1,54 +1,66 @@
-<h1> {{loggedInInstructor?.firstName}}  {{loggedInInstructor?.lastName}}  Instructor Dashboard</h1>
+<div class="container mt-4">
+  <h1 class="mb-4">{{loggedInInstructor?.firstName}} {{loggedInInstructor?.lastName}} Instructor Dashboard</h1>
 
-<!-- Tabs for Navigation -->
-<div class="dashboard-tabs">
-  <button (click)="selectedTab = 'attendance'" [class.active]="selectedTab === 'attendance'">Attendance</button>
-  <button (click)="selectedTab = 'report'" [class.active]="selectedTab === 'report'">Instructor Report</button>
-  <button (click)="selectedTab = 'events'" [class.active]="selectedTab === 'events'">Dojo Events</button>
-  <button (click)="selectedTab = 'grading'" [class.active]="selectedTab === 'grading'">Grading Records</button>
-  <button (click)="selectedTab = 'resources'" [class.active]="selectedTab === 'resources'">Resources</button>
-</div>
-
-<!-- Attendance Section -->
-<div *ngIf="selectedTab === 'attendance'">
-  <ng-container *ngIf="loggedInInstructor as instructor">
-    <app-attendance [instructor]="instructor"></app-attendance>
-  </ng-container>
-</div>
-
-<!-- Instructor Report -->
-<div *ngIf="selectedTab === 'report'">
-  <app-instructor-report></app-instructor-report>
-</div>
-
-<!-- Dojo Events Section -->
-<div *ngIf="selectedTab === 'events'">
-  <h2>Upcoming Events</h2>
-  <ul>
-    <li *ngFor="let evt of events">
-      {{ evt.eventName }} - {{ evt.date | date: 'yyyy-MM-dd' }}
-      <button (click)="onFinalizeRegistration(evt)">Finalize Registration</button>
+  <!-- Tabs for Navigation -->
+  <ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="selectedTab === 'attendance'" (click)="selectedTab = 'attendance'">Attendance</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="selectedTab === 'report'" (click)="selectedTab = 'report'">Instructor Report</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="selectedTab === 'events'" (click)="selectedTab = 'events'">Dojo Events</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="selectedTab === 'grading'" (click)="selectedTab = 'grading'">Grading Records</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="selectedTab === 'resources'" (click)="selectedTab = 'resources'">Resources</a>
     </li>
   </ul>
-</div>
 
-<!-- Grading Records Section-->
-<div *ngIf="selectedTab === 'grading'">
-  <h2>Grading Report</h2>
-  <ul>
-    <li *ngFor="let record of gradingRecords">
-      {{ record.studentId }} - {{ record.testingForBelt }}
-      <button (click)="viewGradingDetail(record)">View</button>
-    </li>
-  </ul>
-</div>
+  <!-- Attendance Section -->
+  <div *ngIf="selectedTab === 'attendance'">
+    <ng-container *ngIf="loggedInInstructor as instructor">
+      <app-attendance [instructor]="instructor"></app-attendance>
+    </ng-container>
+  </div>
 
-<!-- Resource Management Section -->
-<div *ngIf="selectedTab === 'resources'">
-  <h2>Training Resources</h2>
-  <ul>
-    <li *ngFor="let resource of resources">
-      <a [href]="resource.fileUrl" target="_blank">{{ resource.title }}</a>
-    </li>
-  </ul>
+  <!-- Instructor Report -->
+  <div *ngIf="selectedTab === 'report'">
+    <app-instructor-report></app-instructor-report>
+  </div>
+
+  <!-- Dojo Events Section -->
+  <div *ngIf="selectedTab === 'events'">
+    <h2>Upcoming Events</h2>
+    <ul class="list-group">
+      <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let evt of events">
+        {{ evt.eventName }} - {{ evt.date | date: 'yyyy-MM-dd' }}
+        <button class="btn btn-primary" (click)="onFinalizeRegistration(evt)">Finalize Registration</button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Grading Records Section-->
+  <div *ngIf="selectedTab === 'grading'">
+    <h2>Grading Report</h2>
+    <ul class="list-group">
+      <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let record of gradingRecords">
+        {{ record.studentId }} - {{ record.testingForBelt }}
+        <button class="btn btn-primary" (click)="viewGradingDetail(record)">View</button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Resource Management Section -->
+  <div *ngIf="selectedTab === 'resources'">
+    <h2>Training Resources</h2>
+    <ul class="list-group">
+      <li class="list-group-item" *ngFor="let resource of resources">
+        <a [href]="resource.fileUrl" target="_blank">{{ resource.title }}</a>
+      </li>
+    </ul>
+  </div>
 </div>
