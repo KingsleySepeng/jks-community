@@ -4,6 +4,7 @@ import {Attendance, AttendanceStatus} from '../model/attendance ';
 import {MockDataService} from '../mock-service/mock-data.service';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {Role} from '../model/role';
+import { loadGapiInsideDOM } from 'gapi-script';
 
 @Component({
   selector: 'app-attendance',
@@ -26,7 +27,7 @@ export class AttendanceComponent {
 
   constructor(private mockDataService: MockDataService) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     if (!this.instructor) {
       console.error('No instructor provided for attendance tracking.');
       return;
@@ -38,6 +39,7 @@ export class AttendanceComponent {
     ) as Student[];
 
     this.initializeAttendanceState();
+    await this.initializeGapiClient();
   }
 
   private initializeAttendanceState(): void {
@@ -67,7 +69,7 @@ export class AttendanceComponent {
     this.attendanceState[userId].comment = comment;
   }
 
-  onSaveAttendance(): void {
+  async onSaveAttendance(): Promise<void> {
     if (!this.instructor) {
       alert('No instructor is logged in.');
       return;
@@ -92,6 +94,7 @@ export class AttendanceComponent {
     });
 
     this.mockDataService.updateUsers(this.students);
+    await this.updateGoogleSheet();
     alert('Attendance saved successfully!');
   }
 
@@ -101,6 +104,50 @@ export class AttendanceComponent {
 
   private formatDateForInput(date: Date): string {
     return date.toISOString().split('T')[0];
+  }
+
+  private async initializeGapiClient(): Promise<void> {
+    await loadGapiInsideDOM();
+    gapi.load('client:auth2', async () => {
+      await gapi.client.init({
+        apiKey: 'YOUR_API_KEY',
+        clientId: 'YOUR_CLIENT_ID',
+        discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+        scope: 'https://www.googleapis.com/auth/spreadsheets'
+      });
+    });
+  }
+
+  private async updateGoogleSheet(): Promise<void> {
+    const spreadsheetId = 'YOUR_SPREADSHEET_ID';
+    const range = 'Sheet1!A1:E1'; // Adjust the range as needed
+
+    const values = this.students.map(student => {
+      const state = this.attendanceState[student.id];
+      return [
+        student.id,
+        student.firstName,
+        student.lastName,
+        state.status,
+        state.comment
+      ];
+    });
+
+    const body = {
+      values
+    };
+
+    try {
+      await gapi.client.sheets.spreadsheets.values.append({
+        spreadsheetId,
+        range,
+        valueInputOption: 'RAW',
+        resource: body
+      });
+      console.log('Attendance data updated in Google Sheets');
+    } catch (error) {
+      console.error('Error updating Google Sheets:', error);
+    }
   }
 
   protected readonly AttendanceStatus = AttendanceStatus;

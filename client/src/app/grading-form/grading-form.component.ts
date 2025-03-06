@@ -9,6 +9,7 @@ import {FormsModule} from '@angular/forms';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {MultiStudentEvaluation} from '../model/multi-student-evaluation';
 import {MockDataService} from '../mock-service/mock-data.service';
+import { loadGapiInsideDOM } from 'gapi-script';
 
 @Component({
   selector: 'app-grading-form',
@@ -33,7 +34,7 @@ export class GradingFormComponent  implements OnInit  {
 
   constructor(private mockDataService: MockDataService) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     // Load instructor
     this.instructor = this.mockDataService.getLoggedInUser();
     if (!this.instructor || this.instructor.role !== Role.INSTRUCTOR) {
@@ -42,6 +43,45 @@ export class GradingFormComponent  implements OnInit  {
     }
     // Load all students
     this.allStudents = this.mockDataService.getUsers().filter(user => user.role === Role.STUDENT) as Student[];
+
+    await this.initializeGapiClient();
+  }
+
+  async initializeGapiClient(): Promise<void> {
+    await loadGapiInsideDOM();
+    gapi.load('client:auth2', async () => {
+      await gapi.client.init({
+        apiKey: 'YOUR_API_KEY',
+        clientId: 'YOUR_CLIENT_ID',
+        discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+        scope: 'https://www.googleapis.com/auth/spreadsheets'
+      });
+    });
+  }
+
+  async updateGoogleSheetsWithGradingData(record: GradingRecord): Promise<void> {
+    const spreadsheetId = 'YOUR_SPREADSHEET_ID';
+    const range = 'Sheet1!A1'; // Adjust the range as needed
+
+    const values = [
+      [record.studentId, record.examinerId, record.clubId, record.date.toISOString(), record.currentBelt, record.testingForBelt, record.overallDecision, record.overallComment]
+    ];
+
+    const body = {
+      values: values
+    };
+
+    try {
+      const response = await gapi.client.sheets.spreadsheets.values.append({
+        spreadsheetId: spreadsheetId,
+        range: range,
+        valueInputOption: 'RAW',
+        resource: body
+      });
+      console.log('Data appended to Google Sheets: ', response);
+    } catch (error) {
+      console.error('Error appending data to Google Sheets: ', error);
+    }
   }
 
   onBeltChange(event: Event) {
@@ -117,10 +157,10 @@ export class GradingFormComponent  implements OnInit  {
   }
 
 
-  submitGrading() {
+  async submitGrading() {
     if (!this.instructor || !this.belt) return;
 
-    this.selectedStudentIds.forEach(studentId => {
+    this.selectedStudentIds.forEach(async studentId => {
       const student = this.allStudents.find(s => s.id === studentId);
       if (!student) return;
 
@@ -144,6 +184,7 @@ export class GradingFormComponent  implements OnInit  {
       };
 
       this.mockDataService.saveGradingRecord(record);
+      await this.updateGoogleSheetsWithGradingData(record);
     });
 
     // Clear selection after grading
