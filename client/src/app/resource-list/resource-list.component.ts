@@ -4,6 +4,7 @@ import {MockDataService} from '../mock-service/mock-data.service';
 import {FormsModule} from '@angular/forms';
 import {NgForOf, NgIf} from '@angular/common';
 import { loadGapiInsideDOM } from 'gapi-script';
+declare var gapi: any;
 
 @Component({
   selector: 'app-resource-list',
@@ -52,7 +53,7 @@ export class ResourceListComponent implements OnInit{
 
       const files = response.result.files;
       if (files && files.length > 0) {
-        files.forEach(file => {
+        files.forEach((file: { id: any; name: any; webViewLink: any; createdTime: string | number | Date; }) => {
           const newResource: Resource = {
             id: file.id,
             title: file.name,

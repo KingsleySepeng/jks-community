@@ -5,6 +5,7 @@ import {MockDataService} from '../mock-service/mock-data.service';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {Role} from '../model/role';
 import { loadGapiInsideDOM } from 'gapi-script';
+declare var gapi: any;
 
 @Component({
   selector: 'app-attendance',

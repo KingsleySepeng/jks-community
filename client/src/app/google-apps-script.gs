@@ -39,7 +39,7 @@ function submitPayment(formId, formResponse) {
   var form = FormApp.openById(formId);
   var items = form.getItems();
   var response = form.createResponse();
-  
+
   items.forEach(function(item) {
     var itemId = item.getId();
     var answer = formResponse[itemId];
@@ -47,7 +47,7 @@ function submitPayment(formId, formResponse) {
       response.withItemResponse(item.asTextItem().createResponse(answer));
     }
   });
-  
+
   response.submit();
 }
 
@@ -71,7 +71,7 @@ function fetchResources(folderId) {
   var folder = DriveApp.getFolderById(folderId);
   var files = folder.getFiles();
   var resources = [];
-  
+
   while (files.hasNext()) {
     var file = files.next();
     resources.push({
@@ -82,6 +82,16 @@ function fetchResources(folderId) {
       createdTime: file.getDateCreated()
     });
   }
-  
+
   return resources;
 }
+
+deployment id
+AKfycbyh1-tgqlKvKqOmTIgjiUw1Bg3GkCUwV5Llp-GQyTcs2FwANvR9hmRsKMNixsVFNHOgcQ
+
+script
+
+https://script.google.com/macros/s/AKfycbyh1-tgqlKvKqOmTIgjiUw1Bg3GkCUwV5Llp-GQyTcs2FwANvR9hmRsKMNixsVFNHOgcQ/exec
+
+api key
+AIzaSyD4H8fj26Td1rWMDlqHYn9Us4EjnvD_b0g

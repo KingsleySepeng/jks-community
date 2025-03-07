@@ -10,6 +10,7 @@ import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {MultiStudentEvaluation} from '../model/multi-student-evaluation';
 import {MockDataService} from '../mock-service/mock-data.service';
 import { loadGapiInsideDOM } from 'gapi-script';
+declare var gapi: any;
 
 @Component({
   selector: 'app-grading-form',

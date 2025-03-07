@@ -8,6 +8,7 @@ import {Club} from '../model/club';
 import {Role} from '../model/role';
 import {NgIf} from '@angular/common';
 import { loadGapiInsideDOM } from 'gapi-script';
+declare var gapi: any;
 
 @Component({
   selector: 'app-create-event',

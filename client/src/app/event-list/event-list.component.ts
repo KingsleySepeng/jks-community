@@ -5,6 +5,7 @@ import {MockDataService} from '../mock-service/mock-data.service';
 import {User} from '../model/user';
 import {Router} from '@angular/router';
 import { loadGapiInsideDOM } from 'gapi-script';
+declare var gapi: any;
 
 @Component({
   selector: 'app-event-list',

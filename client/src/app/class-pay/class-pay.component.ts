@@ -7,6 +7,7 @@ import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {Events} from '../model/events';
 import {ActivatedRoute} from '@angular/router';
 import { loadGapiInsideDOM } from 'gapi-script';
+declare var gapi: any;
 
 @Component({
   selector: 'app-class-pay',
@@ -105,7 +106,7 @@ export class ClassPayComponent implements OnInit{
         },
         {
           questionId: 'QUESTION_ID_FOR_PAYMENT_METHOD',
-          answer: payment.paymentMethod
+          answer: payment.method
         },
         {
           questionId: 'QUESTION_ID_FOR_PAYMENT_TYPE',
