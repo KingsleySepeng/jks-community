@@ -4,6 +4,8 @@ import {Events} from '../model/events';
 import {MockDataService} from '../mock-service/mock-data.service';
 import {User} from '../model/user';
 import {Router} from '@angular/router';
+import { loadGapiInsideDOM } from 'gapi-script';
+declare var gapi: any;
 
 @Component({
   selector: 'app-event-list',
@@ -27,10 +29,11 @@ export class EventListComponent {
 
   constructor(private mockDataService: MockDataService,private router:Router) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.loggedInUser = this.mockDataService.getLoggedInUser();
     this.events = this.mockDataService.getEvents();
     this.isInstructor = this.loggedInUser?.role === 'INSTRUCTOR';
+    await this.initializeGapiClient();
   }
 
   getInstructorName(instructorId: string): string {
@@ -135,5 +138,43 @@ export class EventListComponent {
         date: new Date() // Assuming registration date is now, adjust as needed
       };
     });
+  }
+
+  private async initializeGapiClient(): Promise<void> {
+    await loadGapiInsideDOM();
+    gapi.load('client:auth2', async () => {
+      await gapi.client.init({
+        apiKey: 'YOUR_API_KEY',
+        clientId: 'YOUR_CLIENT_ID',
+        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
+        scope: 'https://www.googleapis.com/auth/calendar.events'
+      });
+    });
+  }
+
+  private async pushEventToGoogleCalendar(event: Events): Promise<void> {
+    const eventDetails = {
+      summary: event.eventName,
+      location: event.location,
+      description: event.description,
+      start: {
+        dateTime: event.date.toISOString(),
+        timeZone: 'America/Los_Angeles'
+      },
+      end: {
+        dateTime: new Date(event.date.getTime() + 60 * 60 * 1000).toISOString(),
+        timeZone: 'America/Los_Angeles'
+      }
+    };
+
+    try {
+      const response = await gapi.client.calendar.events.insert({
+        calendarId: 'primary',
+        resource: eventDetails
+      });
+      console.log('Event pushed to Google Calendar: ', response);
+    } catch (error) {
+      console.error('Error pushing event to Google Calendar: ', error);
+    }
   }
 }
