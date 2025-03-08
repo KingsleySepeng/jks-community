@@ -17,8 +17,8 @@ export class GoogleApiService {
     await loadGapiInsideDOM();
     gapi.load('client:auth2', async () => {
       await gapi.client.init({
-        apiKey: 'AIzaSyD4H8fj26Td1rWMDlqHYn9Us4EjnvD_b0g',
-        clientId: '763177171416-bdr5i3f0borfj7n45itsn0bfjeqgatlj.apps.googleusercontent.com',
+        apiKey: 'API_KEY',
+        clientId: 'CLIENT_ID',
         discoveryDocs: [
           'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
           'https://sheets.googleapis.com/$discovery/rest?version=v4',
