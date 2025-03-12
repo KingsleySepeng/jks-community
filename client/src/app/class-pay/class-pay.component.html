@@ -1,6 +1,7 @@
 <div class="container mt-4">
   <h2 class="mb-4">Class Payment</h2>
 
+  <!-- Logged-in User Info -->
   <div class="alert alert-info" *ngIf="currentUser">
     <strong>Logged-in User:</strong> {{ currentUser.firstName }} {{ currentUser.lastName }} [ID: {{ currentUser.id }}]
   </div>
@@ -45,13 +46,19 @@
     <div class="form-group mb-3">
       <label for="proofOfPayment" class="form-label">Attach Proof of Payment:</label>
       <input id="proofOfPayment" type="file" class="form-control" (change)="onFileChange($event)" />
+      <small *ngIf="proofOfPayment" class="form-text text-muted">
+        Selected File: {{ proofOfPayment.name }}
+      </small>
     </div>
 
-    <button type="submit" class="btn btn-primary w-100">Submit Payment</button>
+    <!-- Submit Button with Spinner -->
+    <button type="submit" class="btn btn-primary w-100" [disabled]="isSubmitting">
+      <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+      Submit Payment
+    </button>
   </form>
 
-  <p class="alert alert-success mt-3" *ngIf="message">{{ message }}</p>
-
+  <!-- Payment History Table -->
   <h3 class="mt-4">Payment History</h3>
   <table class="table table-striped">
     <thead>
@@ -77,4 +84,23 @@
     </tr>
     </tbody>
   </table>
+
+  <!-- Submission Confirmation Modal -->
+  <div class="modal fade show" *ngIf="showModal" style="display: block;" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Payment Submitted</h5>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Your payment has been successfully submitted!</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" (click)="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show" *ngIf="showModal"></div>
 </div>

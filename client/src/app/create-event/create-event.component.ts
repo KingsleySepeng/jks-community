@@ -8,6 +8,7 @@ import {Club} from '../model/club';
 import {Role} from '../model/role';
 import {NgIf} from '@angular/common';
 import { loadGapiInsideDOM } from 'gapi-script';
+import {GoogleApiService} from '../google-api.service';
 declare var gapi: any;
 
 @Component({
@@ -32,7 +33,7 @@ export class CreateEventComponent {
   loggedInUser?: User ;
   userClub?: Club;
 
-  constructor(private mockData: MockDataService, private router: Router) {}
+  constructor(private mockData: MockDataService, private router: Router,private googleApiService:GoogleApiService) {}
 
   async ngOnInit(): Promise<void> {
     this.loggedInUser = this.mockData.getLoggedInUser();
@@ -46,19 +47,7 @@ export class CreateEventComponent {
       this.userClub = this.mockData.getClubById(this.loggedInUser.clubId);
     }
 
-    await this.initializeGapiClient();
-  }
-
-  async initializeGapiClient(): Promise<void> {
-    await loadGapiInsideDOM();
-    gapi.load('client:auth2', async () => {
-      await gapi.client.init({
-        apiKey: 'YOUR_API_KEY',
-        clientId: 'YOUR_CLIENT_ID',
-        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
-        scope: 'https://www.googleapis.com/auth/calendar.events'
-      });
-    });
+    await this.googleApiService.initializeGapiClient();
   }
 
   async createGoogleCalendarEvent(event: Events): Promise<void> {

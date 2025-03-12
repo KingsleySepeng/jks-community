@@ -1,38 +1,39 @@
-<div class="resource-upload-container">
-  <h2>Upload/Create Resource</h2>
-
-  <form (ngSubmit)="onUploadResource()">
-    <div>
-      <label>Title:</label>
-      <input type="text" [(ngModel)]="title" name="title" required />
+<div class="container my-5">
+  <div class="card shadow-sm">
+    <div class="card-header bg-info text-white">
+      <h2 class="h5 mb-0">Upload/Create Resource</h2>
     </div>
+    <div class="card-body">
+      <form (ngSubmit)="onUploadResource()">
+        <div class="mb-3">
+          <label for="title" class="form-label">Title:</label>
+          <input type="text" id="title" class="form-control" [(ngModel)]="title" name="title" required placeholder="Enter resource title" />
+        </div>
 
-    <div>
-      <label>Description:</label>
-      <textarea [(ngModel)]="description" name="description"></textarea>
+        <div class="mb-3">
+          <label for="description" class="form-label">Description:</label>
+          <textarea id="description" class="form-control" rows="3" [(ngModel)]="description" name="description" placeholder="Enter description"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label for="category" class="form-label">Category:</label>
+          <select id="category" class="form-select" [(ngModel)]="category" name="category">
+            <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="fileUrl" class="form-label">File URL (PDF/Doc Link):</label>
+          <input type="text" id="fileUrl" class="form-control" [(ngModel)]="fileUrl" name="fileUrl" placeholder="https://..." />
+        </div>
+
+        <div class="mb-3">
+          <label for="videoUrl" class="form-label">Video URL (YouTube, etc.):</label>
+          <input type="text" id="videoUrl" class="form-control" [(ngModel)]="videoUrl" name="videoUrl" placeholder="https://..." />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Create Resource</button>
+      </form>
     </div>
-
-    <div>
-      <label>Category:</label>
-      <select [(ngModel)]="category" name="category">
-        <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
-      </select>
-    </div>
-
-    <!-- If uploading a PDF or doc link -->
-    <div>
-      <label>File URL (PDF/Doc Link):</label>
-      <input type="text" [(ngModel)]="fileUrl" name="fileUrl" placeholder="https://..." />
-    </div>
-
-    <!-- If referencing a video link or embed -->
-    <div>
-      <label>Video URL (YouTube, etc.):</label>
-      <input type="text" [(ngModel)]="videoUrl" name="videoUrl" placeholder="https://..." />
-    </div>
-
-    <!-- If you want actual file uploading, you'd handle it differently with an <input type="file">, etc. -->
-
-    <button type="submit">Create Resource</button>
-  </form>
+  </div>
 </div>

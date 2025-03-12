@@ -1,56 +1,126 @@
-<div class="create-event-container">
-  <h2>Create New Event</h2>
-
+<div class="container mt-5">
   <div *ngIf="loggedInUser && userClub; else unauthorized">
-    <p><strong>Host:</strong> {{ loggedInUser.firstName }} {{ loggedInUser.lastName }}</p>
-    <p><strong>Club:</strong> {{ userClub.name }}</p>
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h2 class="mb-0">Create New Event</h2>
+      </div>
+      <div class="card-body">
+        <p><strong>Host:</strong> {{ loggedInUser.firstName }} {{ loggedInUser.lastName }}</p>
+        <p><strong>Club:</strong> {{ userClub.name }}</p>
+        <form (ngSubmit)="onCreateEvent()">
+          <div class="mb-3">
+            <label for="eventName" class="form-label">Event Name</label>
+            <input
+              type="text"
+              id="eventName"
+              class="form-control"
+              [(ngModel)]="eventName"
+              name="eventName"
+              placeholder="Enter event name"
+              required
+            />
+          </div>
 
-  <form (ngSubmit)="onCreateEvent()">
-    <div>
-      <label>Event Name:</label>
-      <input type="text" [(ngModel)]="eventName" name="eventName" required />
+          <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input
+              type="text"
+              id="location"
+              class="form-control"
+              [(ngModel)]="location"
+              name="location"
+              placeholder="Enter event location"
+              required
+            />
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="date" class="form-label">Date</label>
+              <input
+                type="date"
+                id="date"
+                class="form-control"
+                [(ngModel)]="date"
+                name="date"
+                required
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="paymentDueDate" class="form-label">Payment Due Date</label>
+              <input
+                type="date"
+                id="paymentDueDate"
+                class="form-control"
+                [(ngModel)]="paymentDueDate"
+                name="paymentDueDate"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="cost" class="form-label">Cost ($)</label>
+              <input
+                type="number"
+                id="cost"
+                class="form-control"
+                [(ngModel)]="cost"
+                name="cost"
+                placeholder="Enter cost"
+                required
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="maxEntries" class="form-label">Max Entries</label>
+              <input
+                type="number"
+                id="maxEntries"
+                class="form-control"
+                [(ngModel)]="maxEntries"
+                name="maxEntries"
+                min="1"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea
+              id="description"
+              class="form-control"
+              rows="3"
+              [(ngModel)]="description"
+              name="description"
+              placeholder="Enter a description for the event"
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-check mb-3">
+            <input
+              type="checkbox"
+              id="notify"
+              class="form-check-input"
+              [(ngModel)]="notify"
+              name="notify"
+            />
+            <label for="notify" class="form-check-label">Notify Students</label>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">
+            Create Event
+          </button>
+        </form>
+      </div>
     </div>
+  </div>
 
-    <div>
-      <label>Location:</label>
-      <input type="text" [(ngModel)]="location" name="location" required />
+  <ng-template #unauthorized>
+    <div class="alert alert-danger mt-5">
+      Error: Only instructors can create events.
     </div>
-
-    <div>
-      <label>Date:</label>
-      <input type="date" [(ngModel)]="date" name="date" required />
-    </div>
-
-    <div>
-      <label>Cost:</label>
-      <input type="number" [(ngModel)]="cost" name="cost" required />
-    </div>
-
-    <div>
-      <label>Payment Due Date:</label>
-      <input type="date" [(ngModel)]="paymentDueDate" name="paymentDueDate" required />
-    </div>
-
-    <div>
-      <label>Max Entries:</label>
-      <input type="number" [(ngModel)]="maxEntries" name="maxEntries" min="1" required />
-    </div>
-
-    <div>
-      <label>Description:</label>
-      <textarea  [(ngModel)]="description" name="description" required ></textarea>
-    </div>
-
-
-    <div>
-      <input type="checkbox" [(ngModel)]="notify" name="notify" /> Notify Students
-    </div>
-
-    <button type="submit">Create Event</button>
-  </form>
-</div>
-
-<ng-template #unauthorized>
-  <p>Error: Only instructors can create events.</p>
-</ng-template>
+  </ng-template>
 </div>

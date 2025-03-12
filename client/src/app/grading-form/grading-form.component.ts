@@ -1,50 +1,48 @@
-import {Component, OnInit} from '@angular/core';
-import {Instructor, Student, User} from '../model/user';
-import {Belt} from '../model/belt';
-import {Technique} from '../model/technique';
-import {Role} from '../model/role';
-import {SyllabusMap} from '../model/SyllabusMap';
-import {GradingRecord} from '../model/grading-record';
-import {FormsModule} from '@angular/forms';
-import {DatePipe, NgForOf, NgIf} from '@angular/common';
-import {MultiStudentEvaluation} from '../model/multi-student-evaluation';
-import {MockDataService} from '../mock-service/mock-data.service';
+import { Component, OnInit } from '@angular/core';
+import { Student, User } from '../model/user';
+import { Belt } from '../model/belt';
+import { Technique } from '../model/technique';
+import { SyllabusMap } from '../model/SyllabusMap';
+import { GradingRecord } from '../model/grading-record';
+import { MultiStudentEvaluation } from '../model/multi-student-evaluation';
+import { MockDataService } from '../mock-service/mock-data.service';
+import { Role } from '../model/role';
+import { FormsModule } from '@angular/forms';
+import { NgForOf, NgIf } from '@angular/common';
 import { loadGapiInsideDOM } from 'gapi-script';
 declare var gapi: any;
 
 @Component({
   selector: 'app-grading-form',
   standalone: true,
-  imports: [
-    FormsModule,
-    NgForOf,
-    NgIf,
-  ],
+  imports: [FormsModule, NgForOf, NgIf],
   templateUrl: './grading-form.component.html',
-  styleUrl: './grading-form.component.scss'
+  styleUrls: ['./grading-form.component.scss']
 })
-export class GradingFormComponent  implements OnInit  {
+export class GradingFormComponent implements OnInit {
   belt?: Belt;
   allStudents: Student[] = [];
-  eligibleStudents: Student[] = [];
-  selectedStudentIds: Set<string> = new Set();
+  selectedStudents: Student[] = [];
+  studentSearchTerm: string = '';
+  filteredStudents: Student[] = [];
   techniques: { kihon: Technique[]; kata: Technique[]; kumite: Technique[] } = { kihon: [], kata: [], kumite: [] };
   multiEvaluations: MultiStudentEvaluation[] = [];
   instructor?: User;
   allBelts: Belt[] = [Belt.WHITE, Belt.YELLOW, Belt.GREEN, Belt.BLUE, Belt.RED, Belt.BLACK];
+  showModal: boolean = false;
+  // Define allowed technique categories for type safety.
+  public categories: Array<'kihon' | 'kata' | 'kumite'> = ['kihon', 'kata', 'kumite'];
 
   constructor(private mockDataService: MockDataService) {}
 
   async ngOnInit() {
-    // Load instructor
+    // Load instructor and students.
     this.instructor = this.mockDataService.getLoggedInUser();
     if (!this.instructor || this.instructor.role !== Role.INSTRUCTOR) {
       console.error('No instructor is logged in!');
-      return;  // Prevents execution if no instructor is found
+      return;
     }
-    // Load all students
     this.allStudents = this.mockDataService.getUsers().filter(user => user.role === Role.STUDENT) as Student[];
-
     await this.initializeGapiClient();
   }
 
@@ -60,22 +58,85 @@ export class GradingFormComponent  implements OnInit  {
     });
   }
 
+  onBeltChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const newBelt = target?.value as Belt;
+    if (!newBelt) {
+      console.error('No belt selected!');
+      return;
+    }
+    this.belt = newBelt;
+    // Load techniques for the selected belt.
+    this.techniques = SyllabusMap[this.belt as keyof typeof SyllabusMap] || { kihon: [], kata: [], kumite: [] };
+    this.buildEvaluationMatrix();
+  }
+
+  filterStudents() {
+    const term = this.studentSearchTerm.toLowerCase();
+    this.filteredStudents = this.allStudents.filter(student =>
+      (student.firstName.toLowerCase().includes(term) || student.lastName.toLowerCase().includes(term))
+      && !this.selectedStudents.some(s => s.id === student.id)
+    );
+  }
+
+  addStudent(student: Student) {
+    this.selectedStudents.push(student);
+    // Clear search input and suggestions.
+    this.studentSearchTerm = '';
+    this.filteredStudents = [];
+    this.buildEvaluationMatrix();
+  }
+
+  removeStudent(studentId: string) {
+    this.selectedStudents = this.selectedStudents.filter(s => s.id !== studentId);
+    this.buildEvaluationMatrix();
+  }
+
+  buildEvaluationMatrix() {
+    this.multiEvaluations = [];
+    for (let student of this.selectedStudents) {
+      for (let tech of [...this.techniques.kihon, ...this.techniques.kata, ...this.techniques.kumite]) {
+        this.multiEvaluations.push({
+          studentId: student.id,
+          techniqueId: tech.id,
+          rating: 'good',
+          comment: ''
+        });
+      }
+    }
+  }
+
+  getEvaluation(studentId: string, techniqueId: string): MultiStudentEvaluation {
+    let evaluation = this.multiEvaluations.find(e => e.studentId === studentId && e.techniqueId === techniqueId);
+    if (!evaluation) {
+      evaluation = { studentId, techniqueId, rating: 'average', comment: '' };
+      this.multiEvaluations.push(evaluation);
+    }
+    return evaluation;
+  }
+
+  updateRating(studentId: string, techniqueId: string, rating: MultiStudentEvaluation['rating']) {
+    const evaluation = this.getEvaluation(studentId, techniqueId);
+    evaluation.rating = rating;
+  }
+
+  updateComment(studentId: string, techniqueId: string, event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    const evaluation = this.getEvaluation(studentId, techniqueId);
+    evaluation.comment = inputElement.value;
+  }
+
   async updateGoogleSheetsWithGradingData(record: GradingRecord): Promise<void> {
     const spreadsheetId = 'YOUR_SPREADSHEET_ID';
-    const range = 'Sheet1!A1'; // Adjust the range as needed
-
+    const range = 'Sheet1!A1';
     const values = [
       [record.studentId, record.examinerId, record.clubId, record.date.toISOString(), record.currentBelt, record.testingForBelt, record.overallDecision, record.overallComment]
     ];
-
-    const body = {
-      values: values
-    };
-
+    const body = { values };
     try {
       const response = await gapi.client.sheets.spreadsheets.values.append({
-        spreadsheetId: spreadsheetId,
-        range: range,
+        spreadsheetId,
+        range,
         valueInputOption: 'RAW',
         resource: body
       });
@@ -85,112 +146,49 @@ export class GradingFormComponent  implements OnInit  {
     }
   }
 
-  onBeltChange(event: Event) {
-    const target = event.target as HTMLSelectElement;
-    const newBelt = target?.value as Belt;
-
-    if (!newBelt) {
-      console.error('No belt selected!');
-      return;
-    }
-    this.belt = newBelt;
-
-    // Load techniques categorized
-    this.techniques = SyllabusMap[this.belt as keyof typeof SyllabusMap] || { kihon: [], kata: [], kumite: [] };
-
-    // Find eligible students for this belt
-    this.eligibleStudents = this.allStudents.filter(s => this.mockDataService.isEligibleForBelt(s, newBelt));
-    this.selectedStudentIds.clear();
-    this.buildEvaluationMatrix();
-  }
-
-  toggleStudentSelection(studentId: string) {
-    if (this.selectedStudentIds.has(studentId)) {
-      this.selectedStudentIds.delete(studentId);
-    } else {
-      this.selectedStudentIds.add(studentId);
-    }
-    this.buildEvaluationMatrix();
-  }
-
-  // Build or refresh the multiEvaluations array
-  buildEvaluationMatrix() {
-    this.multiEvaluations = [];
-    for (let studentId of this.selectedStudentIds) {
-      for (let tech of [...this.techniques.kihon, ...this.techniques.kata, ...this.techniques.kumite]) {
-        this.multiEvaluations.push({
-          studentId,
-          techniqueId: tech.id,
-          rating: 'good',
-          comment: ''
-        });
-      }
-    }
-  }
-
-  findEvaluation(studentId: string, techniqueId: string): MultiStudentEvaluation | undefined {
-    return this.multiEvaluations.find(m => m.studentId === studentId && m.techniqueId === techniqueId);
-  }
-
-  updateRating(studentId: string, techniqueId: string, rating: MultiStudentEvaluation['rating']) {
-    const evaluation = this.findEvaluation(studentId, techniqueId);
-    if (evaluation) {
-      evaluation.rating = rating;
-    }
-  }
-
-  getEvaluation(studentId: string, techniqueId: string): MultiStudentEvaluation {
-    let evaluation:MultiStudentEvaluation | undefined = this.multiEvaluations.find(e => e.studentId === studentId && e.techniqueId === techniqueId);
-
-    if (!evaluation) {
-      // Create a default evaluation if not found
-      evaluation = { studentId, techniqueId, rating: 'average', comment: '' };
-      this.multiEvaluations.push(evaluation);
-    }
-
-    return evaluation;
-  }
-  updateComment(studentId: string, techniqueId: string,event:Event) {
-    const inputElement = event.target as HTMLInputElement;
-    if (!inputElement) return;
-    const evaluation = this.getEvaluation(studentId, techniqueId);
-    evaluation.comment = inputElement.value;
-  }
-
+  finalDecision: 'pass' | 'fail' | 'regrade' = 'pass';
+  finalComment: string = '';
 
   async submitGrading() {
     if (!this.instructor || !this.belt) return;
 
-    this.selectedStudentIds.forEach(async studentId => {
-      const student = this.allStudents.find(s => s.id === studentId);
-      if (!student) return;
+    // Check that a final decision has been selected.
+    if (!this.finalDecision) {
+      console.error('Please select a final decision.');
+      return;
+    }
 
-      const filteredEvals = this.multiEvaluations.filter(m => m.studentId === studentId);
+    for (let student of this.selectedStudents) {
+      const filteredEvals = this.multiEvaluations.filter(m => m.studentId === student.id);
 
       const record: GradingRecord = {
         id: this.generateId(),
-        studentId,
-        examinerId: this.instructor?.id ?? 'Unknown',
+        studentId: student.id,
+        examinerId: this.instructor.id,
         clubId: student.clubId,
         date: new Date(),
         currentBelt: student.belt,
-        testingForBelt: this.belt ?? Belt.WHITE, // Fallback to WHITE belt
+        testingForBelt: this.belt,
         evaluations: filteredEvals.map(f => ({
           techniqueId: f.techniqueId,
           rating: f.rating,
           comment: f.comment
         })),
-        overallDecision: 'pass', // This can be determined by further logic.
-        overallComment: 'Batch Grading'
+        overallDecision: this.finalDecision,
+        overallComment: this.finalComment
       };
-
       this.mockDataService.saveGradingRecord(record);
       await this.updateGoogleSheetsWithGradingData(record);
-    });
-
-    // Clear selection after grading
-    this.selectedStudentIds.clear();
+    }
+    // Clear selections and evaluations after submission.
+    this.selectedStudents = [];
     this.multiEvaluations = [];
+    // Show submission confirmation modal.
+    this.showModal = true;
+  }
+
+  closeModal() {
+    this.showModal = false;
   }
 
   private generateId() {

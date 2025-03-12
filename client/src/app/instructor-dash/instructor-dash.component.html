@@ -1,66 +1,136 @@
 <div class="container mt-4">
-  <h1 class="mb-4">{{loggedInInstructor?.firstName}} {{loggedInInstructor?.lastName}} Instructor Dashboard</h1>
+  <!-- Dashboard Header & Summary Cards -->
+  <div class="mb-4">
+    <h1 class="mb-3">
+      {{ loggedInInstructor?.firstName }} {{ loggedInInstructor?.lastName }} Instructor Dashboard
+    </h1>
+    <div class="row g-3">
+      <!-- Example summary card: Total Students -->
+      <div class="col-12 col-md-4">
+        <div class="card text-white bg-info h-100">
+          <div class="card-body">
+            <h5 class="card-title">Total Students</h5>
+            <p class="card-text fs-4">{{ students.length }}</p>
+          </div>
+        </div>
+      </div>
+      <!-- Summary card: Upcoming Events -->
+      <div class="col-12 col-md-4">
+        <div class="card text-white bg-success h-100">
+          <div class="card-body">
+            <h5 class="card-title">Upcoming Events</h5>
+            <p class="card-text fs-4">{{ events.length }}</p>
+          </div>
+        </div>
+      </div>
+      <!-- Summary card: Outstanding Payments -->
+      <div class="col-12 col-md-4">
+        <div class="card text-white bg-danger h-100">
+          <div class="card-body">
+            <h5 class="card-title">Outstanding Payments</h5>
+            <p class="card-text fs-4">
+              R{{ getTotalOutstanding }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Tabs for Navigation -->
   <ul class="nav nav-tabs mb-4">
     <li class="nav-item">
-      <a class="nav-link" [class.active]="selectedTab === 'attendance'" (click)="selectedTab = 'attendance'">Attendance</a>
+      <a class="nav-link" [class.active]="selectedTab === 'attendance'" (click)="selectedTab = 'attendance'">
+        Attendance
+      </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [class.active]="selectedTab === 'report'" (click)="selectedTab = 'report'">Instructor Report</a>
+      <a class="nav-link" [class.active]="selectedTab === 'report'" (click)="selectedTab = 'report'">
+        Instructor Report
+      </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [class.active]="selectedTab === 'events'" (click)="selectedTab = 'events'">Dojo Events</a>
+      <a class="nav-link" [class.active]="selectedTab === 'events'" (click)="selectedTab = 'events'">
+        Dojo Events
+      </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [class.active]="selectedTab === 'grading'" (click)="selectedTab = 'grading'">Grading Records</a>
+      <a class="nav-link" [class.active]="selectedTab === 'grading'" (click)="selectedTab = 'grading'">
+        Grading Records
+      </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [class.active]="selectedTab === 'resources'" (click)="selectedTab = 'resources'">Resources</a>
+      <a class="nav-link" [class.active]="selectedTab === 'resources'" (click)="selectedTab = 'resources'">
+        Resources
+      </a>
     </li>
   </ul>
 
-  <!-- Attendance Section -->
+  <!-- Tab Contents -->
   <div *ngIf="selectedTab === 'attendance'">
     <ng-container *ngIf="loggedInInstructor as instructor">
       <app-attendance [instructor]="instructor"></app-attendance>
     </ng-container>
   </div>
 
-  <!-- Instructor Report -->
   <div *ngIf="selectedTab === 'report'">
+    <!-- Instructor Report: Including Chart -->
     <app-instructor-report></app-instructor-report>
   </div>
 
-  <!-- Dojo Events Section -->
   <div *ngIf="selectedTab === 'events'">
-    <h2>Upcoming Events</h2>
-    <ul class="list-group">
-      <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let evt of events">
-        {{ evt.eventName }} - {{ evt.date | date: 'yyyy-MM-dd' }}
-        <button class="btn btn-primary" (click)="onFinalizeRegistration(evt)">Finalize Registration</button>
-      </li>
-    </ul>
+    <div class="card shadow-sm mb-4">
+      <div class="card-header">
+        <h2 class="h6 mb-0">Upcoming Events</h2>
+      </div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+          <li *ngFor="let evt of events" class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              {{ evt.eventName }} <br />
+              <small class="text-muted">{{ evt.date | date: 'yyyy-MM-dd' }}</small>
+            </div>
+            <button class="btn btn-sm btn-primary" (click)="onFinalizeRegistration(evt)" [disabled]="isEventDatePassed(evt)">
+              Finalize Registration
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 
-  <!-- Grading Records Section-->
   <div *ngIf="selectedTab === 'grading'">
-    <h2>Grading Report</h2>
-    <ul class="list-group">
-      <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let record of gradingRecords">
-        {{ record.studentId }} - {{ record.testingForBelt }}
-        <button class="btn btn-primary" (click)="viewGradingDetail(record)">View</button>
-      </li>
-    </ul>
+    <div class="card shadow-sm mb-4">
+      <div class="card-header">
+        <h2 class="h6 mb-0">Grading Report</h2>
+      </div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+          <li *ngFor="let record of gradingRecords" class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              {{ record.studentId }} - {{ record.testingForBelt }}
+            </div>
+            <button class="btn btn-sm btn-outline-primary" (click)="viewGradingDetail(record)">
+              View
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 
-  <!-- Resource Management Section -->
   <div *ngIf="selectedTab === 'resources'">
-    <h2>Training Resources</h2>
-    <ul class="list-group">
-      <li class="list-group-item" *ngFor="let resource of resources">
-        <a [href]="resource.fileUrl" target="_blank">{{ resource.title }}</a>
-      </li>
-    </ul>
+    <div class="card shadow-sm mb-4">
+      <div class="card-header">
+        <h2 class="h6 mb-0">Training Resources</h2>
+      </div>
+      <div class="card-body">
+        <ul class="list-group">
+          <li *ngFor="let resource of resources" class="list-group-item">
+            <a [href]="resource.fileUrl" target="_blank">{{ resource.title }}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>

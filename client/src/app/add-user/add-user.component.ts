@@ -33,6 +33,7 @@ export class AddUserComponent {
     firstName: '',
     lastName: '',
     email: '',
+    profileImageUrl:'',
     clubId: '', //TODO: ADD CLUB THE USER JOINED - DROP DOWN OF CLUBS OR ABLE TO REGISTER CLUB
     belt: Belt.WHITE,
     role: Role.STUDENT,   // Ensures we create a student
