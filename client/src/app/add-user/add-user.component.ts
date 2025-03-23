@@ -56,12 +56,12 @@ export class AddUserComponent {
     // For now, just do something simple:
     this.user.id = 'S' + Math.floor(Math.random() * 1000);
     this.user.memberId = 'M' + Math.floor(Math.random() * 1000);
-
+    this.user.clubId = this.mockData.getLoggedInUser()?.clubId || '';
     // Add to the mock data
     this.mockData.addUser(this.user);
 
-    console.log(`Added student: ${this.user.firstName} ${this.user.lastName}`);
-
+    console.log(`Added student: ${this.user.firstName} ${this.user.lastName} ${this.user.clubId}`);
+    console.log(`Added to club: ${this.mockData.getLoggedInUser()?.clubId} `);
     // Optionally reset the form
     this.user = {
       ...this.user,

@@ -28,8 +28,8 @@ export class NavComponent implements OnInit {
 
   // Routes now only include roles for logged-in users
   appRoutes = [
-    { path: 'instructor-dash', name: 'Instructor Dashboard', roles: [Role.INSTRUCTOR] },
-    { path: 'admin-dash', name: 'Admin Dashboard', roles: [Role.ADMIN] },
+    { path: 'instructor-dashboard', name: 'Instructor Dashboard', roles: [Role.INSTRUCTOR] },
+    { path: 'admin-dashboard', name: 'Admin Dashboard', roles: [Role.ADMIN] },
     { path: 'payment', name: 'Class Payment', roles: [Role.STUDENT, Role.INSTRUCTOR, Role.ADMIN] },
     { path: 'add-user', name: 'Add New User', roles: [Role.STUDENT, Role.INSTRUCTOR, Role.ADMIN] },
     { path: 'create-event', name: 'Create Event', roles: [Role.INSTRUCTOR, Role.ADMIN] },
