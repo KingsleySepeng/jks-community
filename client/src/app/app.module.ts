@@ -10,7 +10,6 @@ import { GoogleApiService } from './google-api.service';
 
 @NgModule({
   declarations: [
-    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -19,27 +18,26 @@ import { GoogleApiService } from './google-api.service';
     RouterModule.forRoot(routes)
   ],
   providers: [GoogleApiService],
-  bootstrap: [AppComponent]
 })
-export class AppModule implements OnInit {
-  async ngOnInit(): Promise<void> {
-    await this.initializeGapiClient();
-  }
+export class AppModule {
+  // async ngOnInit(): Promise<void> {
+  //   await this.initializeGapiClient();
+  // }
 
-  private async initializeGapiClient(): Promise<void> {
-    await loadGapiInsideDOM();
-    gapi.load('client:auth2', async () => {
-      await gapi.client.init({
-        apiKey: 'YOUR_API_KEY',
-        clientId: 'YOUR_CLIENT_ID',
-        discoveryDocs: [
-          'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
-          'https://sheets.googleapis.com/$discovery/rest?version=v4',
-          'https://www.googleapis.com/discovery/v1/apis/forms/v1/rest',
-          'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
-        ],
-        scope: 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/forms https://www.googleapis.com/auth/drive.readonly'
-      });
-    });
-  }
+  // private async initializeGapiClient(): Promise<void> {
+  //   await loadGapiInsideDOM();
+  //   gapi.load('client:auth2', async () => {
+  //     await gapi.client.init({
+  //       apiKey: 'YOUR_API_KEY',
+  //       clientId: 'YOUR_CLIENT_ID',
+  //       discoveryDocs: [
+  //         'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
+  //         'https://sheets.googleapis.com/$discovery/rest?version=v4',
+  //         'https://www.googleapis.com/discovery/v1/apis/forms/v1/rest',
+  //         'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
+  //       ],
+  //       scope: 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/forms https://www.googleapis.com/auth/drive.readonly'
+  //     });
+  //   });
+  // }
 }

@@ -33,3 +33,4 @@ export const routes: Routes = [
   { path: 'resource-list', component: ResourceListComponent },
   { path: 'logout', component: LoginComponent } // Add logout route
 ];
+//TODO: MVP 1: ATTENDANCE,GRADING,LOGIN,LOGOUT
