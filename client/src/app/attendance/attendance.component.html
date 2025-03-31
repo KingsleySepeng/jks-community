@@ -1,100 +1,140 @@
-<h2 class="mb-4 text-center">
-  Take Attendance for Class on {{ selectedDate | date: 'EEEE, yyyy-MM-dd' }}
-</h2>
+<div class="container mt-4">
+  <h2 class="mb-4 text-center">
+    Take Attendance for Class on {{ selectedDate | date: 'EEEE, yyyy-MM-dd' }}
+  </h2>
 
-<!-- Date Picker -->
-<div class="d-flex justify-content-center mb-3">
-  <input type="date" class="form-control w-auto"
-         [value]="selectedDateString"
-         (change)="onDateChange($event)" />
-</div>
+  <!-- Date Picker for taking attendance -->
+  <div class="d-flex justify-content-center mb-3">
+    <input type="date" class="form-control w-auto"
+           [value]="selectedDateString"
+           (change)="onDateChange($event)" />
+  </div>
 
-<h2 class="mb-4">Students</h2>
-<div class="list-group">
-  <div *ngFor="let student of students" class="list-group-item">
-    <div class="d-flex justify-content-between align-items-center">
-      <strong>{{ student.firstName }} {{ student.lastName }}</strong>
-      <!-- Toggle Attendance History -->
-      <button type="button" class="btn btn-link" (click)="toggleHistory(student.id)">
-        {{ attendanceState[student.id]?.showHistory ? 'Hide History' : 'View History' }}
-      </button>
+  <!-- Global Aggregation Date Range for History -->
+  <div class="row justify-content-center mb-4">
+    <div class="col-auto">
+      <label for="aggregationStart" class="form-label">History Start Date:</label>
+      <input type="date" id="aggregationStart" class="form-control"
+             [(ngModel)]="aggregationStartDate" (change)="updateAggregates()">
     </div>
-
-    <!-- Attendance Options -->
-    <div class="attendance-options my-2">
-      <div class="btn-group" role="group" aria-label="Attendance options">
-        <input type="radio" class="btn-check"
-               [name]="student.id + 'attendance'" id="{{student.id}}present"
-               [value]="AttendanceStatus.PRESENT"
-               [checked]="attendanceState[student.id]?.status === AttendanceStatus.PRESENT"
-               (change)="onAttendanceRadioChange(student.id, AttendanceStatus.PRESENT)" />
-        <label class="btn btn-outline-success" [for]="student.id + 'present'">Present</label>
-
-        <input type="radio" class="btn-check"
-               [name]="student.id + 'attendance'" id="{{student.id}}absent"
-               [value]="AttendanceStatus.ABSENT"
-               [checked]="attendanceState[student.id]?.status === AttendanceStatus.ABSENT"
-               (change)="onAttendanceRadioChange(student.id, AttendanceStatus.ABSENT)" />
-        <label class="btn btn-outline-danger" [for]="student.id + 'absent'">Absent</label>
-
-        <input type="radio" class="btn-check"
-               [name]="student.id + 'attendance'" id="{{student.id}}excused"
-               [value]="AttendanceStatus.EXCUSED"
-               [checked]="attendanceState[student.id]?.status === AttendanceStatus.EXCUSED"
-               (change)="onAttendanceRadioChange(student.id, AttendanceStatus.EXCUSED)" />
-        <label class="btn btn-outline-warning" [for]="student.id + 'excused'">Excused</label>
-      </div>
-    </div>
-
-    <!-- Comment Field -->
-    <div class="form-group">
-      <textarea class="form-control"
-                (input)="onCommentChange(student.id, $event)"
-                placeholder="Add comment for {{student.firstName}}"
-                [value]="attendanceState[student.id]?.comment"></textarea>
-    </div>
-
-    <!-- Attendance History -->
-    <div *ngIf="attendanceState[student.id]?.showHistory" class="mt-3">
-      <h5>Attendance History</h5>
-      <ul class="list-group">
-        <li class="list-group-item" *ngFor="let record of student.attendance">
-          {{ record.date | date: 'yyyy-MM-dd' }} -
-          <span [ngClass]="{
-            'text-success': record.status === AttendanceStatus.PRESENT,
-            'text-danger': record.status === AttendanceStatus.ABSENT,
-            'text-warning': record.status === AttendanceStatus.EXCUSED
-          }">{{ record.status }}</span>
-          <span *ngIf="record.comments"> ({{ record.comments }}) </span>
-        </li>
-      </ul>
+    <div class="col-auto">
+      <label for="aggregationEnd" class="form-label">History End Date:</label>
+      <input type="date" id="aggregationEnd" class="form-control"
+             [(ngModel)]="aggregationEndDate" (change)="updateAggregates()">
     </div>
   </div>
-</div>
 
-<!-- Save Attendance Button with Spinner -->
-<div class="text-center mt-4">
-  <button type="button" class="btn btn-primary" [disabled]="isSaving" (click)="onSaveAttendance()">
-    <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-    Save Attendance
-  </button>
-</div>
+  <h2 class="mb-4">Students</h2>
+  <div class="list-group">
+    <div *ngFor="let student of students" class="list-group-item">
+      <div class="d-flex justify-content-between align-items-center">
+        <strong>{{ student.firstName }} {{ student.lastName }}</strong>
+        <!-- Toggle Aggregated Attendance History -->
+        <button type="button" class="btn btn-link" (click)="toggleHistory(student.id)">
+          {{ attendanceState[student.id]?.showHistory ? 'Hide Aggregated History' : 'View Aggregated History' }}
+        </button>
+      </div>
 
-<!-- Modal -->
-<div class="modal fade show" *ngIf="showModal" style="display: block;" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Success</h5>
-        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+      <!-- Attendance Options -->
+      <div class="attendance-options my-2">
+        <div class="btn-group" role="group" aria-label="Attendance options">
+          <input type="radio" class="btn-check"
+                 [name]="student.id + 'attendance'" id="{{student.id}}present"
+                 [value]="AttendanceStatus.PRESENT"
+                 [checked]="attendanceState[student.id]?.status === AttendanceStatus.PRESENT"
+                 (change)="onAttendanceRadioChange(student.id, AttendanceStatus.PRESENT)" />
+          <label class="btn btn-outline-success" [for]="student.id + 'present'">Present</label>
+
+          <input type="radio" class="btn-check"
+                 [name]="student.id + 'attendance'" id="{{student.id}}absent"
+                 [value]="AttendanceStatus.ABSENT"
+                 [checked]="attendanceState[student.id]?.status === AttendanceStatus.ABSENT"
+                 (change)="onAttendanceRadioChange(student.id, AttendanceStatus.ABSENT)" />
+          <label class="btn btn-outline-danger" [for]="student.id + 'absent'">Absent</label>
+
+          <input type="radio" class="btn-check"
+                 [name]="student.id + 'attendance'" id="{{student.id}}excused"
+                 [value]="AttendanceStatus.EXCUSED"
+                 [checked]="attendanceState[student.id]?.status === AttendanceStatus.EXCUSED"
+                 (change)="onAttendanceRadioChange(student.id, AttendanceStatus.EXCUSED)" />
+          <label class="btn btn-outline-warning" [for]="student.id + 'excused'">Excused</label>
+        </div>
       </div>
-      <div class="modal-body">
-        <p>Attendance saved successfully!</p>
+
+      <!-- Comment Field -->
+      <div class="form-group">
+        <textarea class="form-control"
+                  (input)="onCommentChange(student.id, $event)"
+                  placeholder="Add comment for {{student.firstName}}"
+                  [value]="attendanceState[student.id]?.comment"></textarea>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" (click)="closeModal()">Close</button>
+
+      <!-- Aggregated Attendance History -->
+      <div *ngIf="attendanceState[student.id]?.showHistory" class="mt-3">
+        <h5>Aggregated Attendance ({{ aggregationStartDate | date:'yyyy-MM-dd' }} to {{ aggregationEndDate | date:'yyyy-MM-dd' }})</h5>
+        <p><strong>Total Classes:</strong> {{ getAttendanceSummary(student).total }}</p>
+        <p><strong>Attended:</strong> {{ getAttendanceSummary(student).present }} classes</p>
+        <p><strong>Not Attended:</strong> {{ getAttendanceSummary(student).notAttended }} classes</p>
+        <p><strong>Attendance Percentage:</strong> {{ getAttendanceSummary(student).percentage | number:'1.0-2' }}%</p>
       </div>
     </div>
   </div>
+
+  <!-- Detailed Attendance Table for the Specified Date Range -->
+  <div class="card shadow-sm mt-4">
+    <div class="card-header">
+      <h5 class="mb-0">Detailed Attendance ({{ aggregationStartDate | date:'yyyy-MM-dd' }} to {{ aggregationEndDate | date:'yyyy-MM-dd' }})</h5>
+    </div>
+    <div class="card-body p-0">
+      <table class="table table-bordered table-striped">
+        <thead class="table-light">
+        <tr>
+          <th>Date</th>
+          <th>Student</th>
+          <th>Status</th>
+          <th>Comment</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let record of getDetailedAttendance()">
+          <td>{{ record.date | date: 'yyyy-MM-dd' }}</td>
+          <td>{{ getStudentName(record.userId) }}</td>
+          <td [ngClass]="{
+              'text-success': record.status === AttendanceStatus.PRESENT,
+              'text-danger': record.status === AttendanceStatus.ABSENT,
+              'text-warning': record.status === AttendanceStatus.EXCUSED
+            }">{{ record.status }}</td>
+          <td>{{ record.comments }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Save Attendance Button with Spinner -->
+  <div class="text-center mt-4">
+    <button type="button" class="btn btn-primary" [disabled]="isSaving" (click)="onSaveAttendance()">
+      <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+      Save Attendance
+    </button>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade show" *ngIf="showModal" style="display: block;" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Success</h5>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Attendance saved successfully!</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" (click)="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show" *ngIf="showModal"></div>
 </div>
-<div class="modal-backdrop fade show" *ngIf="showModal"></div>

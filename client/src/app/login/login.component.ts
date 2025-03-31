@@ -61,7 +61,7 @@ export class LoginComponent implements OnInit {
     }
 
     this.isLoading = true;
-    const { email, password, rememberMe } = this.loginForm.value;
+    const {email, password, rememberMe} = this.loginForm.value;
 
     // Clear previous error messages.
     this.errorMessage = '';
@@ -82,15 +82,17 @@ export class LoginComponent implements OnInit {
       // Navigate based on role.
       if (user.role === Role.INSTRUCTOR) {
         this.router.navigate(['/instructor-dashboard']);
-      } else if (user.role === Role.ADMIN) {
-        this.router.navigate(['/admin-dashboard']);
-      } else {
-        this.router.navigate(['/student-dashboard']);
       }
-    } else {
-      console.log('Login failed: invalid credentials');
-      // Set an inline error message.
-      this.errorMessage = 'Invalid credentials. Please try again.';
+        // else if (user.role === Role.ADMIN) {
+        //   this.router.navigate(['/admin-dashboard']);
+        // } else {
+        //   this.router.navigate(['/student-dashboard']);
+      // }
+      else {
+        console.log('Login failed: invalid credentials');
+        // Set an inline error message.
+        this.errorMessage = 'Invalid credentials. Please try again.';
+      }
     }
   }
 

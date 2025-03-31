@@ -42,4 +42,5 @@ export interface Admin extends BaseUser {
 }
 
 // Union Type for User
-export type User = Instructor | Student | Admin;
+export type User = Instructor | Student;
+export type AttendanceUser = Student | Instructor;

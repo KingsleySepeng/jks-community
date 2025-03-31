@@ -92,21 +92,24 @@
     </div>
   </div>
 
-  <!-- Final Decision Section -->
+  <!-- Final Decision Section for Each Student -->
   <div class="mb-4" *ngIf="selectedStudents.length > 0 && belt">
-    <h4>Final Decision</h4>
-    <div class="row">
-      <div class="col-md-4">
-        <label for="finalDecision" class="form-label">Decision:</label>
-        <select id="finalDecision" class="form-select" [(ngModel)]="finalDecision">
-          <option value="pass">Pass</option>
-          <option value="fail">Fail</option>
-          <option value="regrade">Regrade (in a couple of months - small stuff to fix)</option>
-        </select>
-      </div>
-      <div class="col-md-8">
-        <label for="finalComment" class="form-label">Comment:</label>
-        <textarea id="finalComment" class="form-control" rows="2" [(ngModel)]="finalComment" placeholder="Enter your final comment..."></textarea>
+    <h4>Final Decisions</h4>
+    <div *ngFor="let student of selectedStudents" class="mb-3 border rounded p-3">
+      <h5>{{ student.firstName }} {{ student.lastName }}</h5>
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-label">Decision:</label>
+          <select class="form-select" [(ngModel)]="finalDecisions[student.id].decision">
+            <option value="pass">Pass</option>
+            <option value="fail">Fail</option>
+            <option value="regrade">Regrade (in a couple of months - small stuff to fix)</option>
+          </select>
+        </div>
+        <div class="col-md-8">
+          <label class="form-label">Comment:</label>
+          <textarea class="form-control" rows="2" [(ngModel)]="finalDecisions[student.id].comment" placeholder="Enter final comment for this student"></textarea>
+        </div>
       </div>
     </div>
   </div>

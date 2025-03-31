@@ -1,55 +1,54 @@
 <div class="container mt-4">
-  <h1 class="mb-4">Instructor Add Student</h1>
-  <form (ngSubmit)="addStudent()">
-    <div class="form-group mb-3">
-      <label for="firstName" class="form-label">First Name</label>
-      <input
-        type="text"
-        id="firstName"
-        name="firstName"
-        class="form-control"
-        placeholder="First Name"
-        [(ngModel)]="user.firstName"
-      />
+  <h1 class="mb-4">Instructor Manage Students</h1>
+
+  <!-- Add Student Form -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Add New Student</h5>
     </div>
-    <div class="form-group mb-3">
-      <label for="lastName" class="form-label">Last Name</label>
-      <input
-        type="text"
-        id="lastName"
-        name="lastName"
-        class="form-control"
-        placeholder="Last Name"
-        [(ngModel)]="user.lastName"
-      />
+    <div class="card-body">
+      <form (ngSubmit)="addStudent()">
+        <div class="form-group mb-3">
+          <label for="firstName" class="form-label">First Name</label>
+          <input type="text" id="firstName" name="firstName" class="form-control" placeholder="First Name" [(ngModel)]="user.firstName" required />
+        </div>
+        <div class="form-group mb-3">
+          <label for="lastName" class="form-label">Last Name</label>
+          <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Last Name" [(ngModel)]="user.lastName" required />
+        </div>
+        <div class="form-group mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" id="email" name="email" class="form-control" placeholder="Email" [(ngModel)]="user.email" required />
+        </div>
+        <div class="form-group mb-3">
+          <label for="rank" class="form-label">Rank</label>
+          <select id="rank" name="rank" class="form-select" [(ngModel)]="user.rank" required>
+            <option *ngFor="let rank of ranks" [value]="rank">{{ rank }}</option>
+          </select>
+        </div>
+        <div class="form-group mb-3">
+          <label for="belt" class="form-label">Belt</label>
+          <select id="belt" name="belt" class="form-select" [(ngModel)]="user.belt" required>
+            <option *ngFor="let belt of belts" [value]="belt">{{ belt }}</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Student</button>
+      </form>
     </div>
-    <div class="form-group mb-3">
-      <label for="email" class="form-label">Email</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        class="form-control"
-        placeholder="Email"
-        [(ngModel)]="user.email"
-      />
+  </div>
+
+  <!-- List of Students in the Club -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">Students in Your Club</h5>
     </div>
-    <div class="form-group mb-3">
-      <label for="rank" class="form-label">Rank</label>
-      <select id="rank" name="rank" class="form-select" [(ngModel)]="user.rank">
-        <option *ngFor="let rank of ranks" [value]="rank">
-          {{ rank }}
-        </option>
-      </select>
+    <div class="card-body">
+      <ul class="list-group">
+        <li *ngFor="let student of clubStudents" class="list-group-item d-flex justify-content-between align-items-center">
+          {{ student.firstName }} {{ student.lastName }} ({{ student.email }})
+          <button type="button" class="btn btn-sm btn-danger" (click)="removeStudent(student.id)">Remove</button>
+        </li>
+      </ul>
     </div>
-    <div class="form-group mb-3">
-      <label for="belt" class="form-label">Belt</label>
-      <select id="belt" name="belt" class="form-select" [(ngModel)]="user.belt">
-        <option *ngFor="let belt of belts" [value]="belt">
-          {{ belt }}
-        </option>
-      </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Add Student</button>
-  </form>
+  </div>
 </div>

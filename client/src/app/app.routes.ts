@@ -18,19 +18,10 @@ import {StudentDashComponent} from './student-dash/student-dash.component';
 export const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'instructor-dashboard', component: InstructorDashComponent },
-  {path:'admin-dashboard',component:AdminDashComponent},
-  {path:'student-dashboard',component:StudentDashComponent},
   {path:'add-user',component:AddUserComponent},
-  { path: 'payment', component: ClassPayComponent },
-  { path: 'create-event', component: CreateEventComponent },
-  { path: 'event-list', component: EventListComponent },
   { path: 'grading-form', component: GradingFormComponent },
   { path: 'grading-report', component: GradingReportComponent },
   { path: 'grading-detail/:id', component: GradingDetailComponent },
-  { path: 'user-profile', component: UserProfileComponent },
-  { path: 'club-profile', component: ClubProfileComponent },
-  { path: 'resource-upload', component: UploadResourceComponent },
-  { path: 'resource-list', component: ResourceListComponent },
   { path: 'logout', component: LoginComponent } // Add logout route
 ];
 //TODO: MVP 1: ATTENDANCE,GRADING,LOGIN,LOGOUT

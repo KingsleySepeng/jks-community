@@ -30,8 +30,10 @@ export class GradingFormComponent implements OnInit {
   instructor?: User;
   allBelts: Belt[] = [Belt.WHITE, Belt.YELLOW, Belt.GREEN, Belt.BLUE, Belt.RED, Belt.BLACK];
   showModal: boolean = false;
-  // Define allowed technique categories for type safety.
   public categories: Array<'kihon' | 'kata' | 'kumite'> = ['kihon', 'kata', 'kumite'];
+
+  // New property: Final decisions per student
+  finalDecisions: { [studentId: string]: { decision: 'pass' | 'fail' | 'regrade'; comment: string } } = {};
 
   constructor(private mockDataService: MockDataService) {}
 
@@ -42,7 +44,7 @@ export class GradingFormComponent implements OnInit {
       console.error('No instructor is logged in!');
       return;
     }
-    this.allStudents = this.mockDataService.getUsers().filter(user => user.role === Role.STUDENT) as Student[];
+    this.allStudents = this.mockDataService.getUsers().filter(user => user.role === Role.STUDENT && user.clubId === this.instructor?.clubId) as Student[];
     await this.initializeGapiClient();
   }
 
@@ -81,6 +83,8 @@ export class GradingFormComponent implements OnInit {
 
   addStudent(student: Student) {
     this.selectedStudents.push(student);
+    // Initialize final decision for the new student.
+    this.finalDecisions[student.id] = { decision: 'pass', comment: '' };
     // Clear search input and suggestions.
     this.studentSearchTerm = '';
     this.filteredStudents = [];
@@ -89,6 +93,7 @@ export class GradingFormComponent implements OnInit {
 
   removeStudent(studentId: string) {
     this.selectedStudents = this.selectedStudents.filter(s => s.id !== studentId);
+    delete this.finalDecisions[studentId];
     this.buildEvaluationMatrix();
   }
 
@@ -134,32 +139,25 @@ export class GradingFormComponent implements OnInit {
     ];
     const body = { values };
     try {
-      const response = await gapi.client.sheets.spreadsheets.values.append({
+      await gapi.client.sheets.spreadsheets.values.append({
         spreadsheetId,
         range,
         valueInputOption: 'RAW',
         resource: body
       });
-      console.log('Data appended to Google Sheets: ', response);
+      console.log('Data appended to Google Sheets: ', record);
     } catch (error) {
       console.error('Error appending data to Google Sheets: ', error);
     }
   }
 
-  finalDecision: 'pass' | 'fail' | 'regrade' = 'pass';
-  finalComment: string = '';
-
   async submitGrading() {
     if (!this.instructor || !this.belt) return;
 
-    // Check that a final decision has been selected.
-    if (!this.finalDecision) {
-      console.error('Please select a final decision.');
-      return;
-    }
-
+    // Iterate over each selected student.
     for (let student of this.selectedStudents) {
       const filteredEvals = this.multiEvaluations.filter(m => m.studentId === student.id);
+      const finalDecisionForStudent = this.finalDecisions[student.id] || { decision: 'pass', comment: '' };
 
       const record: GradingRecord = {
         id: this.generateId(),
@@ -174,8 +172,8 @@ export class GradingFormComponent implements OnInit {
           rating: f.rating,
           comment: f.comment
         })),
-        overallDecision: this.finalDecision,
-        overallComment: this.finalComment
+        overallDecision: finalDecisionForStudent.decision,
+        overallComment: finalDecisionForStudent.comment
       };
       this.mockDataService.saveGradingRecord(record);
       await this.updateGoogleSheetsWithGradingData(record);
@@ -183,6 +181,7 @@ export class GradingFormComponent implements OnInit {
     // Clear selections and evaluations after submission.
     this.selectedStudents = [];
     this.multiEvaluations = [];
+    this.finalDecisions = {};
     // Show submission confirmation modal.
     this.showModal = true;
   }

@@ -15,25 +15,25 @@
         </div>
       </div>
       <!-- Summary card: Upcoming Events -->
-      <div class="col-12 col-md-4">
-        <div class="card text-white bg-success h-100">
-          <div class="card-body">
-            <h5 class="card-title">Upcoming Events</h5>
-            <p class="card-text fs-4">{{ events.length }}</p>
-          </div>
-        </div>
-      </div>
-      <!-- Summary card: Outstanding Payments -->
-      <div class="col-12 col-md-4">
-        <div class="card text-white bg-danger h-100">
-          <div class="card-body">
-            <h5 class="card-title">Outstanding Payments</h5>
-            <p class="card-text fs-4">
-              R{{ getTotalOutstanding }}
-            </p>
-          </div>
-        </div>
-      </div>
+<!--      <div class="col-12 col-md-4">-->
+<!--        <div class="card text-white bg-success h-100">-->
+<!--          <div class="card-body">-->
+<!--            <h5 class="card-title">Upcoming Events</h5>-->
+<!--            <p class="card-text fs-4">{{ events.length }}</p>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      &lt;!&ndash; Summary card: Outstanding Payments &ndash;&gt;-->
+<!--      <div class="col-12 col-md-4">-->
+<!--        <div class="card text-white bg-danger h-100">-->
+<!--          <div class="card-body">-->
+<!--            <h5 class="card-title">Outstanding Payments</h5>-->
+<!--            <p class="card-text fs-4">-->
+<!--              R{{ getTotalOutstanding }}-->
+<!--            </p>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
   </div>
 
@@ -44,26 +44,26 @@
         Attendance
       </a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" [class.active]="selectedTab === 'report'" (click)="selectedTab = 'report'">
-        Instructor Report
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [class.active]="selectedTab === 'events'" (click)="selectedTab = 'events'">
-        Dojo Events
-      </a>
-    </li>
+<!--    <li class="nav-item">-->
+<!--      <a class="nav-link" [class.active]="selectedTab === 'report'" (click)="selectedTab = 'report'">-->
+<!--        Instructor Report-->
+<!--      </a>-->
+<!--    </li>-->
+<!--    <li class="nav-item">-->
+<!--      <a class="nav-link" [class.active]="selectedTab === 'events'" (click)="selectedTab = 'events'">-->
+<!--        Dojo Events-->
+<!--      </a>-->
+<!--    </li>-->
     <li class="nav-item">
       <a class="nav-link" [class.active]="selectedTab === 'grading'" (click)="selectedTab = 'grading'">
         Grading Records
       </a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" [class.active]="selectedTab === 'resources'" (click)="selectedTab = 'resources'">
-        Resources
-      </a>
-    </li>
+<!--    <li class="nav-item">-->
+<!--      <a class="nav-link" [class.active]="selectedTab === 'resources'" (click)="selectedTab = 'resources'">-->
+<!--        Resources-->
+<!--      </a>-->
+<!--    </li>-->
   </ul>
 
   <!-- Tab Contents -->

@@ -57,7 +57,7 @@ export class InstructorDashComponent implements OnInit {
     }
 
     const users = this.mockDataService.getUsers();
-    this.students = users.filter(user => user.clubId === this.loggedInInstructor!.clubId && user.role === Role.STUDENT) as Student[];
+    this.students = users.filter(user => user.clubId === this.loggedInInstructor!.clubId) as Student[];
 
     // Fetch Club Data
     this.club = this.mockDataService.getClubById(this.loggedInInstructor.clubId);

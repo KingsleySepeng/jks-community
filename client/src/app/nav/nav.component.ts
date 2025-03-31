@@ -22,23 +22,16 @@ import { Club } from '../model/club';
 })
 export class NavComponent implements OnInit {
   menuOpen = false;
-  loggedInUser?: User;
+  loggedInUser?: User; //TODO: CREATE SUBJECT BEHAVIOUR FOR LOGGED IN USER SO THAT LABELS CAN BE UPDATED AUTOMATICALLY
   userProfileLabel: string = 'User Profile';
   clubProfileLabel: string = 'Club Profile';
 
   // Routes now only include roles for logged-in users
   appRoutes = [
     { path: 'instructor-dashboard', name: 'Instructor Dashboard', roles: [Role.INSTRUCTOR] },
-    { path: 'admin-dashboard', name: 'Admin Dashboard', roles: [Role.ADMIN] },
-    { path: 'payment', name: 'Class Payment', roles: [Role.STUDENT, Role.INSTRUCTOR, Role.ADMIN] },
     { path: 'add-user', name: 'Add New User', roles: [Role.STUDENT, Role.INSTRUCTOR, Role.ADMIN] },
-    { path: 'create-event', name: 'Create Event', roles: [Role.INSTRUCTOR, Role.ADMIN] },
-    { path: 'event-list', name: 'Event List', roles: [Role.INSTRUCTOR, Role.ADMIN] },
     { path: 'grading-form', name: 'Grading Form', roles: [Role.INSTRUCTOR] },
     { path: 'grading-report', name: 'Grading Report', roles: [Role.INSTRUCTOR, Role.ADMIN] },
-    { path: 'grading-detail/:id', name: 'Grading Detail', roles: [Role.INSTRUCTOR, Role.ADMIN] },
-    { path: 'resource-upload', name: 'Upload Resource', roles: [Role.INSTRUCTOR, Role.ADMIN] },
-    { path: 'resource-list', name: 'Resource List', roles: [Role.INSTRUCTOR, Role.ADMIN, Role.STUDENT] },
   ];
 
   constructor(private mockDataService: MockDataService) {}
