@@ -1,6 +1,7 @@
+/* Bootstrap Navbar Styles */
 .navbar {
-  background-color: #222;
-  color: #fff;
+  @extend .navbar-light !optional;
+  @extend .bg-light !optional;
   padding: 1rem 2rem;
   display: flex;
   align-items: center;

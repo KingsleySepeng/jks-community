@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
-import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import {NgClass, NgForOf, NgIf} from '@angular/common';
-import {MockDataService} from '../mock-service/mock-data.service';
+import { MockDataService } from '../mock-service/mock-data.service';
 import { Role } from '../model/role';
-import {User} from '../model/user';
-import {Club} from '../model/club';
+import { User } from '../model/user';
+import { Club } from '../model/club';
 
 @Component({
   selector: 'app-nav',
@@ -15,37 +15,32 @@ import {Club} from '../model/club';
     RouterOutlet,
     NgForOf,
     NgIf,
+    NgClass,
   ],
   templateUrl: './nav.component.html',
-  styleUrl: './nav.component.scss'
+  styleUrls: ['./nav.component.scss']
 })
-export class NavComponent {
+export class NavComponent implements OnInit {
   menuOpen = false;
-  loggedInUser?: User;
+  loggedInUser?: User; //TODO: CREATE SUBJECT BEHAVIOUR FOR LOGGED IN USER SO THAT LABELS CAN BE UPDATED AUTOMATICALLY
   userProfileLabel: string = 'User Profile';
   clubProfileLabel: string = 'Club Profile';
-  // Add a "roles" array to each route. This controls which roles can see the link.
-  // Use a special "GUEST" role for users who are not logged in.
+
+  // Routes now only include roles for logged-in users
   appRoutes = [
-    { path: '', name: 'Login', roles: [Role.STUDENT, Role.INSTRUCTOR, Role.ADMIN] },
-    { path: 'instructor-dash', name: 'Instructor Dashboard', roles: [Role.INSTRUCTOR] },
-    { path: 'admin-dash', name: 'Admin Dashboard',  roles: [Role.STUDENT, Role.INSTRUCTOR, Role.ADMIN] }, // TODO: ADMIN DOESNT WORK
-    { path: 'payment', name: 'Class Payment', roles: [Role.STUDENT, Role.INSTRUCTOR, Role.ADMIN] },
+    { path: 'instructor-dashboard', name: 'Instructor Dashboard', roles: [Role.INSTRUCTOR] },
     { path: 'add-user', name: 'Add New User', roles: [Role.STUDENT, Role.INSTRUCTOR, Role.ADMIN] },
-    { path: 'create-event', name: 'Create Event', roles: [Role.INSTRUCTOR, Role.ADMIN] },
-    { path: 'event-list', name: 'Event List', roles: [Role.INSTRUCTOR, Role.ADMIN] },
     { path: 'grading-form', name: 'Grading Form', roles: [Role.INSTRUCTOR] },
     { path: 'grading-report', name: 'Grading Report', roles: [Role.INSTRUCTOR, Role.ADMIN] },
-    { path: 'grading-detail/:id', name: 'Grading Detail', roles: [Role.INSTRUCTOR, Role.ADMIN] },
-    { path: 'user-profile', name: 'User Profile', roles: [Role.STUDENT, Role.INSTRUCTOR, Role.ADMIN] },
-    { path: 'club-profile', name: 'Club Profile', roles: [Role.INSTRUCTOR, Role.ADMIN] },
-    { path: 'resource-upload', name: 'Upload Resource', roles: [Role.INSTRUCTOR, Role.ADMIN] },
-    { path: 'resource-list', name: 'Resource List', roles: [Role.INSTRUCTOR, Role.ADMIN, Role.STUDENT] },
   ];
 
   constructor(private mockDataService: MockDataService) {}
 
-  toggleMenu() {
+  ngOnInit(): void {
+    this.updateNavLabels();
+  }
+
+  toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
   }
 
@@ -58,14 +53,16 @@ export class NavComponent {
     return user ? user.role : null;
   }
 
-  // Check if the user's role is in the route's "roles" array
-  canAccess(routeRoles: Role[]): boolean {
+  // Only display a route if the user is logged in and has the appropriate role.
+  canAccess(routeRoles: any[]): boolean {
     const userRole = this.getUserRole();
-    if (!userRole) return false; // no user => can't access
+    if (!userRole) {
+      return false;
+    }
     return routeRoles.includes(userRole);
   }
 
-  logout() {
+  logout(): void {
     this.mockDataService.logout();
   }
 

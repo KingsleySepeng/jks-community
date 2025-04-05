@@ -8,6 +8,7 @@
       <tr>
         <th>Student</th>
         <th>Current Belt</th>
+        <th>Exam for</th>
         <th>Examiner</th>
         <th>Decision</th>
         <th>Actions</th>
@@ -17,6 +18,7 @@
       <tr *ngFor="let rec of groupedRecords[dateKey]">
         <td>{{ getStudentName(rec.studentId) }}</td>
         <td>{{ rec.currentBelt }}</td>
+        <td>{{ rec.testingForBelt }}</td>
         <td>{{ getExaminerName(rec.examinerId) }}</td>
         <td>{{ rec.overallDecision }}</td>
         <td>

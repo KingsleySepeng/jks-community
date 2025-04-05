@@ -1,42 +1,64 @@
-<div class="user-profile">
-  <h2>User Profile</h2>
-
+<div class="container my-5">
   <div *ngIf="currentUser; else noUser">
-    <p><strong>ID:</strong> {{ currentUser.id }}</p>
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white d-flex align-items-center">
+        <!-- Profile image (circle) -->
+        <img
+          [src]="currentUser.profileImageUrl || 'assets/default-user.png'"
+          alt="User Profile Image"
+          class="rounded-circle me-3"
+          style="width: 60px; height: 60px; object-fit: cover;"
+        />
+        <h2 class="h5 mb-0">User Profile</h2>
+      </div>
+      <div class="card-body">
+        <!-- Read-Only View -->
+        <div *ngIf="!isEditing; else editForm">
+          <p><strong>ID:</strong> {{ currentUser.id }}</p>
+          <p>
+            <strong>Name:</strong>
+            {{ currentUser.firstName }} {{ currentUser.lastName }}
+          </p>
+          <p><strong>Email:</strong> {{ currentUser.email }}</p>
+          <p>
+            <strong>Belt:</strong>
+            <span class="badge bg-info text-dark">{{ currentUser.belt }}</span>
+          </p>
+          <!-- Add more read-only fields as needed -->
+          <button class="btn btn-outline-primary" (click)="onEditToggle()">Edit Profile</button>
+        </div>
 
-    <!-- If not editing, display read-only info -->
-    <div *ngIf="!isEditing">
-      <p><strong>Name:</strong> {{ currentUser.firstName }} {{ currentUser.lastName }}</p>
-      <p><strong>Email:</strong> {{ currentUser.email }}</p>
-      <p><strong>Belt:</strong> {{ currentUser.belt }}</p>
-      <!-- etc. -->
-      <button (click)="onEditToggle()">Edit Profile</button>
+        <!-- Editing Mode -->
+        <ng-template #editForm>
+          <div class="mb-3">
+            <label class="form-label">First Name:</label>
+            <input type="text" class="form-control" [(ngModel)]="currentUser.firstName" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Last Name:</label>
+            <input type="text" class="form-control" [(ngModel)]="currentUser.lastName" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email:</label>
+            <input type="email" class="form-control" [(ngModel)]="currentUser.email" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Belt:</label>
+            <select class="form-select" [(ngModel)]="currentUser.belt">
+              <option *ngFor="let b of belts" [ngValue]="b">{{ b }}</option>
+            </select>
+          </div>
+          <!-- Other fields as needed -->
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary" (click)="onSaveChanges()">Save</button>
+            <button class="btn btn-secondary" (click)="onEditToggle()">Cancel</button>
+          </div>
+        </ng-template>
+      </div>
     </div>
-
-    <!-- If editing, display form fields -->
-    <div *ngIf="isEditing">
-      <label>First Name:</label>
-      <input [(ngModel)]="currentUser.firstName" />
-
-      <label>Last Name:</label>
-      <input [(ngModel)]="currentUser.lastName" />
-
-      <label>Email:</label>
-      <input [(ngModel)]="currentUser.email" />
-
-      <label>Belt:</label>
-      <select [(ngModel)]="currentUser.belt">
-        <option *ngFor="let b of belts" [ngValue]="b">{{ b }}</option>
-      </select>
-      <!-- other fields as needed -->
-
-      <button (click)="onSaveChanges()">Save</button>
-      <button (click)="onEditToggle()">Cancel</button>
-    </div>
-
   </div>
 
   <ng-template #noUser>
-    <p>No user found or you are not logged in.</p>
+    <div class="alert alert-warning">No user found or you are not logged in.</div>
   </ng-template>
 </div>

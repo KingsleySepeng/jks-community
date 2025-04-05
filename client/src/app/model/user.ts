@@ -10,6 +10,7 @@ export interface BaseUser {
   firstName: string;
   lastName: string;
   clubId: string;
+  profileImageUrl: string,
   belt: Belt;
   role: Role;
   password:string;
@@ -41,4 +42,5 @@ export interface Admin extends BaseUser {
 }
 
 // Union Type for User
-export type User = Instructor | Student | Admin;
+export type User = Instructor | Student;
+export type AttendanceUser = Student | Instructor;

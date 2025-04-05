@@ -1,31 +1,41 @@
-<div class="resource-list-container">
-  <h2>Available Resources</h2>
+<div class="container my-5">
+  <h2 class="mb-4">Available Resources</h2>
 
   <!-- Category Filter -->
-  <div>
-    <label>Filter by Category:</label>
-    <select [(ngModel)]="selectedCategory" (change)="onCategoryChange()">
+  <div class="mb-4 d-flex align-items-center">
+    <label class="form-label me-2">Filter by Category:</label>
+    <select class="form-select w-auto" [(ngModel)]="selectedCategory" (change)="onCategoryChange()">
       <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
     </select>
   </div>
 
-  <div *ngIf="filteredResources.length > 0; else noResources">
-    <ul>
-      <li *ngFor="let res of filteredResources">
-        <strong>{{ res.title }}</strong>
-        <span>({{ res.category }})</span>
-        <p>{{ res.description }}</p>
-        <!-- If there's a fileUrl, link to it -->
-        <a *ngIf="res.fileUrl" [href]="res.fileUrl" target="_blank">Open PDF/Doc</a>
-        <br/>
-        <!-- If there's a videoUrl, link or embed it -->
-        <a *ngIf="res.videoUrl" [href]="res.videoUrl" target="_blank">Watch Video</a>
-        <hr/>
-      </li>
-    </ul>
+  <!-- Resources Summary Chart -->
+<!--  <div class="mb-4">-->
+<!--    <canvas id="resourceChart"></canvas>-->
+<!--  </div>-->
+
+  <!-- Resources Grid -->
+  <div *ngIf="filteredResources.length > 0; else noResources" class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="col" *ngFor="let res of filteredResources">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{{ res.title }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{ res.category }}</h6>
+          <p class="card-text">{{ res.description }}</p>
+        </div>
+        <div class="card-footer">
+          <ng-container *ngIf="res.fileUrl">
+            <a [href]="res.fileUrl" target="_blank" class="btn btn-sm btn-outline-primary me-2">Open PDF/Doc</a>
+          </ng-container>
+          <ng-container *ngIf="res.videoUrl">
+            <a [href]="res.videoUrl" target="_blank" class="btn btn-sm btn-outline-danger">Watch Video</a>
+          </ng-container>
+        </div>
+      </div>
+    </div>
   </div>
 
   <ng-template #noResources>
-    <p>No resources found.</p>
+    <div class="alert alert-info">No resources found.</div>
   </ng-template>
 </div>

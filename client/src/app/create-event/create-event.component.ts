@@ -7,6 +7,9 @@ import {User} from '../model/user';
 import {Club} from '../model/club';
 import {Role} from '../model/role';
 import {NgIf} from '@angular/common';
+import { loadGapiInsideDOM } from 'gapi-script';
+import {GoogleApiService} from '../google-api.service';
+declare var gapi: any;
 
 @Component({
   selector: 'app-create-event',
@@ -30,23 +33,50 @@ export class CreateEventComponent {
   loggedInUser?: User ;
   userClub?: Club;
 
-  constructor(private mockData: MockDataService, private router: Router) {}
+  constructor(private mockData: MockDataService, private router: Router,private googleApiService:GoogleApiService) {}
 
-
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.loggedInUser = this.mockData.getLoggedInUser();
 
     if (!this.loggedInUser || !this.userClub) {
-      console.error('No logged-in user O club associated with the logged-in user found.');
+      console.error('No logged-in user or club associated with the logged-in user found.');
       return;
     }
 
     if (this.loggedInUser && this.loggedInUser.role === Role.INSTRUCTOR || Role.ADMIN) {
       this.userClub = this.mockData.getClubById(this.loggedInUser.clubId);
     }
+
+    await this.googleApiService.initializeGapiClient();
   }
 
-  onCreateEvent() {
+  async createGoogleCalendarEvent(event: Events): Promise<void> {
+    const eventDetails = {
+      summary: event.eventName,
+      location: event.location,
+      description: event.description,
+      start: {
+        dateTime: event.date.toISOString(),
+        timeZone: 'America/Los_Angeles'
+      },
+      end: {
+        dateTime: new Date(event.date.getTime() + 60 * 60 * 1000).toISOString(),
+        timeZone: 'America/Los_Angeles'
+      }
+    };
+
+    try {
+      const response = await gapi.client.calendar.events.insert({
+        calendarId: 'primary',
+        resource: eventDetails
+      });
+      console.log('Event created: ', response);
+    } catch (error) {
+      console.error('Error creating event: ', error);
+    }
+  }
+
+  async onCreateEvent() {
     if (!this.validateInputs()) {
       alert('Please fill all required fields correctly.');
       return;
@@ -72,6 +102,8 @@ export class CreateEventComponent {
     if (this.notify) {
       this.sendNotification();
     }
+
+    await this.createGoogleCalendarEvent(newEvent);
 
     alert(`Event "${this.eventName}" created successfully!`);
     this.router.navigate(['/event-list']);

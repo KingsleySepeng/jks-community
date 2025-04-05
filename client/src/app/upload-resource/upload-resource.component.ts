@@ -1,27 +1,24 @@
 import { Component } from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {NgForOf} from '@angular/common';
-import {Resource} from '../model/resource';
-import {Router} from '@angular/router';
-import {MockDataService} from '../mock-service/mock-data.service';
+import { FormsModule } from '@angular/forms';
+import { NgForOf } from '@angular/common';
+import { Resource } from '../model/resource';
+import { Router } from '@angular/router';
+import { MockDataService } from '../mock-service/mock-data.service';
 
 @Component({
   selector: 'app-upload-resource',
   standalone: true,
-  imports: [
-    FormsModule,
-    NgForOf
-  ],
+  imports: [FormsModule, NgForOf],
   templateUrl: './upload-resource.component.html',
-  styleUrl: './upload-resource.component.scss'
+  styleUrls: ['./upload-resource.component.scss']
 })
 export class UploadResourceComponent {
   title: string = '';
   description: string = '';
   fileUrl: string = '';    // or handle actual file uploads if needed
   videoUrl: string = '';
-  category: string = 'Syllabus'; // or default
-  categories = ['Syllabus', 'SeminarVideo', 'PDF', 'Other']; // example
+  category: string = 'Syllabus'; // default category
+  categories = ['Syllabus', 'SeminarVideo', 'PDF', 'Other'];
 
   constructor(
     private mockData: MockDataService,

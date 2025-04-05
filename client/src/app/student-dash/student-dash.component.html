@@ -1,0 +1,111 @@
+<div class="container mt-4">
+  <h1 class="mb-4">{{ currentUser?.firstName }} {{ currentUser?.lastName }} Student Dashboard</h1>
+
+  <!-- Summary Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card text-white bg-primary">
+        <div class="card-body text-center">
+          <h5 class="card-title">Grading Records</h5>
+          <p class="card-text fs-4">{{ gradingRecords.length }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card text-white bg-success">
+        <div class="card-body text-center">
+          <h5 class="card-title">Attended Events</h5>
+          <p class="card-text fs-4">{{ attendedEvents.length }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card text-white bg-danger">
+        <div class="card-body text-center">
+          <h5 class="card-title">Outstanding Fees</h5>
+          <p class="card-text fs-4">R{{ outstandingFees }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card text-white bg-warning">
+        <div class="card-body text-center">
+          <h5 class="card-title">Payments Made</h5>
+          <p class="card-text fs-4">{{ paymentHistory.length }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grading Breakdown Chart -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title mb-0">Grading Decision Breakdown</h5>
+    </div>
+    <div class="card-body">
+      <canvas id="studentGradingChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Detailed Sections -->
+  <div class="row">
+    <!-- Grading Results -->
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title">Grading Results</h5>
+        </div>
+        <div class="card-body">
+          <ul *ngIf="gradingRecords.length; else noGrades">
+            <li *ngFor="let record of gradingRecords">
+              {{ record.testingForBelt }} - {{ record.overallDecision }}
+              <small class="text-muted">({{ record.date | date:'mediumDate' }})</small>
+            </li>
+          </ul>
+          <ng-template #noGrades>
+            <p>No grading records available.</p>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attended Events -->
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title">Attended Events</h5>
+        </div>
+        <div class="card-body">
+          <ul *ngIf="attendedEvents.length; else noEvents">
+            <li *ngFor="let event of attendedEvents">
+              {{ event.eventName }}
+              <small class="text-muted">({{ event.date | date:'mediumDate' }})</small>
+            </li>
+          </ul>
+          <ng-template #noEvents>
+            <p>No events attended yet.</p>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment History -->
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title">Payment History</h5>
+        </div>
+        <div class="card-body">
+          <ul *ngIf="paymentHistory.length; else noPayments">
+            <li *ngFor="let payment of paymentHistory">
+              {{ payment.paymentDate | date:'mediumDate' }} - Paid R{{ payment.amount }}
+            </li>
+          </ul>
+          <ng-template #noPayments>
+            <p>No payment history available.</p>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

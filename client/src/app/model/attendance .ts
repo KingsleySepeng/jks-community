@@ -16,3 +16,10 @@ export enum AttendanceStatus {
   ABSENT = 'absent',
   EXCUSED = 'excused',
 }
+
+export interface AttendanceSummary {
+  total: number;
+  present: number;
+  notAttended: number;
+  percentage: number;
+}

@@ -31,7 +31,7 @@ export class ClubProfileComponent implements OnInit {
     }
 
     // Only Admins & Instructors can edit
-    this.canEdit = user?.role === Role.ADMIN || user?.role === Role.INSTRUCTOR;
+    this.canEdit = user?.role === Role.INSTRUCTOR;
   }
 
   onEditToggle() {

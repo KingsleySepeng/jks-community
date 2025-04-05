@@ -57,316 +57,280 @@ export class MockDataService {
    * Populates clubs, users, attendance, etc. and assigns relationships.
    */
   private initializeMockData(): void {
-    // ------------ 2.1 Initialize Clubs ------------
-    const clubPretoria: Club = {
-      id: '1',
-      name: 'JKS Pretoria',
-      address: '123 Karate St, Tokyo, Japan',
-      contactNumber: '+27 12 345 6789',
-      establishedDate: new Date('2010-05-15'),
-      description: 'Leading the way in martial arts excellence.',
-      createdAt: new Date('2010-05-15'),
+    // -------------------- 1. Clubs --------------------
+    const clubShotoRyu: Club = {
+      id: '6',
+      name: 'Shoto Ryu',
+      address: 'Rene St, Winternest AH, Akasia, 0182',
+      contactNumber: '+27 21 999 9999',
+      establishedDate: new Date('2022-01-01'),
+      description: 'Shoto Ryu club – practices on Mondays and Wednesdays',
+      createdAt: new Date('2022-01-01'),
       updatedAt: new Date('2024-01-01')
     };
+    this.clubs = [clubShotoRyu];
 
-    const clubHartebeesport: Club = {
-      id: '2',
-      name: 'JKS Hartebeesport',
-      address: '456 Samurai Rd, Osaka, Japan',
-      contactNumber: '+81 6 1234 5678',
-      establishedDate: new Date('2012-08-20'),
-      description: 'Dedicated to empowering individuals through martial arts.',
-      createdAt: new Date('2012-08-20'),
-      updatedAt: new Date('2024-01-01')
-    };
-
-    const clubDurban: Club = {
-      id: '3',
-      name: 'JKS Durban',
-      address: '789 Dojo Ave, Durban, South Africa',
-      contactNumber: '+27 31 234 5678',
-      establishedDate: new Date('2015-03-10'),
-      description: 'Fostering discipline and respect in martial arts.',
-      createdAt: new Date('2015-03-10'),
-      updatedAt: new Date('2024-01-01')
-    };
-
-    const clubJohannesburg: Club = {
-      id: '4',
-      name: 'JKS Johannesburg',
-      address: '101 Ninjutsu Blvd, Johannesburg, South Africa',
-      contactNumber: '+27 11 345 6789',
-      establishedDate: new Date('2018-07-25'),
-      description: 'Promoting fitness and self-defense through martial arts.',
-      createdAt: new Date('2018-07-25'),
-      updatedAt: new Date('2024-01-01')
-    };
-
-    const clubCapeTown: Club = {
-      id: '5',
-      name: 'JKS Cape Town',
-      address: '202 Kata Street, Cape Town, South Africa',
-      contactNumber: '+27 21 456 7890',
-      establishedDate: new Date('2020-11-05'),
-      description: 'Cultivating champions in the world of martial arts.',
-      createdAt: new Date('2020-11-05'),
-      updatedAt: new Date('2024-01-01')
-    };
-
-    this.clubs = [
-      clubPretoria,
-      clubHartebeesport,
-      clubDurban,
-      clubJohannesburg,
-      clubCapeTown
-    ];
-
-    // ------------ 2.2 Initialize Users ------------
-    const instructor1: Instructor = {
-      id: 'I001',
-      memberId: 'M001',
-      email: 'king@gmail.com',
-      firstName: 'Kingsley',
-      lastName: 'Sepeng',
-      clubId: '1',
+    // -------------------- 2. Users --------------------
+    const instructorMain: Instructor = {
+      id: 'I010',
+      memberId: 'M010',
+      email: 'chris.badenhorst@example.com',
+      firstName: 'Chris',
+      lastName: 'Badenhorst',
+      profileImageUrl: '',
+      clubId: '6',
       belt: Belt.BLACK,
       role: Role.INSTRUCTOR,
       rank: Rank.INSTRUCTOR,
-      password: 'karate',
+      password: 'password',
       isActive: true,
-      createdAt: new Date('2010-05-15'),
+      createdAt: new Date('2022-01-01'),
       updatedAt: new Date('2024-01-01'),
       attendance: []
     };
 
-    const instructor2: Instructor = {
-      id: 'I002',
-      memberId: 'M002',
-      email: 'jane.smith@jks.com',
-      firstName: 'Jane',
-      lastName: 'Smith',
-      clubId: '1',
-      belt: Belt.BLUE,
+    const subInstructor1: Instructor = {
+      id: 'I011',
+      memberId: 'M011',
+      email: 'kingsley.sepeng@example.com',
+      firstName: 'Kingsley',
+      lastName: 'Sepeng',
+      profileImageUrl: '',
+      clubId: '6',
+      belt: Belt.BLACK,
       role: Role.INSTRUCTOR,
       rank: Rank.INSTRUCTOR,
-      password: 'karate',
+      password: 'password',
       isActive: true,
-      createdAt: new Date('2012-08-20'),
+      createdAt: new Date('2022-01-01'),
+      updatedAt: new Date('2024-01-01'),
+      attendance: []
+    };
+
+    const subInstructor2: Instructor = {
+      id: 'I012',
+      memberId: 'M012',
+      email: 'dave.crothall@example.com',
+      firstName: 'Dave',
+      lastName: 'Crothall',
+      profileImageUrl: '',
+      clubId: '6',
+      belt: Belt.BLACK,
+      role: Role.INSTRUCTOR,
+      rank: Rank.INSTRUCTOR,
+      password: 'password',
+      isActive: true,
+      createdAt: new Date('2022-01-01'),
+      updatedAt: new Date('2024-01-01'),
+      attendance: []
+    };
+
+    const subInstructor3: Instructor = {
+      id: 'I013',
+      memberId: 'M013',
+      email: 'deon.buzuidenhout@example.com',
+      firstName: 'Deon',
+      lastName: 'Buzuidenhout',
+      profileImageUrl: '',
+      clubId: '6',
+      belt: Belt.BLACK,
+      role: Role.INSTRUCTOR,
+      rank: Rank.INSTRUCTOR,
+      password: 'password',
+      isActive: true,
+      createdAt: new Date('2022-01-01'),
       updatedAt: new Date('2024-01-01'),
       attendance: []
     };
 
     const student1: Student = {
-      id: 'S001',
-      memberId: 'M003',
-      email: 'student1@example.com',
-      firstName: 'Alice',
-      lastName: 'Brown',
-      clubId: '1',
-      belt: Belt.YELLOW,
+      id: 'S010',
+      memberId: 'M014',
+      email: 'hope.sepeng@example.com',
+      firstName: 'Hope',
+      lastName: 'Sepeng',
+      profileImageUrl: '',
+      clubId: '6',
+      belt: Belt.WHITE,
       role: Role.STUDENT,
+      password: 'password',
       isActive: true,
-      password: 'karate',
-      createdAt: new Date('2015-03-10'),
+      createdAt: new Date('2022-01-01'),
       updatedAt: new Date('2024-01-01'),
       attendance: []
     };
 
     const student2: Student = {
-      id: 'S002',
-      memberId: 'M004',
-      email: 'student2@example.com',
-      firstName: 'Bob',
-      lastName: 'Johnson',
-      clubId: '1',
-      belt: Belt.GREEN,
+      id: 'S011',
+      memberId: 'M015',
+      email: 'luhan.buzuidenhout@example.com',
+      firstName: 'Luhan',
+      lastName: 'Buzuidenhout',
+      profileImageUrl: '',
+      clubId: '6',
+      belt: Belt.WHITE,
       role: Role.STUDENT,
-      password: 'karate',
+      password: 'password',
       isActive: true,
-      createdAt: new Date('2018-07-25'),
-      updatedAt: new Date('2024-01-01'),
-      attendance: []
-    };
-
-    const instructor3: Instructor = {
-      id: 'I003',
-      memberId: 'M005',
-      email: 'dave.crothall@gmail.com',
-      firstName: 'Dave',
-      lastName: 'Crothall',
-      clubId: '2',
-      belt: Belt.BLACK,
-      role: Role.INSTRUCTOR,
-      rank: Rank.INSTRUCTOR,
-      password: 'admin123',
-      isActive: true,
-      createdAt: new Date('2015-03-10'),
-      updatedAt: new Date('2024-01-01'),
-      attendance: []
-    };
-
-    const instructor4: Instructor = {
-      id: 'I004',
-      memberId: 'M006',
-      email: 'evelyn.green@jks.com',
-      firstName: 'Evelyn',
-      lastName: 'Green',
-      clubId: '4',
-      belt: Belt.BROWN,
-      role: Role.INSTRUCTOR,
-      rank: Rank.DOJO_HEAD,
-      isActive: true,
-      password: 'karate',
-      createdAt: new Date('2018-07-25'),
+      createdAt: new Date('2022-01-01'),
       updatedAt: new Date('2024-01-01'),
       attendance: []
     };
 
     const student3: Student = {
-      id: 'S003',
-      memberId: 'M007',
-      email: 'student3@example.com',
-      firstName: 'Charlie',
-      lastName: 'Davis',
-      clubId: '2',
-      belt: Belt.ORANGE,
+      id: 'S012',
+      memberId: 'M016',
+      email: 'ewan.buzuidenhout@example.com',
+      firstName: 'Ewan',
+      lastName: 'Buzuidenhout',
+      profileImageUrl: '',
+      clubId: '6',
+      belt: Belt.BLACK,
       role: Role.STUDENT,
-      password: 'karate',
+      password: 'password',
       isActive: true,
-      createdAt: new Date('2020-11-05'),
+      createdAt: new Date('2022-01-01'),
       updatedAt: new Date('2024-01-01'),
       attendance: []
     };
 
-    const admin1: Admin = {
-      id: 'A001',
-      memberId: 'M008',
-      email: 'admin1@jks.com',
-      firstName: 'Grace',
-      lastName: 'Harris',
-      clubId: '1',
-      belt: Belt.WHITE,
-      role: Role.ADMIN,
-      password: 'karate',
-      isActive: true,
-      createdAt: new Date('2010-05-15'),
-      updatedAt: new Date('2024-01-01')
-    };
 
     this.users = [
-      instructor1, instructor2,
-      student1,    student2,
-      instructor3, instructor4,
-      student3,    admin1
+      instructorMain,
+      subInstructor1,
+      subInstructor2,
+      subInstructor3,
+      student1,
+      student2,
+      student3,
     ];
 
-    // ------------ 2.3 Initialize Attendances ------------
-    const attendanceI001A001: Attendance = {
-      id: 'A001',
-      date: new Date('2024-12-01'),
-      status: AttendanceStatus.PRESENT,
-      instructorId: 'I001',
-      userId: 'I001',
-      clubId: '1',
-      comments: 'Attended staff meeting.',
-      createdAt: new Date('2024-12-01'),
-      updatedAt: new Date('2024-12-01')
-    };
-
-    const attendanceI002A002: Attendance = {
-      id: 'A002',
-      date: new Date('2024-12-02'),
-      status: AttendanceStatus.PRESENT,
-      instructorId: 'I002',
-      userId: 'I002',
-      clubId: '1',
-      comments: 'Conducted advanced class.',
-      createdAt: new Date('2024-12-02'),
-      updatedAt: new Date('2024-12-02')
-    };
-
-    const attendanceS001A003: Attendance = {
-      id: 'A003',
-      date: new Date('2024-12-01'),
-      status: AttendanceStatus.PRESENT,
-      instructorId: 'I001',
-      userId: 'S001',
-      clubId: '1',
-      comments: 'Participated actively.',
-      createdAt: new Date('2024-12-01'),
-      updatedAt: new Date('2024-12-01')
-    };
-
-    const attendanceS002A004: Attendance = {
-      id: 'A004',
-      date: new Date('2024-12-01'),
-      status: AttendanceStatus.ABSENT,
-      instructorId: 'I001',
-      userId: 'S002',
-      clubId: '1',
-      comments: 'Absent due to illness.',
-      createdAt: new Date('2024-12-01'),
-      updatedAt: new Date('2024-12-01')
-    };
-
-    const attendanceS003A005: Attendance = {
-      id: 'A005',
-      date: new Date('2024-12-02'),
-      status: AttendanceStatus.EXCUSED,
-      instructorId: 'I003',
-      userId: 'S003',
-      clubId: '2',
-      comments: 'Family emergency.',
-      createdAt: new Date('2024-12-02'),
-      updatedAt: new Date('2024-12-02')
-    };
-
-    const attendanceA001A006: Attendance = {
-      id: 'A006',
-      date: new Date('2024-12-03'),
-      status: AttendanceStatus.PRESENT,
-      instructorId: 'I001',
-      userId: 'A001',
-      clubId: '1',
-      comments: 'Reviewed monthly reports.',
-      createdAt: new Date('2024-12-03'),
-      updatedAt: new Date('2024-12-03')
-    };
-
-    this.attendances = [
-      attendanceI001A001, attendanceI002A002,
-      attendanceS001A003, attendanceS002A004,
-      attendanceS003A005, attendanceA001A006
-    ];
-
-    // Assign each user's attendance, except Admin if desired
-    this.users.forEach(user => {
-      if (user.role !== Role.ADMIN) {
-        user.attendance = this.attendances.filter(att => att.userId === user.id);
-      }
+    // -------------------- 3. Attendances --------------------
+    // We'll create a few sample attendance records for February and March 2024.
+    const createAttendance = (id: string, dateStr: string, status: AttendanceStatus, instructorId: string, userId: string, clubId: string, comments: string): Attendance => ({
+      id,
+      date: new Date(dateStr),
+      status,
+      instructorId,
+      userId,
+      clubId,
+      comments,
+      createdAt: new Date(dateStr),
+      updatedAt: new Date(dateStr)
     });
 
-    // ------------ 2.4 Assign Users to Clubs ------------
-    this.assignUsersToClubs();
+    // Sample dates: February 5 (Monday), February 7 (Wednesday), March 4 (Monday)
+    const attendances: Attendance[] = [
+      // February 5, 2024 - All present for main instructor, sub instructors, and students.
+      createAttendance('A1001', '2024-02-05', AttendanceStatus.PRESENT, instructorMain.id, instructorMain.id, clubShotoRyu.id, 'Present'),
+      createAttendance('A1002', '2024-02-05', AttendanceStatus.PRESENT, instructorMain.id, subInstructor1.id, clubShotoRyu.id, 'Present'),
+      createAttendance('A1003', '2024-02-05', AttendanceStatus.PRESENT, instructorMain.id, subInstructor2.id, clubShotoRyu.id, 'Present'),
+      createAttendance('A1004', '2024-02-05', AttendanceStatus.PRESENT, instructorMain.id, subInstructor3.id, clubShotoRyu.id, 'Present'),
+      createAttendance('A1005', '2024-02-05', AttendanceStatus.PRESENT, instructorMain.id, student1.id, clubShotoRyu.id, 'Present'),
+      createAttendance('A1006', '2024-02-05', AttendanceStatus.ABSENT, instructorMain.id, student2.id, clubShotoRyu.id, 'Absent due to illness'),
+      createAttendance('A1007', '2024-02-05', AttendanceStatus.PRESENT, instructorMain.id, student3.id, clubShotoRyu.id, 'Present'),
 
-    // ------------ 2.5 Sample Events ------------
-    this.events = [
-      {
-        id: 'EVT-10001',
-        eventName: 'Karate Tournament',
-        location: 'Tokyo Dojo',
-        date: new Date('2025-03-10'),
-        cost: 100,
-        paymentDueDate: new Date('2025-02-25'),
-        interestedStudents: [],
-        finalRegistrations: [],
-        maxEntries: 1,
-        description: "Freindly Tournament",
-        instructorId:"I004",
-        clubId:"4",
-      }
+      // February 7, 2024 - Mixed statuses.
+      createAttendance('A1008', '2024-02-07', AttendanceStatus.PRESENT, instructorMain.id, instructorMain.id, clubShotoRyu.id, 'Present'),
+      createAttendance('A1009', '2024-02-07', AttendanceStatus.PRESENT, instructorMain.id, subInstructor1.id, clubShotoRyu.id, 'Present'),
+      createAttendance('A1010', '2024-02-07', AttendanceStatus.EXCUSED, instructorMain.id, subInstructor2.id, clubShotoRyu.id, 'Family emergency'),
+      createAttendance('A1011', '2024-02-07', AttendanceStatus.PRESENT, instructorMain.id, subInstructor3.id, clubShotoRyu.id, 'Present'),
+      createAttendance('A1012', '2024-02-07', AttendanceStatus.PRESENT, instructorMain.id, student1.id, clubShotoRyu.id, 'Present'),
+      createAttendance('A1013', '2024-02-07', AttendanceStatus.PRESENT, instructorMain.id, student2.id, clubShotoRyu.id, 'Present'),
+      createAttendance('A1014', '2024-02-07', AttendanceStatus.PRESENT, instructorMain.id, student3.id, clubShotoRyu.id, 'Present'),
+
+      // March 4, 2024 - All present.
+      createAttendance('A1015', '2024-03-04', AttendanceStatus.PRESENT, instructorMain.id, instructorMain.id, clubShotoRyu.id, 'Present'),
+      createAttendance('A1016', '2024-03-04', AttendanceStatus.PRESENT, instructorMain.id, subInstructor1.id, clubShotoRyu.id, 'Present'),
+      createAttendance('A1017', '2024-03-04', AttendanceStatus.PRESENT, instructorMain.id, subInstructor2.id, clubShotoRyu.id, 'Present'),
+      createAttendance('A1018', '2024-03-04', AttendanceStatus.PRESENT, instructorMain.id, subInstructor3.id, clubShotoRyu.id, 'Present'),
+      createAttendance('A1019', '2024-03-04', AttendanceStatus.PRESENT, instructorMain.id, student1.id, clubShotoRyu.id, 'Present'),
+      createAttendance('A1020', '2024-03-04', AttendanceStatus.PRESENT, instructorMain.id, student2.id, clubShotoRyu.id, 'Present'),
+      createAttendance('A1021', '2024-03-04', AttendanceStatus.PRESENT, instructorMain.id, student3.id, clubShotoRyu.id, 'Present')
     ];
+    this.attendances = attendances;
+
+    // Assign each user's attendance (for all users except Admin)
+    // this.users.forEach(user => {
+    //   if (user.role !== Role.ADMIN) {
+    //     user.attendance = this.attendances.filter(att => att.userId === user.id);
+    //   }
+    // }
+    // );
+
+    // -------------------- 4. Events --------------------
+    const event1: Events = {
+      id: 'EVT-3001',
+      eventName: 'Shoto Ryu Annual Tournament',
+      location: 'Shoto Ryu Dojo, Akasia',
+      date: new Date('2024-06-15'),
+      cost: 150,
+      paymentDueDate: new Date('2024-06-01'),
+      interestedStudents: [],
+      finalRegistrations: [],
+      maxEntries: 50,
+      description: 'Annual tournament for Shoto Ryu members.',
+      instructorId: instructorMain.id,
+      clubId: clubShotoRyu.id
+    };
+    this.events = [event1];
+
+    // -------------------- 5. Grading Records --------------------
+    // Create grading records for the purple belt students (Hope and Luhan)
+    const gradingRecord1: GradingRecord = {
+      id: 'GR-3001',
+      studentId: student1.id,
+      examinerId: instructorMain.id,
+      clubId: clubShotoRyu.id,
+      date: new Date('2024-01-15'),
+      currentBelt: student1.belt,
+      testingForBelt: student1.belt,
+      evaluations: [
+        { techniqueId: 'kihon-1', rating: 'good', comment: 'Excellent fundamentals.' },
+        { techniqueId: 'kata-1', rating: 'average', comment: 'Needs to refine form.' }
+      ],
+      overallDecision: 'pass',
+      overallComment: 'Well done, continue training.'
+    };
+
+    const gradingRecord2: GradingRecord = {
+      id: 'GR-3002',
+      studentId: student2.id,
+      examinerId: instructorMain.id,
+      clubId: clubShotoRyu.id,
+      date: new Date('2024-01-20'),
+      currentBelt: student2.belt,
+      testingForBelt: student2.belt,
+      evaluations: [
+        { techniqueId: 'kihon-2', rating: 'average', comment: 'Satisfactory, but room for improvement.' },
+        { techniqueId: 'kata-2', rating: 'bad', comment: 'Significant improvement needed.' }
+      ],
+      overallDecision: 'regrade',
+      overallComment: 'Re-assessment recommended in 2 months.'
+    };
+    this.gradingRecords = [gradingRecord1, gradingRecord2];
+
+    // -------------------- 6. Resources --------------------
+    const resource1: Resource = {
+      id: 'RES-3001',
+      title: 'Shoto Ryu Training Manual',
+      description: 'Comprehensive guide to Shoto Ryu techniques.',
+      fileUrl: 'https://example.com/shotoru_manual.pdf',
+      category: 'Syllabus',
+      dateCreated: new Date('2024-01-01')
+    };
+
+    const resource2: Resource = {
+      id: 'RES-3002',
+      title: 'Shoto Ryu Seminar Video',
+      description: 'Highlights from the recent seminar.',
+      videoUrl: 'https://youtube.com/shotoru_seminar',
+      category: 'SeminarVideo',
+      dateCreated: new Date('2024-02-01')
+    };
+    this.resources = [resource1, resource2];
   }
+
 
   // -------------------------------------------------------
   // 3. Relationship Helpers
@@ -558,4 +522,20 @@ export class MockDataService {
       this.resources[idx] = { ...updated };
     }
   }
+
+  public getOutstandingFees(userId: string): number {
+    const userPayments = this.payments.filter(p => p.userId === userId);
+    const totalPaid = userPayments.reduce((sum, p) => sum + p.amount, 0);
+
+    // Assume a fixed training fee per student
+    const totalDue = 5000; // Example total fees for a term
+
+    return totalDue - totalPaid > 0 ? totalDue - totalPaid : 0;
+  }
+
+  // Add a method to get payments for a specific event
+  public getPaymentsForEvent(eventId: string): Payment[] {
+    return this.payments.filter(p => p.id === eventId);
+  }
+
 }

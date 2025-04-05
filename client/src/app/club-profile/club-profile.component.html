@@ -1,66 +1,88 @@
-<div class="club-profile">
-  <h2>Club Profile</h2>
-
+<div class="container my-5">
   <div *ngIf="currentClub; else noClub">
-    <!-- Club Logo -->
-    <div class="club-logo">
-      <img [src]="currentClub.logoUrl || 'assets/default-club-logo.png'" alt="Club Logo" />
-    </div>
+    <div class="card shadow-sm">
+      <div class="card-header bg-success text-white">
+        <h2 class="h5 mb-0">Club Profile</h2>
+      </div>
+      <div class="card-body">
+        <!-- Club Logo and Basic Info -->
+        <div class="d-flex align-items-center mb-4">
+          <div class="me-3">
+            <img
+              [src]="currentClub.logoUrl || 'assets/default-club-logo.png'"
+              alt="Club Logo"
+              class="img-thumbnail"
+              style="max-width: 100px;"
+            />
+          </div>
+          <div>
+            <p class="mb-1"><strong>ID:</strong> {{ currentClub.id }}</p>
+            <p class="mb-1"><strong>Name:</strong> {{ currentClub.name }}</p>
+            <p class="mb-1"><strong>Address:</strong> {{ currentClub.address }}</p>
+            <p class="mb-1"><strong>Contact:</strong> {{ currentClub.contactNumber }}</p>
+          </div>
+        </div>
 
-    <p><strong>ID:</strong> {{ currentClub.id }}</p>
+        <!-- Read-Only View -->
+        <div *ngIf="!isEditing; else editForm">
+          <p><strong>Description:</strong> {{ currentClub.description }}</p>
+          <div *ngIf="canEdit">
+            <button class="btn btn-outline-secondary" (click)="onEditToggle()">Edit Club Info</button>
+          </div>
 
-    <!-- Read-Only View -->
-    <div *ngIf="!isEditing">
-      <p><strong>Name:</strong> {{ currentClub.name }}</p>
-      <p><strong>Address:</strong> {{ currentClub.address }}</p>
-      <p><strong>Contact Info:</strong> {{ currentClub.contactNumber }}</p>
-      <p><strong>Description:</strong> {{ currentClub.description }}</p>
+          <!-- Instructors List -->
+          <div class="mt-4">
+            <h4>Instructors</h4>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item" *ngFor="let instructor of currentClub.instructors">
+                {{ instructor.firstName }} {{ instructor.lastName }}
+              </li>
+            </ul>
+          </div>
 
-      <p *ngIf="canEdit">
-        <button (click)="onEditToggle()">Edit Club Info</button>
-      </p>
+          <!-- Students List -->
+          <div class="mt-4">
+            <h4>Students</h4>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item" *ngFor="let student of currentClub.students">
+                {{ student.firstName }} {{ student.lastName }}
+              </li>
+            </ul>
+          </div>
+        </div>
 
-      <!-- Show instructors -->
-      <h4>Instructors</h4>
-      <ul>
-        <li *ngFor="let instructor of currentClub.instructors">
-          {{ instructor.firstName }} {{ instructor.lastName }}
-        </li>
-      </ul>
-
-      <!-- Show students -->
-      <h4>Students</h4>
-      <ul>
-        <li *ngFor="let student of currentClub.students">
-          {{ student.firstName }} {{ student.lastName }}
-        </li>
-      </ul>
-    </div>
-
-    <!-- Editing Mode -->
-    <div *ngIf="isEditing">
-      <label>Club Name:</label>
-      <input [(ngModel)]="currentClub.name" />
-
-      <label>Address:</label>
-      <input [(ngModel)]="currentClub.address" />
-
-      <label>Contact Number:</label>
-      <input [(ngModel)]="currentClub.contactNumber" />
-
-      <label>Description:</label>
-      <textarea [(ngModel)]="currentClub.description"></textarea>
-
-      <label>Logo URL:</label>
-      <input [(ngModel)]="currentClub.logoUrl" placeholder="Paste club logo URL here" />
-
-      <br /><br />
-      <button (click)="onSaveChanges()">Save</button>
-      <button (click)="onEditToggle()">Cancel</button>
+        <!-- Editing Mode -->
+        <ng-template #editForm>
+          <div class="mb-3">
+            <label class="form-label">Club Name:</label>
+            <input type="text" class="form-control" [(ngModel)]="currentClub.name" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Address:</label>
+            <input type="text" class="form-control" [(ngModel)]="currentClub.address" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Contact Number:</label>
+            <input type="text" class="form-control" [(ngModel)]="currentClub.contactNumber" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description:</label>
+            <textarea class="form-control" rows="3" [(ngModel)]="currentClub.description"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Logo URL:</label>
+            <input type="text" class="form-control" [(ngModel)]="currentClub.logoUrl" placeholder="Paste club logo URL here" />
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-success" (click)="onSaveChanges()">Save</button>
+            <button class="btn btn-secondary" (click)="onEditToggle()">Cancel</button>
+          </div>
+        </ng-template>
+      </div>
     </div>
   </div>
 
   <ng-template #noClub>
-    <p>No club found for this user.</p>
+    <div class="alert alert-warning mt-5">No club found for this user.</div>
   </ng-template>
 </div>

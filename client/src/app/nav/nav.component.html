@@ -1,34 +1,54 @@
-<nav class="navbar">
-  <div class="navbar-container">
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm">
+  <div class="container-fluid">
     <a class="navbar-brand" [routerLink]="'/'">Martial Arts System</a>
-    <button class="navbar-toggler" (click)="toggleMenu()">
+    <button class="navbar-toggler" type="button" (click)="toggleMenu()"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <ul class="navbar-links" [class.active]="menuOpen">
-      <li class="nav-item" *ngFor="let route of appRoutes">
-        <a class="nav-link" [routerLink]="route.path" routerLinkActive="active">{{ route.name }}</a>
-      </li>
 
-      <!-- Dynamic User Profile Link -->
-      <li class="nav-item" *ngIf="isLoggedIn()">
-        <a class="nav-link" [routerLink]="'/user-profile'">{{ userProfileLabel }}</a>
-      </li>
+    <div class="collapse navbar-collapse" [ngClass]="{'show': menuOpen}" id="navbarNav">
+      <!-- Main Navigation Links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <ng-container *ngFor="let route of appRoutes">
+          <li class="nav-item" *ngIf="canAccess(route.roles)">
+            <a class="nav-link" [routerLink]="route.path" routerLinkActive="active">
+              {{ route.name }}
+            </a>
+          </li>
+        </ng-container>
+      </ul>
 
-      <!-- Dynamic Club Profile Link -->
-      <li class="nav-item" *ngIf="isLoggedIn()">
-        <a class="nav-link" [routerLink]="'/club-profile'">{{ clubProfileLabel }}</a>
-      </li>
-
-      <!-- Logout -->
-      <li class="nav-item" *ngIf="isLoggedIn()">
-        <a class="nav-link" [routerLink]="'/logout'" (click)="logout()">Logout</a>
-      </li>
-
-      <!-- Login (if not logged in) -->
-      <li class="nav-item" *ngIf="!isLoggedIn()">
-        <a class="nav-link" [routerLink]="'/'">Login</a>
-      </li>
-    </ul>
+      <!-- Authenticated User Dropdown or Login Link -->
+      <ul class="navbar-nav mb-2 mb-lg-0">
+        <ng-container *ngIf="isLoggedIn(); else loginLink">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+              {{ userProfileLabel }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li>
+                <a class="dropdown-item" [routerLink]="'/user-profile'">Profile</a>
+              </li>
+              <li>
+                <a class="dropdown-item" [routerLink]="'/club-profile'">
+                  {{ clubProfileLabel }}
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item" href="#" (click)="logout()">Logout</a>
+              </li>
+            </ul>
+          </li>
+        </ng-container>
+        <ng-template #loginLink>
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="'/'">Login</a>
+          </li>
+        </ng-template>
+      </ul>
+    </div>
   </div>
 </nav>
 
