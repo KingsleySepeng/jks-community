@@ -5,7 +5,6 @@ import { MockDataService } from '../mock-service/mock-data.service';
 import {DatePipe, NgForOf, NgIf, NgClass, DecimalPipe} from '@angular/common';
 import { Role } from '../model/role';
 import { loadGapiInsideDOM } from 'gapi-script';
-import {GoogleApiService} from '../google-api.service';
 import {FormsModule} from '@angular/forms';
 import {Rank} from '../model/rank';
 declare var gapi: any;

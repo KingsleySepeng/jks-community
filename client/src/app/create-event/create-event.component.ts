@@ -8,7 +8,6 @@ import {Club} from '../model/club';
 import {Role} from '../model/role';
 import {NgIf} from '@angular/common';
 import { loadGapiInsideDOM } from 'gapi-script';
-import {GoogleApiService} from '../google-api.service';
 declare var gapi: any;
 
 @Component({
@@ -33,7 +32,7 @@ export class CreateEventComponent {
   loggedInUser?: User ;
   userClub?: Club;
 
-  constructor(private mockData: MockDataService, private router: Router,private googleApiService:GoogleApiService) {}
+  constructor(private mockData: MockDataService, private router: Router) {}
 
   async ngOnInit(): Promise<void> {
     this.loggedInUser = this.mockData.getLoggedInUser();
@@ -47,7 +46,6 @@ export class CreateEventComponent {
       this.userClub = this.mockData.getClubById(this.loggedInUser.clubId);
     }
 
-    await this.googleApiService.initializeGapiClient();
   }
 
   async createGoogleCalendarEvent(event: Events): Promise<void> {
