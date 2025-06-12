@@ -32,6 +32,8 @@ export class NavComponent implements OnInit {
     { path: 'add-user', name: 'Add New User', roles: [Role.STUDENT, Role.INSTRUCTOR, Role.ADMIN] },
     { path: 'grading-form', name: 'Grading Form', roles: [Role.INSTRUCTOR] },
     { path: 'grading-report', name: 'Grading Report', roles: [Role.INSTRUCTOR, Role.ADMIN] },
+    {path: 'upload-resource', name: 'Upload Resource'},
+    {path: ' resource-list', name: 'Resource List'},
   ];
 
   constructor(private mockDataService: MockDataService) {}

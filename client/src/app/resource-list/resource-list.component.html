@@ -24,13 +24,16 @@
           <p class="card-text">{{ res.description }}</p>
         </div>
         <div class="card-footer">
-          <ng-container *ngIf="res.fileUrl">
-            <a [href]="res.fileUrl" target="_blank" class="btn btn-sm btn-outline-primary me-2">Open PDF/Doc</a>
-          </ng-container>
           <ng-container *ngIf="res.videoUrl">
-            <a [href]="res.videoUrl" target="_blank" class="btn btn-sm btn-outline-danger">Watch Video</a>
+            <!-- 👇 Embedded video -->
+            <video controls class="w-100" [src]="res.videoUrl"></video>
+          </ng-container>
+
+          <ng-container *ngIf="res.fileUrl && !res.videoUrl">
+            <a [href]="res.fileUrl" target="_blank" class="btn btn-sm btn-outline-primary">Open PDF/Doc</a>
           </ng-container>
         </div>
+
       </div>
     </div>
   </div>
