@@ -6,7 +6,6 @@ import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { routes } from './app.routes';
-import { GoogleApiService } from './google-api.service';
 
 @NgModule({
   declarations: [
@@ -17,7 +16,7 @@ import { GoogleApiService } from './google-api.service';
     HttpClientModule,
     RouterModule.forRoot(routes)
   ],
-  providers: [GoogleApiService],
+  providers: [],
 })
 export class AppModule {
   // async ngOnInit(): Promise<void> {

@@ -22,6 +22,8 @@ export const routes: Routes = [
   { path: 'grading-form', component: GradingFormComponent },
   { path: 'grading-report', component: GradingReportComponent },
   { path: 'grading-detail/:id', component: GradingDetailComponent },
+  {path: 'resource-list', component: ResourceListComponent},
+  {path: 'upload-resource', component: UploadResourceComponent},
   { path: 'logout', component: LoginComponent } // Add logout route
 ];
 //TODO: MVP 1: ATTENDANCE,GRADING,LOGIN,LOGOUT

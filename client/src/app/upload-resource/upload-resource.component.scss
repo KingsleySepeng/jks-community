@@ -1,0 +1,10 @@
+.drag-zone {
+  border: 2px dashed #6c757d;
+  padding: 2rem;
+  text-align: center;
+  transition: background-color 0.2s ease;
+}
+
+.drag-zone.dragover {
+  background-color: #e9ecef;
+}

@@ -22,14 +22,11 @@
           </select>
         </div>
 
-        <div class="mb-3">
-          <label for="fileUrl" class="form-label">File URL (PDF/Doc Link):</label>
-          <input type="text" id="fileUrl" class="form-control" [(ngModel)]="fileUrl" name="fileUrl" placeholder="https://..." />
-        </div>
-
-        <div class="mb-3">
-          <label for="videoUrl" class="form-label">Video URL (YouTube, etc.):</label>
-          <input type="text" id="videoUrl" class="form-control" [(ngModel)]="videoUrl" name="videoUrl" placeholder="https://..." />
+        <div class="mb-3 border border-secondary rounded p-3 text-center"
+             (dragover)="onDragOver($event)"
+             (drop)="onFileDrop($event)">
+          <p class="mb-2">Drag & Drop your file here</p>
+          <input type="file" (change)="onFileSelected($event)" class="form-control" />
         </div>
 
         <button type="submit" class="btn btn-primary w-100">Create Resource</button>
