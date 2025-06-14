@@ -28,12 +28,10 @@ export class NavComponent implements OnInit {
 
   // Routes now only include roles for logged-in users
   appRoutes = [
-    { path: 'instructor-dashboard', name: 'Instructor Dashboard', roles: [Role.INSTRUCTOR] },
-    { path: 'add-user', name: 'Add New User', roles: [Role.STUDENT, Role.INSTRUCTOR, Role.ADMIN] },
-    { path: 'grading-form', name: 'Grading Form', roles: [Role.INSTRUCTOR] },
-    { path: 'grading-report', name: 'Grading Report', roles: [Role.INSTRUCTOR, Role.ADMIN] },
-    {path: 'upload-resource', name: 'Upload Resource'},
-    {path: ' resource-list', name: 'Resource List'},
+    { path: 'attendance-tracker', name: 'Track Attendance', roles: [Role.SUBINSTRUCTOR, Role.INSTRUCTOR, Role.ADMIN] },
+    { path: 'add-user', name: 'Manage Students', roles: [Role.SUBINSTRUCTOR, Role.INSTRUCTOR, Role.ADMIN] },
+    {path: 'upload-resource', name: 'Upload Resources',roles:  [Role.SUBINSTRUCTOR, Role.INSTRUCTOR, Role.ADMIN] },
+    {path: ' resource-list', name: 'View Resources',roles:  [Role.SUBINSTRUCTOR, Role.INSTRUCTOR, Role.ADMIN]},
   ];
 
   constructor(private mockDataService: MockDataService) {}

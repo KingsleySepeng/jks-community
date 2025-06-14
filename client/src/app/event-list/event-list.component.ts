@@ -29,11 +29,10 @@ export class EventListComponent {
 
   constructor(private mockDataService: MockDataService,private router:Router) {}
 
-  async ngOnInit(): Promise<void> {
+   ngOnInit(): void {
     this.loggedInUser = this.mockDataService.getLoggedInUser();
     this.events = this.mockDataService.getEvents();
     this.isInstructor = this.loggedInUser?.role === 'INSTRUCTOR';
-    await this.initializeGapiClient();
   }
 
   getInstructorName(instructorId: string): string {

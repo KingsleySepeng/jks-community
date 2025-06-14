@@ -4,7 +4,6 @@ import {Student, User} from '../model/user';
 import {Role} from '../model/role';
 import {Belt} from '../model/belt';
 import {NgForOf} from '@angular/common';
-import {Rank} from '../model/rank';
 import {MockDataService} from '../mock-service/mock-data.service';
 
 @Component({
@@ -22,7 +21,6 @@ export class AddUserComponent implements OnInit{
 
   // Arrays for select dropdowns.
   belts = Object.values(Belt);
-  ranks = Object.values(Rank);
 
   // Local user object for adding a new student.
   user: Student = {
@@ -40,7 +38,6 @@ export class AddUserComponent implements OnInit{
     createdAt: new Date(),
     updatedAt: new Date(),
     attendance: [],
-    rank: Rank.JUNIOR
   };
 
   clubStudents: Student[] = []; // List of students in the instructor's club
@@ -80,7 +77,6 @@ export class AddUserComponent implements OnInit{
       lastName: '',
       email: '',
       belt: Belt.WHITE,
-      rank: Rank.JUNIOR
     };
   }
 
