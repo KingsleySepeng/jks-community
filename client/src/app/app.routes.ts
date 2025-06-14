@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import {LoginComponent} from './login/login.component';
-import {InstructorDashComponent} from './instructor-dash/instructor-dash.component';
 import {ClassPayComponent} from './class-pay/class-pay.component';
 import {CreateEventComponent} from './create-event/create-event.component';
 import {EventListComponent} from './event-list/event-list.component';
@@ -14,10 +13,11 @@ import {ResourceListComponent} from './resource-list/resource-list.component';
 import {AdminDashComponent} from './admin-dash/admin-dash.component';
 import {AddUserComponent} from './add-user/add-user.component';
 import {StudentDashComponent} from './student-dash/student-dash.component';
+import {AttendanceComponent} from './attendance/attendance.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
-  { path: 'instructor-dashboard', component: InstructorDashComponent },
+  {path: 'attendance-tracker',component: AttendanceComponent},
   {path:'add-user',component:AddUserComponent},
   { path: 'grading-form', component: GradingFormComponent },
   { path: 'grading-report', component: GradingReportComponent },
@@ -26,4 +26,3 @@ export const routes: Routes = [
   {path: 'upload-resource', component: UploadResourceComponent},
   { path: 'logout', component: LoginComponent } // Add logout route
 ];
-//TODO: MVP 1: ATTENDANCE,GRADING,LOGIN,LOGOUT

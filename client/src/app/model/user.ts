@@ -1,5 +1,4 @@
 import { Attendance } from "./attendance ";
-import { Rank } from "./rank";
 import { Role } from "./role";
 import {Belt} from './belt';
 
@@ -22,7 +21,6 @@ export interface BaseUser {
 // Instructor Interface
 export interface Instructor extends BaseUser {
   role: Role.INSTRUCTOR;
-  rank: Rank;
   attendance: Attendance[];
   // Additional instructor-specific fields
 }
@@ -30,7 +28,6 @@ export interface Instructor extends BaseUser {
 // Student Interface
 export interface Student extends BaseUser {
   role: Role.STUDENT;
-  rank?: Rank; // If applicable in the future
   attendance: Attendance[];
   // Additional student-specific fields
 }

@@ -3,7 +3,6 @@ import { Admin, Instructor, Student, User } from '../model/user';
 import { Club } from '../model/club';
 import { Attendance, AttendanceStatus } from '../model/attendance ';
 import { Belt } from '../model/belt';
-import { Rank } from '../model/rank';
 import { Role } from '../model/role';
 import { Payment } from '../model/payment';
 import { Events } from '../model/events';
@@ -81,7 +80,6 @@ export class MockDataService {
       clubId: '6',
       belt: Belt.BLACK,
       role: Role.INSTRUCTOR,
-      rank: Rank.INSTRUCTOR,
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
@@ -99,7 +97,6 @@ export class MockDataService {
       clubId: '6',
       belt: Belt.BLACK,
       role: Role.INSTRUCTOR,
-      rank: Rank.INSTRUCTOR,
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
@@ -117,7 +114,6 @@ export class MockDataService {
       clubId: '6',
       belt: Belt.BLACK,
       role: Role.INSTRUCTOR,
-      rank: Rank.INSTRUCTOR,
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
@@ -135,7 +131,6 @@ export class MockDataService {
       clubId: '6',
       belt: Belt.BLACK,
       role: Role.INSTRUCTOR,
-      rank: Rank.INSTRUCTOR,
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),

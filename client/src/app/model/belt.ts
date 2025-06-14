@@ -9,8 +9,5 @@ export enum Belt {
   RED = 'RED',
   BROWN = 'BROWN',
   BLACK = 'BLACK',
-  // Future additions for Kyu ranks
-  KYU1 = 'KYU1',
-  KYU2 = 'KYU2',
 }
 

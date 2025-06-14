@@ -44,7 +44,7 @@ export class ClassPayComponent implements OnInit {
 
   constructor(private mockService: MockDataService, private route: ActivatedRoute) {}
 
-  async ngOnInit(): Promise<void> {
+   ngOnInit(): void {
     // Retrieve the currently logged-in user and related data.
     this.currentUser = this.mockService.getLoggedInUser() ?? null;
     this.users = this.mockService.getUsers();
@@ -67,20 +67,6 @@ export class ClassPayComponent implements OnInit {
     if (this.currentUser) {
       this.payments = this.mockService.getPayments().filter(p => p.userId === this.currentUser?.id);
     }
-
-    await this.initializeGapiClient();
-  }
-
-  async initializeGapiClient(): Promise<void> {
-    await loadGapiInsideDOM();
-    gapi.load('client:auth2', async () => {
-      await gapi.client.init({
-        apiKey: 'YOUR_API_KEY',
-        clientId: 'YOUR_CLIENT_ID',
-        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/forms/v1/rest'],
-        scope: 'https://www.googleapis.com/auth/forms'
-      });
-    });
   }
 
   onFileChange(event: Event) {

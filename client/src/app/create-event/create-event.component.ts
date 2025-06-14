@@ -34,7 +34,7 @@ export class CreateEventComponent {
 
   constructor(private mockData: MockDataService, private router: Router) {}
 
-  async ngOnInit(): Promise<void> {
+   ngOnInit(): void {
     this.loggedInUser = this.mockData.getLoggedInUser();
 
     if (!this.loggedInUser || !this.userClub) {

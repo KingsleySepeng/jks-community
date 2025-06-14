@@ -3,11 +3,7 @@ import {Instructor, Student, User} from '../model/user';
 import {Attendance, AttendanceStatus, AttendanceSummary} from '../model/attendance ';
 import { MockDataService } from '../mock-service/mock-data.service';
 import {DatePipe, NgForOf, NgIf, NgClass, DecimalPipe} from '@angular/common';
-import { Role } from '../model/role';
-import { loadGapiInsideDOM } from 'gapi-script';
 import {FormsModule} from '@angular/forms';
-import {Rank} from '../model/rank';
-declare var gapi: any;
 
 @Component({
   selector: 'app-attendance',
@@ -43,7 +39,7 @@ export class AttendanceComponent implements OnInit {
     private mockDataService: MockDataService,
   ) {}
 
-  async ngOnInit(): Promise<void> {
+   ngOnInit(): void{
     if (!this.instructor) {
       console.error('No instructor provided for attendance tracking.');
       return;
@@ -82,7 +78,7 @@ export class AttendanceComponent implements OnInit {
     this.attendanceState[userId].comment = comment;
   }
 
-  async onSaveAttendance(): Promise<void> {
+   onSaveAttendance(): void {
     if (!this.instructor) {
       alert('No instructor is logged in.');
       return;

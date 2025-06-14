@@ -12,6 +12,7 @@ import { Belt } from '../model/belt';
 import { NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 import { MockDataService } from '../mock-service/mock-data.service';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -25,6 +26,7 @@ export class LoginComponent implements OnInit {
   showPassword = false;
   isLoading = false;
   errorMessage: string = '';
+  loggedInUser$: Observable<User> = new Observable<User>();
   loggedInUser?: User;
 
   constructor(
@@ -44,10 +46,6 @@ export class LoginComponent implements OnInit {
     // Check if a user is already logged in (for demo/testing).
     this.loggedInUser = this.mockDataService.getLoggedInUser();
     // Optionally pre-populate email if stored in localStorage.
-    const rememberedEmail = localStorage.getItem('rememberedEmail');
-    if (rememberedEmail) {
-      this.loginForm.patchValue({ email: rememberedEmail });
-    }
   }
 
   togglePasswordVisibility(): void {
@@ -72,22 +70,12 @@ export class LoginComponent implements OnInit {
 
     if (user) {
       console.log(`Logged in as ${user.firstName} ${user.lastName}`);
-      this.loggedInUser = user;
-      if (rememberMe) {
-        localStorage.setItem('rememberedEmail', email);
-      } else {
-        localStorage.removeItem('rememberedEmail');
-      }
+      this.loggedInUser$ = new Observable<User>((observer) => observer.next(user));
 
       // Navigate based on role.
-      if (user.role === Role.INSTRUCTOR) {
-        this.router.navigate(['/instructor-dashboard']);
+      if (user.role === Role.INSTRUCTOR || Role.SUBINSTRUCTOR) {
+        this.router.navigate(['/attendance-tracker']);
       }
-        // else if (user.role === Role.ADMIN) {
-        //   this.router.navigate(['/admin-dashboard']);
-        // } else {
-        //   this.router.navigate(['/student-dashboard']);
-      // }
       else {
         console.log('Login failed: invalid credentials');
         // Set an inline error message.
@@ -98,13 +86,7 @@ export class LoginComponent implements OnInit {
 
   logout(): void {
     this.mockDataService.logout();
-    this.loggedInUser = undefined;
+    this.loggedInUser$ = new Observable<User>();
     this.router.navigate(['/']);
-  }
-
-  onForgotPassword(event: Event): void {
-    event.preventDefault();
-    // Placeholder for forgot password functionality.
-    alert('Forgot Password functionality is not implemented yet.');
   }
 }
