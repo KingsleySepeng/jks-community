@@ -73,7 +73,7 @@ export class LoginComponent implements OnInit {
       this.loggedInUser$ = new Observable<User>((observer) => observer.next(user));
 
       // Navigate based on role.
-      if (user.role === Role.INSTRUCTOR || Role.SUBINSTRUCTOR) {
+      if (user.roles.includes(Role.INSTRUCTOR || Role.SUB_INSTRUCTOR)) {
         this.router.navigate(['/attendance-tracker']);
       }
       else {
@@ -88,5 +88,9 @@ export class LoginComponent implements OnInit {
     this.mockDataService.logout();
     this.loggedInUser$ = new Observable<User>();
     this.router.navigate(['/']);
+  }
+
+  onForgotPassword() {
+    this.router.navigate(['/update-password']);
   }
 }

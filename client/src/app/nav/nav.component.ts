@@ -22,16 +22,17 @@ import { Club } from '../model/club';
 })
 export class NavComponent implements OnInit {
   menuOpen = false;
-  loggedInUser?: User; //TODO: CREATE SUBJECT BEHAVIOUR FOR LOGGED IN USER SO THAT LABELS CAN BE UPDATED AUTOMATICALLY
+  loggedInUser?: User;
   userProfileLabel: string = 'User Profile';
   clubProfileLabel: string = 'Club Profile';
 
   // Routes now only include roles for logged-in users
   appRoutes = [
-    { path: 'attendance-tracker', name: 'Track Attendance', roles: [Role.SUBINSTRUCTOR, Role.INSTRUCTOR, Role.ADMIN] },
-    { path: 'add-user', name: 'Manage Students', roles: [Role.SUBINSTRUCTOR, Role.INSTRUCTOR, Role.ADMIN] },
-    {path: 'upload-resource', name: 'Upload Resources',roles:  [Role.SUBINSTRUCTOR, Role.INSTRUCTOR, Role.ADMIN] },
-    {path: ' resource-list', name: 'View Resources',roles:  [Role.SUBINSTRUCTOR, Role.INSTRUCTOR, Role.ADMIN]},
+    { path: 'attendance-tracker', name: 'Track Attendance', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR, Role.SYSTEM_ADMIN] },
+    { path: 'add-user', name: 'Manage Students', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR, Role.SYSTEM_ADMIN] },
+    {path: 'upload-resource', name: 'Upload Resources',roles:  [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR, Role.SYSTEM_ADMIN] },
+    {path: 'resource-list', name: 'View Resources',roles:  [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR, Role.SYSTEM_ADMIN]},
+    {path: 'add-club', name: 'Add Club',roles:  [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR, Role.SYSTEM_ADMIN]},
   ];
 
   constructor(private mockDataService: MockDataService) {}
@@ -48,9 +49,9 @@ export class NavComponent implements OnInit {
     return !!this.mockDataService.getLoggedInUser();
   }
 
-  getUserRole(): Role | null {
+  getUserRole(): Role[] | null {
     const user = this.mockDataService.getLoggedInUser();
-    return user ? user.role : null;
+    return user ? user.roles : null;
   }
 
   // Only display a route if the user is logged in and has the appropriate role.

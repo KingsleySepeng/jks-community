@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Admin, Instructor, Student, User } from '../model/user';
+import { SystemAdmin, Instructor, Student, User } from '../model/user';
 import { Club } from '../model/club';
 import { Attendance, AttendanceStatus } from '../model/attendance ';
 import { Belt } from '../model/belt';
@@ -79,12 +79,11 @@ export class MockDataService {
       profileImageUrl: '',
       clubId: '6',
       belt: Belt.BLACK,
-      role: Role.INSTRUCTOR,
+      roles: [Role.INSTRUCTOR],
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
       updatedAt: new Date('2024-01-01'),
-      attendance: []
     };
 
     const subInstructor1: Instructor = {
@@ -96,12 +95,11 @@ export class MockDataService {
       profileImageUrl: '',
       clubId: '6',
       belt: Belt.BLACK,
-      role: Role.INSTRUCTOR,
+      roles: [Role.INSTRUCTOR],
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
       updatedAt: new Date('2024-01-01'),
-      attendance: []
     };
 
     const subInstructor2: Instructor = {
@@ -113,12 +111,11 @@ export class MockDataService {
       profileImageUrl: '',
       clubId: '6',
       belt: Belt.BLACK,
-      role: Role.INSTRUCTOR,
+      roles:[ Role.INSTRUCTOR],
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
       updatedAt: new Date('2024-01-01'),
-      attendance: []
     };
 
     const subInstructor3: Instructor = {
@@ -130,12 +127,11 @@ export class MockDataService {
       profileImageUrl: '',
       clubId: '6',
       belt: Belt.BLACK,
-      role: Role.INSTRUCTOR,
+      roles: [Role.INSTRUCTOR],
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
       updatedAt: new Date('2024-01-01'),
-      attendance: []
     };
 
     const student1: Student = {
@@ -147,7 +143,7 @@ export class MockDataService {
       profileImageUrl: '',
       clubId: '6',
       belt: Belt.WHITE,
-      role: Role.STUDENT,
+      roles: [Role.STUDENT],
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
@@ -164,7 +160,7 @@ export class MockDataService {
       profileImageUrl: '',
       clubId: '6',
       belt: Belt.WHITE,
-      role: Role.STUDENT,
+      roles: [Role.STUDENT],
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
@@ -181,7 +177,7 @@ export class MockDataService {
       profileImageUrl: '',
       clubId: '6',
       belt: Belt.BLACK,
-      role: Role.STUDENT,
+      roles: [Role.STUDENT],
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
@@ -332,17 +328,23 @@ export class MockDataService {
   // -------------------------------------------------------
   private assignUsersToClubs(): void {
     this.clubs.forEach(club => {
-      // Instructors
-      club.instructors = this.users.filter(
-        user => user.clubId === club.id && user.role === Role.INSTRUCTOR
-      ) as Instructor[];
+      // Set the single instructor (first match, assuming one per club)
+      const instructor = this.users.find(
+        user => user.clubId === club.id && user.roles.includes(Role.INSTRUCTOR)
+      );
 
-      // Students
-      club.students = this.users.filter(
-        user => user.clubId === club.id && user.role === Role.STUDENT
-      ) as Student[];
+      // Set students (including those who are sub-instructors)
+      const students = this.users.filter(
+        user => user.clubId === club.id && user.roles.includes(Role.STUDENT)
+      );
+
+      // Assign to club
+      club.instructor = instructor as Instructor;
+      club.students = students as Student[];
     });
   }
+
+
 
   // -------------------------------------------------------
   // 4. Authentication Methods
@@ -517,6 +519,14 @@ export class MockDataService {
       this.resources[idx] = { ...updated };
     }
   }
+
+  deleteResource(id: string): void {
+    const index = this.resources.findIndex(r => r.id === id);
+    if (index !== -1) {
+      this.resources.splice(index, 1);
+    }
+  }
+
 
   public getOutstandingFees(userId: string): number {
     const userPayments = this.payments.filter(p => p.userId === userId);

@@ -40,11 +40,11 @@ export class GradingFormComponent implements OnInit {
   async ngOnInit() {
     // Load instructor and students.
     this.instructor = this.mockDataService.getLoggedInUser();
-    if (!this.instructor || this.instructor.role !== Role.INSTRUCTOR) {
+    if (!this.instructor || !this.instructor.roles.includes(Role.INSTRUCTOR)) {
       console.error('No instructor is logged in!');
       return;
     }
-    this.allStudents = this.mockDataService.getUsers().filter(user => user.role === Role.STUDENT && user.clubId === this.instructor?.clubId) as Student[];
+    this.allStudents = this.mockDataService.getUsers().filter(user => user.roles.includes(Role.STUDENT) && user.clubId === this.instructor?.clubId) as Student[];
     await this.initializeGapiClient();
   }
 

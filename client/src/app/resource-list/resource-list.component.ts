@@ -19,6 +19,7 @@ export class ResourceListComponent implements OnInit {
   filteredResources: Resource[] = [];
   categories: string[] = ['All', 'Syllabus', 'SeminarVideo', 'PDF', 'Other', 'GoogleDrive'];
   selectedCategory: string = 'All';
+  isInstructor: boolean = true; // 🔁 Replace with actual logic later
 
   constructor(private mockData: MockDataService) {
   }
@@ -35,4 +36,11 @@ export class ResourceListComponent implements OnInit {
       this.filteredResources = this.resources.filter(r => r.category === this.selectedCategory);
     }
   }
+
+  deleteResource(id: string): void {
+    this.resources = this.resources.filter(r => r.id !== id);
+    this.filteredResources = this.filteredResources.filter(r => r.id !== id);
+    this.mockData.deleteResource(id);
+  }
+
 }

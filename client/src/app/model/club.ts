@@ -7,8 +7,8 @@ export interface Club {
   contactNumber?: string;
   establishedDate?: Date;
   description?: string;
-  instructors?: Instructor[]; // Optional, populated as needed
-  students?: Student[];       // Optional, populated as needed
+  instructor?: Instructor;        // ✅ Only ONE main instructor
+  students?: Student[];          // ✅ All students (including sub-instructors)
   createdAt: Date;
   updatedAt: Date;
   logoUrl?: string;

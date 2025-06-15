@@ -9,11 +9,6 @@
     </select>
   </div>
 
-  <!-- Resources Summary Chart -->
-<!--  <div class="mb-4">-->
-<!--    <canvas id="resourceChart"></canvas>-->
-<!--  </div>-->
-
   <!-- Resources Grid -->
   <div *ngIf="filteredResources.length > 0; else noResources" class="row row-cols-1 row-cols-md-3 g-4">
     <div class="col" *ngFor="let res of filteredResources">
@@ -33,7 +28,9 @@
             <a [href]="res.fileUrl" target="_blank" class="btn btn-sm btn-outline-primary">Open PDF/Doc</a>
           </ng-container>
         </div>
-
+        <button *ngIf="isInstructor" class="btn btn-sm btn-outline-danger ms-2" (click)="deleteResource(res.id)">
+          Delete
+        </button>
       </div>
     </div>
   </div>

@@ -1,4 +1,4 @@
-import {Admin, Instructor, Student} from './user';
+import {SystemAdmin, Instructor, Student} from './user';
 
 export enum Belt {
   WHITE = 'WHITE',

@@ -42,7 +42,7 @@ export class CreateEventComponent {
       return;
     }
 
-    if (this.loggedInUser && this.loggedInUser.role === Role.INSTRUCTOR || Role.ADMIN) {
+    if (this.loggedInUser && this.loggedInUser.roles.includes(Role.INSTRUCTOR || Role.SYSTEM_ADMIN)) {
       this.userClub = this.mockData.getClubById(this.loggedInUser.clubId);
     }
 

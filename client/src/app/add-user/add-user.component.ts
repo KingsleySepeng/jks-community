@@ -5,6 +5,7 @@ import {Role} from '../model/role';
 import {Belt} from '../model/belt';
 import {NgForOf} from '@angular/common';
 import {MockDataService} from '../mock-service/mock-data.service';
+import {generateId} from '../utils/utils';
 
 @Component({
   selector: 'app-add-user',
@@ -24,7 +25,7 @@ export class AddUserComponent implements OnInit{
 
   // Local user object for adding a new student.
   user: Student = {
-    id: '',
+    id: generateId(),
     memberId: '',
     firstName: '',
     lastName: '',
@@ -32,7 +33,7 @@ export class AddUserComponent implements OnInit{
     profileImageUrl: '',
     clubId: '',  // To be set based on logged-in instructor's club
     belt: Belt.WHITE,
-    role: Role.STUDENT,   // Ensures we create a student
+    roles: [],   // Ensures we create a student
     password: 'karate',   // Default password; adjust as needed
     isActive: true,
     createdAt: new Date(),
@@ -47,11 +48,11 @@ export class AddUserComponent implements OnInit{
   ngOnInit(): void {
     // Assume the logged-in user is an instructor.
     const loggedInUser = this.mockData.getLoggedInUser();
-    if (loggedInUser && loggedInUser.role === Role.INSTRUCTOR) {
+    if (loggedInUser && loggedInUser.roles.includes(Role.INSTRUCTOR)) {
       // Set the clubId for new student from the logged-in instructor.
       this.user.clubId = loggedInUser.clubId;
       // Populate the list of students in the instructor's club.
-      this.clubStudents = this.mockData.getUsers().filter(u => u.role === Role.STUDENT && u.clubId === loggedInUser.clubId) as Student[];
+      this.clubStudents = this.mockData.getUsers().filter(u => u.roles.includes(Role.STUDENT) && u.clubId === loggedInUser.clubId) as Student[];
     }
   }
 
@@ -90,7 +91,20 @@ export class AddUserComponent implements OnInit{
   private updateClubStudents(): void {
     const loggedInUser = this.mockData.getLoggedInUser();
     if (loggedInUser) {
-      this.clubStudents = this.mockData.getUsers().filter(u => u.role === Role.STUDENT && u.clubId === loggedInUser.clubId) as Student[];
+      this.clubStudents = this.mockData.getUsers().filter(u => u.roles.includes(Role.STUDENT) && u.clubId === loggedInUser.clubId) as Student[];
     }
   }
+
+  toggleSubInstructor(user: User): void {
+    const isSubInstructor = user.roles.includes(Role.SUB_INSTRUCTOR);
+
+    if (isSubInstructor) {
+      user.roles = user.roles.filter(role => role !== Role.SUB_INSTRUCTOR);
+    } else {
+      user.roles.push(Role.SUB_INSTRUCTOR);
+    }
+    this.mockData.updateUser(user);
+}
+
+  protected readonly Role = Role;
 }

@@ -21,7 +21,7 @@ import {FormsModule} from '@angular/forms';
 })
 export class AttendanceComponent implements OnInit {
   @Input() instructor!: Instructor;
-  students: User[] = [];
+  students: Student[] = [];
   attendanceState: { [userId: string]: { status: AttendanceStatus | undefined; comment: string; showHistory: boolean } } = {};
 
   selectedDate: Date = new Date();
@@ -108,7 +108,7 @@ export class AttendanceComponent implements OnInit {
   }
 
   // Aggregation: returns summary counts for a given student over the aggregation date range.
-  getAttendanceSummary(student: Instructor | Student): AttendanceSummary {
+  getAttendanceSummary(student:  Student): AttendanceSummary {
     const start = new Date(this.aggregationStartDate);
     const end = new Date(this.aggregationEndDate);
     const records = (student.attendance || []).filter(record => {
