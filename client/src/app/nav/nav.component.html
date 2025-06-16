@@ -10,15 +10,13 @@
       <!-- Main Navigation Links -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <ng-container *ngFor="let route of appRoutes">
-          <li class="nav-item">
+          <li *ngIf="canAccess(route.roles)" class="nav-item">
             <a class="nav-link" [routerLink]="route.path" routerLinkActive="active">
               {{ route.name }}
             </a>
           </li>
         </ng-container>
-      </ul>
-
-      <!-- Authenticated User Dropdown or Login Link -->
+        <!-- Authenticated User Dropdown or Login Link -->
       <ul class="navbar-nav mb-2 mb-lg-0">
         <ng-container *ngIf="isLoggedIn(); else loginLink">
           <li class="nav-item dropdown">
@@ -48,7 +46,7 @@
           </li>
         </ng-template>
       </ul>
-    </div>
+  </div>
   </div>
 </nav>
 

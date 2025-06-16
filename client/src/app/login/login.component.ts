@@ -12,7 +12,8 @@ import { Belt } from '../model/belt';
 import { NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 import { MockDataService } from '../mock-service/mock-data.service';
-import {Observable} from 'rxjs';
+import {Observable, tap} from 'rxjs';
+import {ServiceService} from '../services/service.service';
 
 @Component({
   selector: 'app-login',
@@ -25,27 +26,23 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   showPassword = false;
   isLoading = false;
-  errorMessage: string = '';
-  loggedInUser$: Observable<User> = new Observable<User>();
-  loggedInUser?: User;
+  errorMessage = '';
+  loggedInUser$!: Observable<User | undefined>;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private mockDataService: MockDataService
+    private serviceService: ServiceService
   ) {}
 
   ngOnInit(): void {
-    // Build the form with validation rules.
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      rememberMe: [false],
+      rememberMe: [false]
     });
 
-    // Check if a user is already logged in (for demo/testing).
-    this.loggedInUser = this.mockDataService.getLoggedInUser();
-    // Optionally pre-populate email if stored in localStorage.
+    this.loggedInUser$ = this.serviceService.getLoggedInUser();
   }
 
   togglePasswordVisibility(): void {
@@ -53,44 +50,36 @@ export class LoginComponent implements OnInit {
   }
 
   login(): void {
-    if (this.loginForm.invalid) {
-      console.log('Form is invalid');
-      return;
-    }
+    if (this.loginForm.invalid) return;
 
     this.isLoading = true;
-    const {email, password, rememberMe} = this.loginForm.value;
+    const { email, password } = this.loginForm.value;
 
-    // Clear previous error messages.
-    this.errorMessage = '';
+    this.serviceService.authenticateUser(email, password).pipe(
+      tap(user => {
+        this.isLoading = false;
 
-    // Simulate authentication (replace with real auth in production).
-    const user: User | null = this.mockDataService.authenticate(email, password);
-    this.isLoading = false;
+        if (user) {
+          const isInstructor = user.roles.includes(Role.INSTRUCTOR) || user.roles.includes(Role.SUB_INSTRUCTOR);
 
-    if (user) {
-      console.log(`Logged in as ${user.firstName} ${user.lastName}`);
-      this.loggedInUser$ = new Observable<User>((observer) => observer.next(user));
-
-      // Navigate based on role.
-      if (user.roles.includes(Role.INSTRUCTOR || Role.SUB_INSTRUCTOR)) {
-        this.router.navigate(['/attendance-tracker']);
-      }
-      else {
-        console.log('Login failed: invalid credentials');
-        // Set an inline error message.
-        this.errorMessage = 'Invalid credentials. Please try again.';
-      }
-    }
+          if (isInstructor) {
+            this.router.navigate(['/attendance-tracker']);
+          } else {
+            this.router.navigate(['/resource-list']);
+          }
+        } else {
+          this.errorMessage = 'Invalid credentials. Please try again.';
+        }
+      })
+    ).subscribe();
   }
 
   logout(): void {
-    this.mockDataService.logout();
-    this.loggedInUser$ = new Observable<User>();
+    this.serviceService.logout();
     this.router.navigate(['/']);
   }
 
-  onForgotPassword() {
+  onForgotPassword(): void {
     this.router.navigate(['/update-password']);
   }
 }

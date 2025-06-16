@@ -5,7 +5,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { routes } from './app.routes';
 import {DataService} from './services/DataService';
-import {NewMockDataService} from './services/new-mock-data-service';
 
 @NgModule({
   declarations: [
@@ -17,7 +16,6 @@ import {NewMockDataService} from './services/new-mock-data-service';
     RouterModule.forRoot(routes)
   ],
   providers: [
-    // { provide: DataService, useClass: NewMockDataService }
   ],
 })
 export class AppModule {

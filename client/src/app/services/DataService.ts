@@ -22,6 +22,7 @@ export abstract class DataService {
   abstract deleteResource(res: Resource): void;
   abstract updateResource(updated: Resource): void;
   abstract getLoggedInUser(): Observable<User | undefined>;
+  abstract getLoggedInUserValue(): User | undefined;
   abstract authenticateUser(email: string, password: string): Observable<User | null>;
   abstract logout(): void;
   // abstract getPayments(): Observable<Payment[]>;
