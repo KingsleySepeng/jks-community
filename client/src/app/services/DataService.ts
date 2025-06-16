@@ -19,7 +19,12 @@ export abstract class DataService {
   abstract removeClub(clubId: string): void;
   abstract getAttendances(): Observable<Attendance[]>;
   abstract getAllResources(): Observable<Resource[]>;
-  abstract addResource(res: Resource): void;
+  abstract  createAndAddResource(data: {
+    title: string;
+    description: string;
+    category: string;
+    uploadedFile: File;
+  }): void;
   abstract deleteResourceById(id: string): void;
   abstract updateResource(updated: Resource): void;
   abstract getLoggedInUser(): Observable<User | undefined>;

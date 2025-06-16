@@ -22,30 +22,24 @@ import {ServiceService} from '../services/service.service';
 export class NavComponent implements OnInit {
   menuOpen = false;
   loggedInUser?: User;
-  userProfileLabel: string = 'User Profile';
-  clubProfileLabel: string = 'Club Profile';
   hasClub = false;
-  clubName?: string;
-
-  // Routes now only include roles for logged-in users
+  clubName :string | undefined = ''
   appRoutes = [
     { path: 'attendance-tracker', name: 'Track Attendance', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR] },
     { path: 'add-user', name: 'Manage Students', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR] },
-    {path: 'upload-resource', name: 'Upload Resources',roles:  [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR] },
-    {path: 'resource-list', name: 'View Resources',roles:  [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR,Role.STUDENT]},
-    {path: 'add-club', name: 'Add Club',roles: [Role.SYSTEM_ADMIN]},
+    { path: 'upload-resource', name: 'Upload Resources', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR] },
+    { path: 'resource-list', name: 'View Resources', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR, Role.STUDENT] },
+    { path: 'add-club', name: 'Manage Clubs', roles: [Role.SYSTEM_ADMIN] }
   ];
 
-  constructor(private serviceService: ServiceService,private router:Router) {}
+  constructor(private serviceService: ServiceService, private router: Router) {}
 
   ngOnInit(): void {
     this.serviceService.getLoggedInUser().subscribe(user => {
       this.loggedInUser = user;
-      this.clubName = user?.clubId ? this.serviceService.getClubByIdValue(user.clubId)?.name : undefined;
       this.updateNavLabels();
     });
   }
-
 
   toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
@@ -55,36 +49,20 @@ export class NavComponent implements OnInit {
     return !!this.loggedInUser;
   }
 
-  // Only display a route if the user is logged in and has the appropriate role.
   canAccess(routeRoles: Role[]): boolean {
-    const user = this.serviceService.getLoggedInUserValue(); // Use the `.value` version
-    if (!user) return false;
-    return routeRoles.some(role => user.roles.includes(role));
+    return this.serviceService.canUserAccessRoute(this.loggedInUser, routeRoles);
   }
-
 
   logout(): void {
     this.serviceService.logout();
     this.loggedInUser = undefined;
-    this.router.navigate(['/login'])
+    this.router.navigate(['/login']);
   }
-
 
   updateNavLabels(): void {
     if (this.loggedInUser) {
-      this.userProfileLabel = `${this.loggedInUser.firstName} ${this.loggedInUser.lastName}`;
-      const club = this.serviceService.getClubByIdValue(this.loggedInUser.clubId);
-      if (club) {
-        this.clubProfileLabel = `${club.name} Club`;
-        this.hasClub = true;
-      } else {
-        this.hasClub = false;
-      }
+      this.clubName = this.serviceService.getClubNameForUser(this.loggedInUser);
     } else {
-      this.userProfileLabel = 'User Profile';
-      this.clubProfileLabel = 'Club Profile';
-      this.hasClub = false;
     }
   }
-
 }

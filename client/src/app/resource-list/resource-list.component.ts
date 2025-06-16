@@ -26,32 +26,14 @@ export class ResourceListComponent implements OnInit {
   constructor(private serviceService: ServiceService) {}
 
   ngOnInit(): void {
-    this.updateFilteredResources();
-  }
-
-  updateFilteredResources(): void {
-    const user = this.serviceService.getLoggedInUserValue();
-    if (!user || !user.clubId) {
-      this.filteredResources$ = of([]);
-      return;
-    }
-
-    this.filteredResources$ = this.serviceService.getAllResources().pipe(
-      map(resources =>
-        resources.filter(r =>
-          r.clubId === user.clubId &&
-          (this.selectedCategory === 'All' || r.category === this.selectedCategory)
-        )
-      )
-    );
+    this.filteredResources$ = this.serviceService.getFilteredResources();
   }
 
   onCategoryChange(): void {
-    this.updateFilteredResources(); // refresh when filter changes
+    this.serviceService.setSelectedCategory(this.selectedCategory);
   }
 
   deleteResource(id: string): void {
-    this.serviceService.deleteResourceById(id);
-    this.updateFilteredResources(); // re-filter after deletion
+    this.serviceService.deleteResourceAndRefresh(id);
   }
 }

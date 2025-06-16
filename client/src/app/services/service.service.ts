@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, of} from 'rxjs';
-import {User} from '../model/user';
+import {BehaviorSubject, combineLatest, map, Observable, of} from 'rxjs';
+import {Instructor, Student, User} from '../model/user';
 import {Club} from '../model/club';
 import {Attendance} from '../model/attendance ';
 import {Resource} from '../model/resource';
@@ -12,15 +12,15 @@ import {generateId} from '../utils/utils';
 @Injectable({
   providedIn: 'root'
 })
-export class ServiceService  extends DataService {
+export class ServiceService {
   private users$ = new BehaviorSubject<User[]>([]);
   private clubs$ = new BehaviorSubject<Club[]>([]);
   private attendances$ = new BehaviorSubject<Attendance[]>([]);
   private resources$ = new BehaviorSubject<Resource[]>([]);
   private loggedInUser$ = new BehaviorSubject<User | undefined>(undefined);
+  private selectedCategory$ = new BehaviorSubject<string>('All');
 
   constructor() {
-    super();
     // Load persisted data if available
     const usersFromStorage = localStorage.getItem('users');
     const clubsFromStorage = localStorage.getItem('clubs');
@@ -60,13 +60,97 @@ export class ServiceService  extends DataService {
     }
   }
 
+  //TODO: BOTH GENERATE METHODS WILL BE REMOVED WHEN BACKEND IS CREATED
+  generateStudentId(): string {
+    return 'S' + Math.floor(Math.random() * 1000);
+  }
+
+  generateMemberId(): string {
+    return 'M' + Math.floor(Math.random() * 1000);
+  }
+
+  canUserAccessRoute(user: User | undefined, allowedRoles: Role[]): boolean {
+    if (!user) return false;
+    return allowedRoles.some(role => user.roles.includes(role));
+  }
+  getClubNameForUser(user: User | undefined): string | undefined {
+    if (!user || !user.clubId) return undefined;
+    return this.getClubByIdValue(user.clubId)?.name;
+  }
+
+  getStudentsByClub(clubId: string) {
+    return this.getUsers().pipe(
+      map(users =>
+        users.filter(u => u.clubId === clubId && u.roles.includes(Role.STUDENT)) as Student[]
+      )
+    );
+  }
+
+  toggleSubInstructorRole(user: User): void {
+    const isSubInstructor = user.roles.includes(Role.SUB_INSTRUCTOR);
+    const updatedUser: User = {
+      ...user,
+      roles: isSubInstructor
+        ? user.roles.filter(role => role !== Role.SUB_INSTRUCTOR)
+        : [...user.roles, Role.SUB_INSTRUCTOR]
+    };
+    this.updateUser(updatedUser);
+  }
+  addClubWithInstructor(clubData: Partial<Club>, instructorData: Partial<Instructor>): void {
+    const clubId = generateId();
+    const instructorId = generateId();
+
+    const instructor: Instructor = {
+      ...instructorData,
+      id: instructorId,
+      memberId: 'M-' + instructorId.slice(0, 4),
+      clubId: clubId,
+      password: 'password',
+      profileImageUrl: '',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      roles: [Role.INSTRUCTOR],
+      isActive: true
+    } as Instructor;
+
+    const club: Club = {
+      ...clubData,
+      id: clubId,
+      instructor,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    } as Club;
+
+    this.addUser(instructor);
+    this.addClub(club);
+  }
+
+  saveAttendanceRecords(records: Attendance[]): void {
+    const updatedUsers = this.users$.value.map(user => {
+      // Only update if user is a Student (i.e., has an attendance property)
+      const isStudent = user.roles.includes(Role.STUDENT);
+      if (isStudent) {
+        const studentRecords = records.filter(r => r.userId === user.id);
+        if (studentRecords.length > 0) {
+          const updatedAttendance = [...((user as Student).attendance || []), ...studentRecords];
+          return {
+            ...user,
+            attendance: updatedAttendance,
+            updatedAt: new Date()
+          } as Student;
+        }
+      }
+      return user;
+    });
+
+    this.users$.next(updatedUsers);
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
+  }
+
   getUsers(): Observable<User[]> {
     return this.users$.asObservable();
   }
 
-  getUserById(id: string): Observable<User | undefined> {
-    return of(this.users$.value.find(u => u.id === id));
-  }
 
   addUser(user: User): void {
     if (user.roles.includes(Role.INSTRUCTOR)) {
@@ -92,6 +176,18 @@ export class ServiceService  extends DataService {
     localStorage.setItem('users', JSON.stringify(users));
   }
 
+  updatePasswordByEmail(email: string, newPassword: string): { success: boolean; message: string } {
+    const users = this.users$.value;
+    const user = users.find(u => u.email === email);
+
+    if (!user) {
+      return { success: false, message: 'User not found.' };
+    }
+
+    const updatedUser: User = { ...user, password: newPassword };
+    this.updateUser(updatedUser);
+    return { success: true, message: 'Password updated successfully.' };
+  }
   removeUser(userId: string): void {
     const updated = this.users$.value.filter(u => u.id !== userId);
     this.users$.next(updated);
@@ -102,18 +198,8 @@ export class ServiceService  extends DataService {
     return this.clubs$.asObservable();
   }
 
-  getClubById(clubId: string): Observable<Club | undefined> {
-    return of(this.clubs$.value.find(c => c.id === clubId));
-  }
-
   addClub(club: Club): void {
     const updated = [...this.clubs$.value, club];
-    this.clubs$.next(updated);
-    localStorage.setItem('clubs', JSON.stringify(updated));
-  }
-
-  updateClub(club: Club): void {
-    const updated = this.clubs$.value.map(c => c.id === club.id ? club : c);
     this.clubs$.next(updated);
     localStorage.setItem('clubs', JSON.stringify(updated));
   }
@@ -124,26 +210,59 @@ export class ServiceService  extends DataService {
     localStorage.setItem('clubs', JSON.stringify(updated));
   }
 
-  getAttendances(): Observable<Attendance[]> {
-    return this.attendances$.asObservable();
-  }
 
-  getAllResources(): Observable<Resource[]> {
-    return this.resources$.asObservable();
-  }
+  createAndAddResource(data: {
+    title: string;
+    description: string;
+    category: string;
+    uploadedFile: File;
+  }): void {
+    const user = this.loggedInUser$.value;
+    if (!user || !user.clubId) {
+      throw new Error('Only instructors with a club can upload resources.');
+    }
 
-  addResource(resource: Resource): void {
-    const updated = [...this.resources$.value, resource];
+    const isVideo = data.uploadedFile?.type.startsWith('video/');
+    const isPdf = data.uploadedFile?.type === 'application/pdf';
+
+    const newResource: Resource = {
+      id: generateId(),
+      title: data.title || data.uploadedFile?.name || 'Untitled',
+      description: data.description,
+      category: data.category,
+      fileUrl: isPdf ? URL.createObjectURL(data.uploadedFile) : '',
+      videoUrl: isVideo ? URL.createObjectURL(data.uploadedFile) : '',
+      dateCreated: new Date(),
+      clubId: user.clubId,
+    };
+
+    const updated = [...this.resources$.value, newResource];
     this.resources$.next(updated);
   }
-  deleteResourceById(id: string): void {
+
+  setSelectedCategory(category: string): void {
+    this.selectedCategory$.next(category);
+  }
+
+  getFilteredResources(): Observable<Resource[]> {
+    return combineLatest([
+      this.resources$.asObservable(),
+      this.loggedInUser$.asObservable(),
+      this.selectedCategory$.asObservable(),
+    ]).pipe(
+      map(([resources, user, selectedCategory]) => {
+        if (!user?.clubId) return [];
+        return resources.filter(resource =>
+          resource.clubId === user.clubId &&
+          (selectedCategory === 'All' || resource.category === selectedCategory)
+        );
+      })
+    );
+  }
+
+  deleteResourceAndRefresh(id: string): void {
     const updated = this.resources$.value.filter(r => r.id !== id);
     this.resources$.next(updated);
-  }
-
-  updateResource(updated: Resource): void {
-    const updatedResources = this.resources$.value.map(r => r.id === updated.id ? updated : r);
-    this.resources$.next(updatedResources);
   }
 
   getLoggedInUser(): Observable<User | undefined> {
@@ -167,7 +286,6 @@ export class ServiceService  extends DataService {
     this.loggedInUser$.next(undefined);
     localStorage.removeItem('loggedInUser');
   }
-
 
   getClubByIdValue(clubId: string): Club | undefined {
     return this.clubs$.value.find(c=>c.id === clubId);

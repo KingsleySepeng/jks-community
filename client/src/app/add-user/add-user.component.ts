@@ -23,7 +23,6 @@ import {first} from 'rxjs';
 export class AddUserComponent implements OnInit{
   belts = Object.values(Belt);
   user: Student = this.getEmptyUser();
-
   clubStudents: Student[] = [];
   currentInstructor?: User;
 
@@ -44,8 +43,8 @@ export class AddUserComponent implements OnInit{
 
     const newStudent: Student = {
       ...this.user,
-      id: 'S' + Math.floor(Math.random() * 1000),
-      memberId: 'M' + Math.floor(Math.random() * 1000),
+      id: this.serviceService.generateStudentId(),
+      memberId: this.serviceService.generateMemberId(),
       clubId: this.currentInstructor.clubId,
       roles: [Role.STUDENT],
       createdAt: new Date(),
@@ -65,19 +64,13 @@ export class AddUserComponent implements OnInit{
   }
 
   toggleSubInstructor(user: User): void {
-    const isSubInstructor = user.roles.includes(Role.SUB_INSTRUCTOR);
-    user.roles = isSubInstructor
-      ? user.roles.filter(role => role !== Role.SUB_INSTRUCTOR)
-      : [...user.roles, Role.SUB_INSTRUCTOR];
-
-    this.serviceService.updateUser(user);
+    this.serviceService.toggleSubInstructorRole(user);
+    this.loadClubStudents(user.clubId);
   }
 
   private loadClubStudents(clubId: string): void {
-    this.serviceService.getUsers().pipe(first()).subscribe(users => {
-      this.clubStudents = users.filter(
-        u => u.clubId === clubId && u.roles.includes(Role.STUDENT)
-      ) as Student[];
+    this.serviceService.getStudentsByClub(clubId).pipe(first()).subscribe(students => {
+      this.clubStudents = students;
     });
   }
 

@@ -1,10 +1,7 @@
 import { Component } from '@angular/core';
-import {DataService} from '../services/DataService';
 import {NgClass, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ServiceService} from '../services/service.service';
-import {first} from 'rxjs';
-import {User} from '../model/user';
 
 @Component({
   selector: 'app-update-password',
@@ -28,30 +25,22 @@ export class UpdatePasswordComponent {
 
   updatePassword(): void {
     if (this.newPassword !== this.confirmPassword) {
-      this.message = 'Passwords do not match.';
-      this.isError = true;
+      this.setMessage('Passwords do not match.', true);
       return;
     }
 
-    this.serviceService.getUsers().pipe(first()).subscribe(users => {
-      const user = users.find(u => u.email === this.email);
+    const result = this.serviceService.updatePasswordByEmail(this.email, this.newPassword);
+    this.setMessage(result.message, !result.success);
 
-      if (!user) {
-        this.message = 'User not found.';
-        this.isError = true;
-        return;
-      }
-
-      const updatedUser: User = { ...user, password: this.newPassword };
-      this.serviceService.updateUser(updatedUser);
-
-      this.message = 'Password updated successfully.';
-      this.isError = false;
-
-      // Clear fields
+    if (result.success) {
       this.email = '';
       this.newPassword = '';
       this.confirmPassword = '';
-    });
+    }
+  }
+
+  private setMessage(message: string, isError: boolean): void {
+    this.message = message;
+    this.isError = isError;
   }
 }

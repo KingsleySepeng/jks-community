@@ -86,11 +86,13 @@ export class AttendanceComponent implements OnInit {
       alert('No instructor is logged in.');
       return;
     }
+
     this.isSaving = true;
-    this.students.forEach(student => {
+
+    const attendanceRecords: Attendance[] = this.students.flatMap(student => {
       const state = this.attendanceState[student.id];
       if (state.status) {
-        const newRecord: Attendance = {
+        return [{
           id: this.generateUniqueId(),
           date: this.selectedDate,
           status: state.status,
@@ -100,15 +102,16 @@ export class AttendanceComponent implements OnInit {
           comments: state.comment,
           createdAt: new Date(),
           updatedAt: new Date()
-        };
-        student.attendance = [...(student.attendance || []), newRecord];
+        }];
       }
+      return [];
     });
 
-    this.students.forEach(student => this.serviceService.updateUser(student));
+    this.serviceService.saveAttendanceRecords(attendanceRecords);
     this.isSaving = false;
     this.openModal();
   }
+
 
   getAttendanceSummary(student: Student): AttendanceSummary {
     const start = new Date(this.aggregationStartDate);

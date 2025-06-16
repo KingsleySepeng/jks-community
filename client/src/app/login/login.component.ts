@@ -59,21 +59,21 @@ export class LoginComponent implements OnInit {
       tap(user => {
         this.isLoading = false;
 
-        if (user) {
-          const isInstructor = user.roles.includes(Role.INSTRUCTOR) || user.roles.includes(Role.SUB_INSTRUCTOR);
-          if( user.roles.includes(Role.SYSTEM_ADMIN)) {
-            this.router.navigate(['/add-club']);
-          }
-          if( user.roles.includes(Role.STUDENT)) {
-            this.router.navigate(['/resource-list']);
-          }
-          if (isInstructor) {
-            this.router.navigate(['/attendance-tracker']);
-          } else {
-            this.router.navigate(['/resource-list']);
-          }
-        } else {
+        if (!user) {
           this.errorMessage = 'Invalid credentials. Please try again.';
+          return;
+        }
+
+        // 🧠 Routing based on role priority
+        if (user.roles.includes(Role.SYSTEM_ADMIN)) {
+          this.router.navigate(['/add-club']);
+        } else if (user.roles.includes(Role.INSTRUCTOR) || user.roles.includes(Role.SUB_INSTRUCTOR)) {
+          this.router.navigate(['/attendance-tracker']);
+        } else if (user.roles.includes(Role.STUDENT)) {
+          this.router.navigate(['/resource-list']);
+        } else {
+          // Optional fallback
+          this.router.navigate(['/']);
         }
       })
     ).subscribe();
