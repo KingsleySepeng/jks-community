@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import {Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {NgClass, NgForOf, NgIf} from '@angular/common';
 import { Role } from '../model/role';
 import { User } from '../model/user';
@@ -24,21 +24,24 @@ export class NavComponent implements OnInit {
   loggedInUser?: User;
   userProfileLabel: string = 'User Profile';
   clubProfileLabel: string = 'Club Profile';
+  hasClub = false;
+  clubName?: string;
 
   // Routes now only include roles for logged-in users
   appRoutes = [
-    { path: 'attendance-tracker', name: 'Track Attendance', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR, Role.SYSTEM_ADMIN] },
-    { path: 'add-user', name: 'Manage Students', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR, Role.SYSTEM_ADMIN] },
-    {path: 'upload-resource', name: 'Upload Resources',roles:  [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR, Role.SYSTEM_ADMIN] },
-    {path: 'resource-list', name: 'View Resources',roles:  [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR, Role.SYSTEM_ADMIN]},
-    {path: 'add-club', name: 'Add Club',roles:  [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR, Role.SYSTEM_ADMIN]},
+    { path: 'attendance-tracker', name: 'Track Attendance', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR] },
+    { path: 'add-user', name: 'Manage Students', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR] },
+    {path: 'upload-resource', name: 'Upload Resources',roles:  [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR] },
+    {path: 'resource-list', name: 'View Resources',roles:  [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR,Role.STUDENT]},
+    {path: 'add-club', name: 'Add Club',roles: [Role.SYSTEM_ADMIN]},
   ];
 
-  constructor(private serviceService: ServiceService) {}
+  constructor(private serviceService: ServiceService,private router:Router) {}
 
   ngOnInit(): void {
     this.serviceService.getLoggedInUser().subscribe(user => {
       this.loggedInUser = user;
+      this.clubName = user?.clubId ? this.serviceService.getClubByIdValue(user.clubId)?.name : undefined;
       this.updateNavLabels();
     });
   }
@@ -63,18 +66,24 @@ export class NavComponent implements OnInit {
   logout(): void {
     this.serviceService.logout();
     this.loggedInUser = undefined;
+    this.router.navigate(['/login'])
   }
 
 
   updateNavLabels(): void {
     if (this.loggedInUser) {
-      this.userProfileLabel = `${this.loggedInUser.firstName} ${this.loggedInUser.lastName} (${this.loggedInUser.roles.join(', ')})'s Profile`;
-
-      this.serviceService.getClubById(this.loggedInUser.clubId).subscribe(club => {
-        if (club) {
-          this.clubProfileLabel = `${club.name} Club`;
-        }
-      });
+      this.userProfileLabel = `${this.loggedInUser.firstName} ${this.loggedInUser.lastName}`;
+      const club = this.serviceService.getClubByIdValue(this.loggedInUser.clubId);
+      if (club) {
+        this.clubProfileLabel = `${club.name} Club`;
+        this.hasClub = true;
+      } else {
+        this.hasClub = false;
+      }
+    } else {
+      this.userProfileLabel = 'User Profile';
+      this.clubProfileLabel = 'Club Profile';
+      this.hasClub = false;
     }
   }
 

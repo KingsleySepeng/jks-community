@@ -13,13 +13,14 @@ export abstract class DataService {
   abstract removeUser(userId: string): void;
   abstract getClubs(): Observable<Club[]>;
   abstract getClubById(clubId: string): Observable<Club | undefined>;
+  abstract getClubByIdValue(clubId: string): Club | undefined;
   abstract addClub(club: Club): void;
   abstract updateClub(club: Club): void;
   abstract removeClub(clubId: string): void;
   abstract getAttendances(): Observable<Attendance[]>;
   abstract getAllResources(): Observable<Resource[]>;
   abstract addResource(res: Resource): void;
-  abstract deleteResource(res: Resource): void;
+  abstract deleteResourceById(id: string): void;
   abstract updateResource(updated: Resource): void;
   abstract getLoggedInUser(): Observable<User | undefined>;
   abstract getLoggedInUserValue(): User | undefined;

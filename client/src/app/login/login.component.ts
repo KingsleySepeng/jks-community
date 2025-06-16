@@ -61,7 +61,12 @@ export class LoginComponent implements OnInit {
 
         if (user) {
           const isInstructor = user.roles.includes(Role.INSTRUCTOR) || user.roles.includes(Role.SUB_INSTRUCTOR);
-
+          if( user.roles.includes(Role.SYSTEM_ADMIN)) {
+            this.router.navigate(['/add-club']);
+          }
+          if( user.roles.includes(Role.STUDENT)) {
+            this.router.navigate(['/resource-list']);
+          }
           if (isInstructor) {
             this.router.navigate(['/attendance-tracker']);
           } else {

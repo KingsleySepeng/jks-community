@@ -13,7 +13,7 @@ import {AuthGuard} from './utils/auth.guard';
 import {Role} from './model/role';
 
 export const routes: Routes = [
-  {path: '', component: LoginComponent},
+  {path: 'login', component: LoginComponent},
   {
     path: 'attendance-tracker', component: AttendanceComponent,
     canActivate: [AuthGuard],
@@ -26,7 +26,7 @@ export const routes: Routes = [
   {path: 'upload-resource', component: UploadResourceComponent},
   {
     path: 'resource-list', component: ResourceListComponent, canActivate: [AuthGuard],
-    data: {roles: [Role.INSTRUCTOR]}
+    data: {roles: [Role.INSTRUCTOR, Role.SUB_INSTRUCTOR, Role.STUDENT]}
   },
   {
     path: 'add-club', component: AddClubComponent, canActivate: [AuthGuard],

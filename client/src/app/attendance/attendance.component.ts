@@ -4,6 +4,8 @@ import {Attendance, AttendanceStatus, AttendanceSummary} from '../model/attendan
 import { MockDataService } from '../mock-service/mock-data.service';
 import {DatePipe, NgForOf, NgIf, NgClass, DecimalPipe} from '@angular/common';
 import {FormsModule} from '@angular/forms';
+import {ServiceService} from '../services/service.service';
+import {Role} from '../model/role';
 
 @Component({
   selector: 'app-attendance',
@@ -20,8 +22,8 @@ import {FormsModule} from '@angular/forms';
   styleUrls: ['./attendance.component.scss']
 })
 export class AttendanceComponent implements OnInit {
-  @Input() instructor!: Instructor;
   students: Student[] = [];
+  loggedInUser?: User;
   attendanceState: { [userId: string]: { status: AttendanceStatus | undefined; comment: string; showHistory: boolean } } = {};
 
   selectedDate: Date = new Date();
@@ -29,26 +31,27 @@ export class AttendanceComponent implements OnInit {
   isSaving = false;
   showModal = false;
 
-  // Global aggregation date range
   aggregationStartDate: string = new Date().toISOString().split('T')[0];
   aggregationEndDate: string = new Date().toISOString().split('T')[0];
 
   protected readonly AttendanceStatus = AttendanceStatus;
 
-  constructor(
-    private mockDataService: MockDataService,
-  ) {}
+  constructor(private serviceService: ServiceService) {}
 
-   ngOnInit(): void{
-    if (!this.instructor) {
-      console.error('No instructor provided for attendance tracking.');
+  ngOnInit(): void {
+    this.loggedInUser = this.serviceService.getLoggedInUserValue();
+    if (!this.loggedInUser) {
+      console.error('No instructor is logged in.');
       return;
     }
-    // Load students for the instructor's club
-    this.students = this.mockDataService.getUsers().filter(
-      user => user.clubId === this.instructor.clubId
-    ) as Student[];
-    this.initializeAttendanceState();
+
+    const userClubId = this.loggedInUser.clubId;
+    this.serviceService.getUsers().subscribe(users => {
+      this.students = users.filter(
+        u => u.clubId === userClubId && u.roles.includes(Role.STUDENT)
+      ) as Student[];
+      this.initializeAttendanceState();
+    });
   }
 
   private initializeAttendanceState(): void {
@@ -78,8 +81,8 @@ export class AttendanceComponent implements OnInit {
     this.attendanceState[userId].comment = comment;
   }
 
-   onSaveAttendance(): void {
-    if (!this.instructor) {
+  onSaveAttendance(): void {
+    if (!this.loggedInUser) {
       alert('No instructor is logged in.');
       return;
     }
@@ -91,9 +94,9 @@ export class AttendanceComponent implements OnInit {
           id: this.generateUniqueId(),
           date: this.selectedDate,
           status: state.status,
-          instructorId: this.instructor.id,
+          instructorId: this.loggedInUser!.id,
           userId: student.id,
-          clubId: this.instructor.clubId,
+          clubId: this.loggedInUser!.clubId,
           comments: state.comment,
           createdAt: new Date(),
           updatedAt: new Date()
@@ -102,13 +105,12 @@ export class AttendanceComponent implements OnInit {
       }
     });
 
-    this.mockDataService.updateUsers(this.students);
+    this.students.forEach(student => this.serviceService.updateUser(student));
     this.isSaving = false;
     this.openModal();
   }
 
-  // Aggregation: returns summary counts for a given student over the aggregation date range.
-  getAttendanceSummary(student:  Student): AttendanceSummary {
+  getAttendanceSummary(student: Student): AttendanceSummary {
     const start = new Date(this.aggregationStartDate);
     const end = new Date(this.aggregationEndDate);
     const records = (student.attendance || []).filter(record => {
@@ -122,7 +124,6 @@ export class AttendanceComponent implements OnInit {
     return { total, present: presentCount, notAttended, percentage };
   }
 
-  // Detailed Attendance: returns a list of all attendance records for the given global date range.
   getDetailedAttendance(): Attendance[] {
     const start = new Date(this.aggregationStartDate);
     const end = new Date(this.aggregationEndDate);
@@ -136,7 +137,6 @@ export class AttendanceComponent implements OnInit {
     }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }
 
-  // Helper: Get student name by ID.
   getStudentName(userId: string): string {
     const student = this.students.find(s => s.id === userId);
     return student ? `${student.firstName} ${student.lastName}` : userId;
@@ -158,7 +158,6 @@ export class AttendanceComponent implements OnInit {
     this.showModal = false;
   }
 
-  updateAggregates(): void {
-    // This method is triggered on change of the aggregation dates.
-    // With the current implementation, getAttendanceSummary() and getDetailedAttendance() recalc on the fly.
-  }}
+  updateAggregates(): void {}
+
+}

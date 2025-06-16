@@ -6,6 +6,8 @@ import {Belt} from '../model/belt';
 import {NgForOf} from '@angular/common';
 import {MockDataService} from '../mock-service/mock-data.service';
 import {generateId} from '../utils/utils';
+import {ServiceService} from '../services/service.service';
+import {first} from 'rxjs';
 
 @Component({
   selector: 'app-add-user',
@@ -19,92 +21,84 @@ import {generateId} from '../utils/utils';
   styleUrl: './add-user.component.scss'
 })
 export class AddUserComponent implements OnInit{
-
-  // Arrays for select dropdowns.
   belts = Object.values(Belt);
+  user: Student = this.getEmptyUser();
 
-  // Local user object for adding a new student.
-  user: Student = {
-    id: generateId(),
-    memberId: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    profileImageUrl: '',
-    clubId: '',  // To be set based on logged-in instructor's club
-    belt: Belt.WHITE,
-    roles: [],   // Ensures we create a student
-    password: 'karate',   // Default password; adjust as needed
-    isActive: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    attendance: [],
-  };
+  clubStudents: Student[] = [];
+  currentInstructor?: User;
 
-  clubStudents: Student[] = []; // List of students in the instructor's club
-
-  constructor(private mockData: MockDataService) {}
+  constructor(private serviceService: ServiceService) {}
 
   ngOnInit(): void {
-    // Assume the logged-in user is an instructor.
-    const loggedInUser = this.mockData.getLoggedInUser();
-    if (loggedInUser && loggedInUser.roles.includes(Role.INSTRUCTOR)) {
-      // Set the clubId for new student from the logged-in instructor.
-      this.user.clubId = loggedInUser.clubId;
-      // Populate the list of students in the instructor's club.
-      this.clubStudents = this.mockData.getUsers().filter(u => u.roles.includes(Role.STUDENT) && u.clubId === loggedInUser.clubId) as Student[];
-    }
+    this.serviceService.getLoggedInUser().pipe(first()).subscribe(user => {
+      if (user && user.roles.includes(Role.INSTRUCTOR)) {
+        this.currentInstructor = user;
+        this.user.clubId = user.clubId;
+        this.loadClubStudents(user.clubId);
+      }
+    });
   }
 
   addStudent(): void {
-    // Generate unique IDs for the new student.
-    this.user.id = 'S' + Math.floor(Math.random() * 1000);
-    this.user.memberId = 'M' + Math.floor(Math.random() * 1000);
-    // Set clubId from logged-in instructor.
-    this.user.clubId = this.mockData.getLoggedInUser()?.clubId || '';
+    if (!this.currentInstructor) return;
 
-    // Add the student to the service.
-    this.mockData.addUser(this.user);
-    // Update the club student list.
-    this.updateClubStudents();
-
-    console.log(`Added student: ${this.user.firstName} ${this.user.lastName} to club ${this.user.clubId}`);
-    // Optionally, reset the form:
-    this.user = {
+    const newStudent: Student = {
       ...this.user,
-      id: '',
-      memberId: '',
-      firstName: '',
-      lastName: '',
-      email: '',
-      belt: Belt.WHITE,
+      id: 'S' + Math.floor(Math.random() * 1000),
+      memberId: 'M' + Math.floor(Math.random() * 1000),
+      clubId: this.currentInstructor.clubId,
+      roles: [Role.STUDENT],
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
+
+    this.serviceService.addUser(newStudent);
+    this.user = this.getEmptyUser(); // Reset form
+    this.loadClubStudents(this.currentInstructor.clubId);
   }
 
   removeStudent(studentId: string): void {
-    // Remove the student using the service.
-    this.mockData.removeUser(studentId);
-    // Update the local list.
-    this.updateClubStudents();
-  }
-
-  private updateClubStudents(): void {
-    const loggedInUser = this.mockData.getLoggedInUser();
-    if (loggedInUser) {
-      this.clubStudents = this.mockData.getUsers().filter(u => u.roles.includes(Role.STUDENT) && u.clubId === loggedInUser.clubId) as Student[];
+    this.serviceService.removeUser(studentId);
+    if (this.currentInstructor) {
+      this.loadClubStudents(this.currentInstructor.clubId);
     }
   }
 
   toggleSubInstructor(user: User): void {
     const isSubInstructor = user.roles.includes(Role.SUB_INSTRUCTOR);
+    user.roles = isSubInstructor
+      ? user.roles.filter(role => role !== Role.SUB_INSTRUCTOR)
+      : [...user.roles, Role.SUB_INSTRUCTOR];
 
-    if (isSubInstructor) {
-      user.roles = user.roles.filter(role => role !== Role.SUB_INSTRUCTOR);
-    } else {
-      user.roles.push(Role.SUB_INSTRUCTOR);
-    }
-    this.mockData.updateUser(user);
-}
+    this.serviceService.updateUser(user);
+  }
+
+  private loadClubStudents(clubId: string): void {
+    this.serviceService.getUsers().pipe(first()).subscribe(users => {
+      this.clubStudents = users.filter(
+        u => u.clubId === clubId && u.roles.includes(Role.STUDENT)
+      ) as Student[];
+    });
+  }
+
+  private getEmptyUser(): Student {
+    return {
+      id: '',
+      memberId: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      profileImageUrl: '',
+      clubId: '',
+      belt: Belt.WHITE,
+      roles: [],
+      password: 'karate',
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      attendance: []
+    };
+  }
 
   protected readonly Role = Role;
 }

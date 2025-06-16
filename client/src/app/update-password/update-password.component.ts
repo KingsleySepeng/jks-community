@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import {DataService} from '../services/DataService';
 import {NgClass, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {MockDataService} from '../mock-service/mock-data.service';
+import {ServiceService} from '../services/service.service';
+import {first} from 'rxjs';
+import {User} from '../model/user';
 
 @Component({
   selector: 'app-update-password',
@@ -22,7 +24,7 @@ export class UpdatePasswordComponent {
   message: string = '';
   isError: boolean = false;
 
-  constructor(private dataService: MockDataService) {}
+  constructor(private serviceService: ServiceService) {}
 
   updatePassword(): void {
     if (this.newPassword !== this.confirmPassword) {
@@ -31,22 +33,25 @@ export class UpdatePasswordComponent {
       return;
     }
 
-    const user = this.dataService.getUsers().find(u => u.email === this.email);
-    if (!user) {
-      this.message = 'User not found.';
-      this.isError = true;
-      return;
-    }
+    this.serviceService.getUsers().pipe(first()).subscribe(users => {
+      const user = users.find(u => u.email === this.email);
 
-    user.password = this.newPassword;
-    this.dataService.updateUser(user);
+      if (!user) {
+        this.message = 'User not found.';
+        this.isError = true;
+        return;
+      }
 
-    this.message = 'Password updated successfully.';
-    this.isError = false;
+      const updatedUser: User = { ...user, password: this.newPassword };
+      this.serviceService.updateUser(updatedUser);
 
-    // Clear fields
-    this.email = '';
-    this.newPassword = '';
-    this.confirmPassword = '';
+      this.message = 'Password updated successfully.';
+      this.isError = false;
+
+      // Clear fields
+      this.email = '';
+      this.newPassword = '';
+      this.confirmPassword = '';
+    });
   }
 }

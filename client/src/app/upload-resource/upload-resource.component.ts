@@ -4,6 +4,7 @@ import { NgForOf } from '@angular/common';
 import { Resource } from '../model/resource';
 import { Router } from '@angular/router';
 import { MockDataService } from '../mock-service/mock-data.service';
+import {ServiceService} from '../services/service.service';
 
 @Component({
   selector: 'app-upload-resource',
@@ -15,35 +16,40 @@ import { MockDataService } from '../mock-service/mock-data.service';
 export class UploadResourceComponent {
   title: string = '';
   description: string = '';
-  fileUrl: string = '';    // or handle actual file uploads if needed
+  fileUrl: string = '';
   videoUrl: string = '';
-  category: string = 'Syllabus'; // default category
+  category: string = 'Syllabus';
   categories = ['Syllabus', 'SeminarVideo', 'PDF', 'Other'];
   uploadedFile: File | null = null;
 
   constructor(
-    private mockData: MockDataService,
+    private serviceService: ServiceService,
     private router: Router
   ) {}
 
-  onFileSelected(event: Event) {
+  onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.uploadedFile = input.files?.[0] ?? null;
   }
 
-  onDragOver(event: DragEvent) {
+  onDragOver(event: DragEvent): void {
     event.preventDefault();
   }
 
-  onFileDrop(event: DragEvent) {
+  onFileDrop(event: DragEvent): void {
     event.preventDefault();
     if (event.dataTransfer?.files?.length) {
       this.uploadedFile = event.dataTransfer.files[0];
     }
   }
 
+  onUploadResource(): void {
+    const loggedInUser = this.serviceService.getLoggedInUserValue();
+    if (!loggedInUser || !loggedInUser.clubId) {
+      alert('Only instructors with a club can upload resources.');
+      return;
+    }
 
-  onUploadResource() {
     const isVideo = this.uploadedFile?.type.startsWith('video/');
     const isPdf = this.uploadedFile?.type === 'application/pdf';
 
@@ -54,10 +60,11 @@ export class UploadResourceComponent {
       category: this.category,
       fileUrl: isPdf ? URL.createObjectURL(this.uploadedFile!) : '',
       videoUrl: isVideo ? URL.createObjectURL(this.uploadedFile!) : '',
-      dateCreated: new Date()
+      dateCreated: new Date(),
+      clubId: loggedInUser.clubId,
     };
 
-    this.mockData.addResource(newResource);
+    this.serviceService.addResource(newResource);
     this.router.navigate(['/resource-list']);
   }
 
