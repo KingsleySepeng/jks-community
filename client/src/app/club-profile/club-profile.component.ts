@@ -19,7 +19,7 @@ import {MockDataService} from '../mock-service/mock-data.service';
 export class ClubProfileComponent implements OnInit {
   currentClub?: Club;
   isEditing = false;
-  canEdit = false;
+  canEdit: boolean | undefined = false;
 
   constructor(private mockDataService: MockDataService) {}
 
@@ -31,7 +31,7 @@ export class ClubProfileComponent implements OnInit {
     }
 
     // Only Admins & Instructors can edit
-    this.canEdit = user?.role === Role.INSTRUCTOR;
+    this.canEdit = user?.roles.includes(Role.INSTRUCTOR);
   }
 
   onEditToggle() {

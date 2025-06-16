@@ -11,8 +11,8 @@ export interface BaseUser {
   clubId: string;
   profileImageUrl: string,
   belt: Belt;
-  role: Role;
-  password:string;
+  roles: Role[]; // ✅ keep this consistent
+  password: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -20,24 +20,20 @@ export interface BaseUser {
 
 // Instructor Interface
 export interface Instructor extends BaseUser {
-  role: Role.INSTRUCTOR;
-  attendance: Attendance[];
-  // Additional instructor-specific fields
+  // No override for roles — keep Role[] type
+  // You may add instructor-specific properties if needed
 }
 
 // Student Interface
 export interface Student extends BaseUser {
-  role: Role.STUDENT;
   attendance: Attendance[];
-  // Additional student-specific fields
+  // Student-specific properties
 }
 
 // Admin Interface
-export interface Admin extends BaseUser {
-  role: Role.ADMIN;
-  // Additional admin-specific fields
+export interface SystemAdmin extends BaseUser {
+  // Admin-specific properties
 }
 
 // Union Type for User
-export type User = Instructor | Student;
-export type AttendanceUser = Student | Instructor;
+export type User = Instructor | Student | SystemAdmin;

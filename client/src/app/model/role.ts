@@ -1,7 +1,7 @@
 export enum Role {
-  ADMIN = 'ADMIN',
+  SYSTEM_ADMIN = 'SYSTEM_ADMIN',
   STUDENT = 'STUDENT',
   INSTRUCTOR = 'INSTRUCTOR',
-  SUBINSTRUCTOR = 'SUBINSTRUCTOR', // If applicable
+  SUB_INSTRUCTOR = 'SUB_INSTRUCTOR', // If applicable
   // Consider removing or renaming USER
 }

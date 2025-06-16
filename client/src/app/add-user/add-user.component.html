@@ -38,7 +38,17 @@
       <ul class="list-group">
         <li *ngFor="let student of clubStudents" class="list-group-item d-flex justify-content-between align-items-center">
           {{ student.firstName }} {{ student.lastName }}
-          <button type="button" class="btn btn-sm btn-danger" (click)="removeStudent(student.id)">Remove</button>
+          <div>
+            <button type="button"
+                    class="btn btn-sm btn-secondary me-2"
+                    (click)="toggleSubInstructor(student)">
+              {{ student.roles.includes(Role.SUB_INSTRUCTOR) ? 'Demote to Student' : 'Promote to Sub-Instructor' }}
+            </button>
+            <button type="button" class="btn btn-sm btn-danger"
+                    (click)="removeStudent(student.id)">
+              Remove
+            </button>
+          </div>
         </li>
       </ul>
     </div>

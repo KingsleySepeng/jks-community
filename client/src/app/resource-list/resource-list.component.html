@@ -1,21 +1,12 @@
 <div class="container my-5">
   <h2 class="mb-4">Available Resources</h2>
+  <!-- Filter dropdown -->
+  <select class="form-select w-auto" [(ngModel)]="selectedCategory" (change)="onCategoryChange()">
+    <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+  </select>
 
-  <!-- Category Filter -->
-  <div class="mb-4 d-flex align-items-center">
-    <label class="form-label me-2">Filter by Category:</label>
-    <select class="form-select w-auto" [(ngModel)]="selectedCategory" (change)="onCategoryChange()">
-      <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
-    </select>
-  </div>
-
-  <!-- Resources Summary Chart -->
-<!--  <div class="mb-4">-->
-<!--    <canvas id="resourceChart"></canvas>-->
-<!--  </div>-->
-
-  <!-- Resources Grid -->
-  <div *ngIf="filteredResources.length > 0; else noResources" class="row row-cols-1 row-cols-md-3 g-4">
+  <!-- Resources -->
+  <div *ngIf="(filteredResources$ | async) as filteredResources; else noResources" class="row row-cols-1 row-cols-md-3 g-4">
     <div class="col" *ngFor="let res of filteredResources">
       <div class="card h-100 shadow-sm">
         <div class="card-body">
@@ -25,15 +16,13 @@
         </div>
         <div class="card-footer">
           <ng-container *ngIf="res.videoUrl">
-            <!-- 👇 Embedded video -->
             <video controls class="w-100" [src]="res.videoUrl"></video>
           </ng-container>
-
           <ng-container *ngIf="res.fileUrl && !res.videoUrl">
             <a [href]="res.fileUrl" target="_blank" class="btn btn-sm btn-outline-primary">Open PDF/Doc</a>
           </ng-container>
+          <button class="btn btn-sm btn-danger mt-2" (click)="deleteResource(res.id)">Delete</button>
         </div>
-
       </div>
     </div>
   </div>

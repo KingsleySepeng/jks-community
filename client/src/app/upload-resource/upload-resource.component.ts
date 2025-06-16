@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { NgForOf } from '@angular/common';
-import { Resource } from '../model/resource';
-import { Router } from '@angular/router';
-import { MockDataService } from '../mock-service/mock-data.service';
+import {Component} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {NgForOf} from '@angular/common';
+import {Resource} from '../model/resource';
+import {Router} from '@angular/router';
+import {MockDataService} from '../mock-service/mock-data.service';
+import {ServiceService} from '../services/service.service';
 
 @Component({
   selector: 'app-upload-resource',
@@ -13,56 +14,49 @@ import { MockDataService } from '../mock-service/mock-data.service';
   styleUrls: ['./upload-resource.component.scss']
 })
 export class UploadResourceComponent {
-  title: string = '';
-  description: string = '';
-  fileUrl: string = '';    // or handle actual file uploads if needed
-  videoUrl: string = '';
-  category: string = 'Syllabus'; // default category
+  title = '';
+  description = '';
+  category = 'Syllabus';
   categories = ['Syllabus', 'SeminarVideo', 'PDF', 'Other'];
   uploadedFile: File | null = null;
 
   constructor(
-    private mockData: MockDataService,
+    private serviceService: ServiceService,
     private router: Router
-  ) {}
+  ) {
+  }
 
-  onFileSelected(event: Event) {
+  onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.uploadedFile = input.files?.[0] ?? null;
   }
 
-  onDragOver(event: DragEvent) {
+  onDragOver(event: DragEvent): void {
     event.preventDefault();
   }
 
-  onFileDrop(event: DragEvent) {
+  onFileDrop(event: DragEvent): void {
     event.preventDefault();
     if (event.dataTransfer?.files?.length) {
       this.uploadedFile = event.dataTransfer.files[0];
     }
   }
 
-
-  onUploadResource() {
-    const isVideo = this.uploadedFile?.type.startsWith('video/');
-    const isPdf = this.uploadedFile?.type === 'application/pdf';
-
-    const newResource: Resource = {
-      id: this.generateId(),
-      title: this.title || this.uploadedFile?.name || 'Untitled',
-      description: this.description,
-      category: this.category,
-      fileUrl: isPdf ? URL.createObjectURL(this.uploadedFile!) : '',
-      videoUrl: isVideo ? URL.createObjectURL(this.uploadedFile!) : '',
-      dateCreated: new Date()
-    };
-
-    this.mockData.addResource(newResource);
-    this.router.navigate(['/resource-list']);
-  }
-
-
-  private generateId(): string {
-    return 'RES-' + Math.floor(Math.random() * 100000);
+  onUploadResource(): void {
+    if (!this.uploadedFile) {
+      alert('Please select a file.');
+      return;
+    }
+    try {
+      this.serviceService.createAndAddResource({
+        title: this.title,
+        description: this.description,
+        category: this.category,
+        uploadedFile: this.uploadedFile,
+      });
+      this.router.navigate(['/resource-list']);
+    } catch (e: any) {
+      alert(e.message);
+    }
   }
 }

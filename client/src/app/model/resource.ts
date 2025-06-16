@@ -6,4 +6,5 @@ export interface Resource {
   videoUrl?: string;   // e.g. link to YouTube or stored video
   category?: string;   // e.g. "Syllabus", "SeminarVideo"
   dateCreated: Date;
+  clubId: string;
 }

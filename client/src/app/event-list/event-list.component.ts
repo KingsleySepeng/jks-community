@@ -5,6 +5,7 @@ import {MockDataService} from '../mock-service/mock-data.service';
 import {User} from '../model/user';
 import {Router} from '@angular/router';
 import { loadGapiInsideDOM } from 'gapi-script';
+import {Role} from '../model/role';
 declare var gapi: any;
 
 @Component({
@@ -21,7 +22,7 @@ declare var gapi: any;
 })
 export class EventListComponent {
   events: Events[] = [];
-  isInstructor: boolean = false;
+  isInstructor: boolean | undefined = false;
   loggedInUser?: User;
   selectedEvent?: Events;
   clubStudents: User[] = [];
@@ -32,7 +33,7 @@ export class EventListComponent {
    ngOnInit(): void {
     this.loggedInUser = this.mockDataService.getLoggedInUser();
     this.events = this.mockDataService.getEvents();
-    this.isInstructor = this.loggedInUser?.role === 'INSTRUCTOR';
+    this.isInstructor = this.loggedInUser?.roles.includes(Role.INSTRUCTOR);
   }
 
   getInstructorName(instructorId: string): string {
@@ -62,7 +63,7 @@ export class EventListComponent {
 
     this.selectedEvent = evt;
     this.clubStudents = this.mockDataService.getUsers().filter(
-      (user) => user.clubId === this.loggedInUser?.clubId && user.role === 'STUDENT'
+      (user) => user.clubId === this.loggedInUser?.clubId && user.roles.includes(Role.STUDENT)
     );
     this.selectedStudents.clear();
   }

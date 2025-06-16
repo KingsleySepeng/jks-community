@@ -1,4 +1,3 @@
-import {Admin, Instructor, Student} from './user';
 
 export enum Belt {
   WHITE = 'WHITE',

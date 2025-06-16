@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Admin, Instructor, Student, User } from '../model/user';
+import { SystemAdmin, Instructor, Student, User } from '../model/user';
 import { Club } from '../model/club';
 import { Attendance, AttendanceStatus } from '../model/attendance ';
 import { Belt } from '../model/belt';
@@ -25,24 +25,6 @@ export class MockDataService {
   private gradingRecords: GradingRecord[] = [];
   private loggedInUser: User | null = null;
 
-  private resources: Resource[] = [
-    {
-      id: 'RES-1000',
-      title: 'Yellow Belt Syllabus PDF',
-      description: 'Full PDF of the yellow belt curriculum',
-      fileUrl: 'https://example.com/yellow-belt.pdf',
-      category: 'Syllabus',
-      dateCreated: new Date('2025-01-01')
-    },
-    {
-      id: 'RES-1001',
-      title: 'Seminar on Kata Basics',
-      description: 'Recorded Zoom session from last seminar',
-      videoUrl: 'https://youtube.com/some-video',
-      category: 'SeminarVideo',
-      dateCreated: new Date('2025-01-15')
-    }
-  ];
 
   // -------------------------------------------------------
   // 2. Constructor & Initialization
@@ -79,12 +61,11 @@ export class MockDataService {
       profileImageUrl: '',
       clubId: '6',
       belt: Belt.BLACK,
-      role: Role.INSTRUCTOR,
+      roles: [Role.INSTRUCTOR],
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
       updatedAt: new Date('2024-01-01'),
-      attendance: []
     };
 
     const subInstructor1: Instructor = {
@@ -96,12 +77,11 @@ export class MockDataService {
       profileImageUrl: '',
       clubId: '6',
       belt: Belt.BLACK,
-      role: Role.INSTRUCTOR,
+      roles: [Role.INSTRUCTOR],
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
       updatedAt: new Date('2024-01-01'),
-      attendance: []
     };
 
     const subInstructor2: Instructor = {
@@ -113,12 +93,11 @@ export class MockDataService {
       profileImageUrl: '',
       clubId: '6',
       belt: Belt.BLACK,
-      role: Role.INSTRUCTOR,
+      roles: [Role.INSTRUCTOR],
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
       updatedAt: new Date('2024-01-01'),
-      attendance: []
     };
 
     const subInstructor3: Instructor = {
@@ -130,12 +109,11 @@ export class MockDataService {
       profileImageUrl: '',
       clubId: '6',
       belt: Belt.BLACK,
-      role: Role.INSTRUCTOR,
+      roles: [Role.INSTRUCTOR],
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
       updatedAt: new Date('2024-01-01'),
-      attendance: []
     };
 
     const student1: Student = {
@@ -147,7 +125,7 @@ export class MockDataService {
       profileImageUrl: '',
       clubId: '6',
       belt: Belt.WHITE,
-      role: Role.STUDENT,
+      roles: [Role.STUDENT],
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
@@ -164,7 +142,7 @@ export class MockDataService {
       profileImageUrl: '',
       clubId: '6',
       belt: Belt.WHITE,
-      role: Role.STUDENT,
+      roles: [Role.STUDENT],
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
@@ -181,7 +159,7 @@ export class MockDataService {
       profileImageUrl: '',
       clubId: '6',
       belt: Belt.BLACK,
-      role: Role.STUDENT,
+      roles: [Role.STUDENT],
       password: 'password',
       isActive: true,
       createdAt: new Date('2022-01-01'),
@@ -281,8 +259,8 @@ export class MockDataService {
       currentBelt: student1.belt,
       testingForBelt: student1.belt,
       evaluations: [
-        { techniqueId: 'kihon-1', rating: 'good', comment: 'Excellent fundamentals.' },
-        { techniqueId: 'kata-1', rating: 'average', comment: 'Needs to refine form.' }
+        {techniqueId: 'kihon-1', rating: 'good', comment: 'Excellent fundamentals.'},
+        {techniqueId: 'kata-1', rating: 'average', comment: 'Needs to refine form.'}
       ],
       overallDecision: 'pass',
       overallComment: 'Well done, continue training.'
@@ -297,33 +275,13 @@ export class MockDataService {
       currentBelt: student2.belt,
       testingForBelt: student2.belt,
       evaluations: [
-        { techniqueId: 'kihon-2', rating: 'average', comment: 'Satisfactory, but room for improvement.' },
-        { techniqueId: 'kata-2', rating: 'bad', comment: 'Significant improvement needed.' }
+        {techniqueId: 'kihon-2', rating: 'average', comment: 'Satisfactory, but room for improvement.'},
+        {techniqueId: 'kata-2', rating: 'bad', comment: 'Significant improvement needed.'}
       ],
       overallDecision: 'regrade',
       overallComment: 'Re-assessment recommended in 2 months.'
     };
     this.gradingRecords = [gradingRecord1, gradingRecord2];
-
-    // -------------------- 6. Resources --------------------
-    const resource1: Resource = {
-      id: 'RES-3001',
-      title: 'Shoto Ryu Training Manual',
-      description: 'Comprehensive guide to Shoto Ryu techniques.',
-      fileUrl: 'https://example.com/shotoru_manual.pdf',
-      category: 'Syllabus',
-      dateCreated: new Date('2024-01-01')
-    };
-
-    const resource2: Resource = {
-      id: 'RES-3002',
-      title: 'Shoto Ryu Seminar Video',
-      description: 'Highlights from the recent seminar.',
-      videoUrl: 'https://youtube.com/shotoru_seminar',
-      category: 'SeminarVideo',
-      dateCreated: new Date('2024-02-01')
-    };
-    this.resources = [resource1, resource2];
   }
 
 
@@ -332,17 +290,23 @@ export class MockDataService {
   // -------------------------------------------------------
   private assignUsersToClubs(): void {
     this.clubs.forEach(club => {
-      // Instructors
-      club.instructors = this.users.filter(
-        user => user.clubId === club.id && user.role === Role.INSTRUCTOR
-      ) as Instructor[];
+      // Set the single instructor (first match, assuming one per club)
+      const instructor = this.users.find(
+        user => user.clubId === club.id && user.roles.includes(Role.INSTRUCTOR)
+      );
 
-      // Students
-      club.students = this.users.filter(
-        user => user.clubId === club.id && user.role === Role.STUDENT
-      ) as Student[];
+      // Set students (including those who are sub-instructors)
+      const students = this.users.filter(
+        user => user.clubId === club.id && user.roles.includes(Role.STUDENT)
+      );
+
+      // Assign to club
+      club.instructor = instructor as Instructor;
+      club.students = students as Student[];
     });
   }
+
+
 
   // -------------------------------------------------------
   // 4. Authentication Methods
@@ -505,18 +469,7 @@ export class MockDataService {
   // -------------------------------------------------------
   // 10. Resources
   // -------------------------------------------------------
-  public getAllResources(): Resource[] {
-    return [...this.resources];
-  }
-  public addResource(res: Resource): void {
-    this.resources.push(res);
-  }
-  public updateResource(updated: Resource): void {
-    const idx = this.resources.findIndex(r => r.id === updated.id);
-    if (idx >= 0) {
-      this.resources[idx] = { ...updated };
-    }
-  }
+
 
   public getOutstandingFees(userId: string): number {
     const userPayments = this.payments.filter(p => p.userId === userId);
