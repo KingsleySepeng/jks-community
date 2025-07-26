@@ -2,10 +2,12 @@ package com.example.service.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.time.Instant;
 
 @Entity
+@Table(name = "clubs")
 public class Club {
     @Id
     private String id;
