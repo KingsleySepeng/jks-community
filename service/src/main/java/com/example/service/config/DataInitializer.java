@@ -38,7 +38,7 @@ public class DataInitializer {
             }
             if (clubRepository.count() == 0) {
                 Club club = new Club();
-                club.setId("system");
+                club.setId(UUID.randomUUID().toString());
                 club.setName("System Club");
                 club.setAddress("");
                 club.setCreatedAt(Instant.now());
