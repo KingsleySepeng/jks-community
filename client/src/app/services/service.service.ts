@@ -1,8 +1,10 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap, map } from 'rxjs';
-import { User } from '../model/user';
-import { Club } from '../model/club';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {BehaviorSubject, map, Observable, tap} from 'rxjs';
+import {User} from '../model/user';
+import {Club} from '../model/club';
+import {Role} from '../model/role';
+import {Attendance} from '../model/attendance ';
 
 @Injectable({
   providedIn: 'root'
@@ -70,19 +72,19 @@ export class ServiceService {
   }
 
   addClubWithInstructor(club: Partial<Club>, instructor: Partial<User>): void {
-    const clubId = this.generateMemberId();
-    const instructorId = this.generateStudentId();
+    // const clubId = this.generateMemberId();
+    // const instructorId = this.generateStudentId();
     const newClub: Club = {
       ...(club as Club),
-      id: clubId,
+      // id: clubId,
       createdAt: new Date(),
       updatedAt: new Date(),
     } as Club;
     const newInstructor: User = {
       ...(instructor as User),
-      id: instructorId,
-      memberId: instructorId,
-      clubId: clubId,
+      // id: instructorId,
+      // memberId: instructorId,
+      // clubId: clubId,
       createdAt: new Date(),
       updatedAt: new Date(),
     } as User;
@@ -92,7 +94,7 @@ export class ServiceService {
 
   getStudentsByClub(clubId: string): Observable<User[]> {
     return this.getUsers().pipe(
-      map(users => users.filter(u => u.clubId === clubId && u.roles?.includes('STUDENT')))
+      map(users => users.filter(u => u.clubId === clubId && u.roles?.includes(Role.STUDENT)))
     );
   }
 
@@ -145,5 +147,17 @@ export class ServiceService {
     let club: Club | undefined;
     this.getClubById(id).subscribe(c => club = c ?? undefined);
     return club;
+  }
+
+  saveAttendanceRecords(records: Attendance[]): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/attendance`, records);
+  }
+
+  getAttendanceByStudent(studentId: string): Observable<Attendance[]> {
+    return this.http.get<Attendance[]>(`${this.baseUrl}/attendance/student/${studentId}`);
+  }
+
+  getAttendanceBetween(clubId: string, start: string, end: string): Observable<Attendance[]> {
+    return this.http.get<Attendance[]>(`${this.baseUrl}/attendance/club/${clubId}?start=${start}&end=${end}`);
   }
 }

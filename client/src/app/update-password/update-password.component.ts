@@ -30,13 +30,13 @@ export class UpdatePasswordComponent {
     }
 
     const result = this.serviceService.updatePasswordByEmail(this.email, this.newPassword);
-    this.setMessage(result.message, !result.success);
-
-    if (result.success) {
-      this.email = '';
-      this.newPassword = '';
-      this.confirmPassword = '';
-    }
+    // this.setMessage(result.message, !result.success);
+    //
+    // if (result.success) {
+    //   this.email = '';
+    //   this.newPassword = '';
+    //   this.confirmPassword = '';
+    // }
   }
 
   private setMessage(message: string, isError: boolean): void {

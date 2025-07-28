@@ -3,7 +3,6 @@ import {FormsModule} from '@angular/forms';
 import {NgForOf} from '@angular/common';
 import {Resource} from '../model/resource';
 import {Router} from '@angular/router';
-import {MockDataService} from '../mock-service/mock-data.service';
 import {ServiceService} from '../services/service.service';
 
 @Component({
@@ -48,12 +47,12 @@ export class UploadResourceComponent {
       return;
     }
     try {
-      this.serviceService.createAndAddResource({
-        title: this.title,
-        description: this.description,
-        category: this.category,
-        uploadedFile: this.uploadedFile,
-      });
+      // this.serviceService.createAndAddResource({
+      //   title: this.title,
+      //   description: this.description,
+      //   category: this.category,
+      //   uploadedFile: this.uploadedFile,
+      // });
       this.router.navigate(['/resource-list']);
     } catch (e: any) {
       alert(e.message);

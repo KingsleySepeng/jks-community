@@ -4,8 +4,6 @@ import {Student, User} from '../model/user';
 import {Role} from '../model/role';
 import {Belt} from '../model/belt';
 import {NgForOf} from '@angular/common';
-import {MockDataService} from '../mock-service/mock-data.service';
-import {generateId} from '../utils/utils';
 import {ServiceService} from '../services/service.service';
 import {first} from 'rxjs';
 
@@ -43,8 +41,8 @@ export class AddUserComponent implements OnInit{
 
     const newStudent: Student = {
       ...this.user,
-      id: this.serviceService.generateStudentId(),
-      memberId: this.serviceService.generateMemberId(),
+      // id: this.serviceService.generateStudentId(),
+      // memberId: this.serviceService.generateMemberId(),
       clubId: this.currentInstructor.clubId,
       roles: [Role.STUDENT],
       createdAt: new Date(),
@@ -69,8 +67,8 @@ export class AddUserComponent implements OnInit{
   }
 
   private loadClubStudents(clubId: string): void {
-    this.serviceService.getStudentsByClub(clubId).pipe(first()).subscribe(students => {
-      this.clubStudents = students;
+    this.serviceService.getStudentsByClub(clubId).pipe(first()).subscribe((students: User[]) => {
+      this.clubStudents = (students as Student[]).filter((student: Student) => student.roles.includes(Role.STUDENT));
     });
   }
 

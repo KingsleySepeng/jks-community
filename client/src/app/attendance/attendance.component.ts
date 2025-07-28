@@ -1,7 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Instructor, Student, User} from '../model/user';
+import {Student, User} from '../model/user';
 import {Attendance, AttendanceStatus, AttendanceSummary} from '../model/attendance ';
-import { MockDataService } from '../mock-service/mock-data.service';
 import {DatePipe, NgForOf, NgIf, NgClass, DecimalPipe} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ServiceService} from '../services/service.service';
@@ -93,7 +92,8 @@ export class AttendanceComponent implements OnInit {
       const state = this.attendanceState[student.id];
       if (state.status) {
         return [{
-          id: this.generateUniqueId(),
+          // id: this.generateUniqueId(),
+          id: "",
           date: this.selectedDate,
           status: state.status,
           instructorId: this.loggedInUser!.id,
