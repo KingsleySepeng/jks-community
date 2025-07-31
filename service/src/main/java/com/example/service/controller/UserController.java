@@ -1,5 +1,6 @@
 package com.example.service.controller;
 
+import com.example.service.dto.UserDto;
 import com.example.service.dto.UserRequestDto;
 import com.example.service.dto.UserResponseDto;
 import com.example.service.service.UserService;
@@ -28,6 +29,24 @@ public class UserController {
     public List<UserResponseDto> all() {
         return userService.getAllUsers();
     }
+
+    @GetMapping("/users/email/{email}")
+    public ResponseEntity<UserResponseDto> getUserByEmail(@PathVariable String email) {
+        return userService.getUserByEmail(email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/users/{id}")
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable UUID id, @RequestBody UserRequestDto userDto) {
+        UserResponseDto updatedUser = userService.updateUser(id, userDto);
+        if (updatedUser != null) {
+            return ResponseEntity.ok(updatedUser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> one(@PathVariable UUID id) {
