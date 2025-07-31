@@ -44,10 +44,10 @@ export class AttendanceComponent implements OnInit {
       return;
     }
 
-    const userClubId = this.loggedInUser.clubId;
+    const userClubId = this.loggedInUser.club;
     this.serviceService.getUsers().subscribe(users => {
       this.students = users.filter(
-        u => u.clubId === userClubId && u.roles.includes(Role.STUDENT)
+        u => u.club === userClubId && u.roles.includes(Role.STUDENT)
       ) as Student[];
       this.initializeAttendanceState();
     });
@@ -98,7 +98,7 @@ export class AttendanceComponent implements OnInit {
           status: state.status,
           instructorId: this.loggedInUser!.id,
           userId: student.id,
-          clubId: this.loggedInUser!.clubId,
+          clubId: this.loggedInUser!.club.id,
           comments: state.comment,
           createdAt: new Date(),
           updatedAt: new Date()

@@ -44,7 +44,7 @@ export class GradingFormComponent implements OnInit {
       console.error('No instructor is logged in!');
       return;
     }
-    this.allStudents = this.mockDataService.getUsers().filter(user => user.roles.includes(Role.STUDENT) && user.clubId === this.instructor?.clubId) as Student[];
+    this.allStudents = this.mockDataService.getUsers().filter(user => user.roles.includes(Role.STUDENT) && user.club === this.instructor?.club) as Student[];
     await this.initializeGapiClient();
   }
 
@@ -163,7 +163,7 @@ export class GradingFormComponent implements OnInit {
         id: this.generateId(),
         studentId: student.id,
         examinerId: this.instructor.id,
-        clubId: student.clubId,
+        clubId: student.club.id,
         date: new Date(),
         currentBelt: student.belt,
         testingForBelt: this.belt,

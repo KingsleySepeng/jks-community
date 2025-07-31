@@ -8,7 +8,7 @@ export interface BaseUser {
   email: string;
   firstName: string;
   lastName: string;
-  clubId: string;
+  club: { id:string };
   profileImageUrl: string,
   belt: Belt;
   roles: Role[]; // ✅ keep this consistent

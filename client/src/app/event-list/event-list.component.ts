@@ -63,7 +63,7 @@ export class EventListComponent {
 
     this.selectedEvent = evt;
     this.clubStudents = this.mockDataService.getUsers().filter(
-      (user) => user.clubId === this.loggedInUser?.clubId && user.roles.includes(Role.STUDENT)
+      (user) => user.club === this.loggedInUser?.club && user.roles.includes(Role.STUDENT)
     );
     this.selectedStudents.clear();
   }
@@ -130,7 +130,7 @@ export class EventListComponent {
 
     return event.finalRegistrations.map(studentId => {
       const student = this.mockDataService.getUserById(studentId);
-      const club = student ? this.mockDataService.getClubById(student.clubId) : undefined;
+      const club = student ? this.mockDataService.getClubById(student.club) : undefined;
       return {
         name: student?.firstName || 'Unknown',
         surname: student?.lastName || 'Unknown',

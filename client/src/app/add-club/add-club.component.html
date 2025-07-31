@@ -37,7 +37,7 @@
   <h3 class="mt-4">Existing Clubs</h3>
   <ul class="list-group">
     <li *ngFor="let club of clubs" class="list-group-item d-flex justify-content-between align-items-center">
-      {{ club.name }} - {{ club.instructor?.firstName }} {{ club.instructor?.lastName }}
+      {{ club.name }}
       <button class="btn btn-sm btn-danger" (click)="removeClub(club.id)">Remove</button>
     </li>
   </ul>

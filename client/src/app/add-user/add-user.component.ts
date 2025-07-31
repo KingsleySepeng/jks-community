@@ -30,47 +30,54 @@ export class AddUserComponent implements OnInit{
     this.serviceService.getLoggedInUser().pipe(first()).subscribe(user => {
       if (user && user.roles.includes(Role.INSTRUCTOR)) {
         this.currentInstructor = user;
-        this.user.clubId = user.clubId;
-        this.loadClubStudents(user.clubId);
-      }
-    });
-  }
+          if (user.club?.id) {
+          this.serviceService.getClubById(user.club.id).pipe(first()).subscribe(club => {
+              if (club) {
+            this.currentInstructor!.club = {id: club.id};
+              }
+          });
+          }
+    }});
+    }
 
   addStudent(): void {
-    if (!this.currentInstructor) return;
+    if (!this.currentInstructor || !this.currentInstructor.club?.id) {
+      console.error('Instructor or club ID is missing.'); //TODO: THIS IS ALWAYS TRU
+      return;
+    }
 
     const newStudent: Student = {
       ...this.user,
-      // id: this.serviceService.generateStudentId(),
-      // memberId: this.serviceService.generateMemberId(),
-      clubId: this.currentInstructor.clubId,
+      club: { id: this.currentInstructor.club.id }, // Ensure ID is set
       roles: [Role.STUDENT],
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
+    this.serviceService.addUser(newStudent).pipe(first()).subscribe({
+      next: (student) => {
+        console.log('Student added:', student);
+        this.user = this.getEmptyUser(); // Reset form
+      },
+      error: (err) => console.error('Error adding student:', err)
+    });
+
     this.serviceService.addUser(newStudent);
     this.user = this.getEmptyUser(); // Reset form
-    this.loadClubStudents(this.currentInstructor.clubId);
   }
 
   removeStudent(studentId: string): void {
     this.serviceService.removeUser(studentId);
     if (this.currentInstructor) {
-      this.loadClubStudents(this.currentInstructor.clubId);
+      // this.loadClubStudents(this.currentInstructor.club.id);
     }
   }
 
   toggleSubInstructor(user: User): void {
     this.serviceService.toggleSubInstructorRole(user);
-    this.loadClubStudents(user.clubId);
+    // this.loadClubStudents(user.club.id);
   }
 
-  private loadClubStudents(clubId: string): void {
-    this.serviceService.getStudentsByClub(clubId).pipe(first()).subscribe((students: User[]) => {
-      this.clubStudents = (students as Student[]).filter((student: Student) => student.roles.includes(Role.STUDENT));
-    });
-  }
 
   private getEmptyUser(): Student {
     return {
@@ -80,7 +87,7 @@ export class AddUserComponent implements OnInit{
       lastName: '',
       email: '',
       profileImageUrl: '',
-      clubId: '',
+      club: { id: '' }, // Initialize with empty club
       belt: Belt.WHITE,
       roles: [],
       password: 'karate',

@@ -26,8 +26,8 @@ export class ClubProfileComponent implements OnInit {
   ngOnInit(): void {
     // Get logged-in user
     const user = this.mockDataService.getLoggedInUser();
-    if (user?.clubId) {
-      this.currentClub = this.mockDataService.getClubById(user.clubId);
+    if (user?.club) {
+      this.currentClub = this.mockDataService.getClubById(user.club);
     }
 
     // Only Admins & Instructors can edit

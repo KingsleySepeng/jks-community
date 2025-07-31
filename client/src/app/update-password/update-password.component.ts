@@ -29,9 +29,9 @@ export class UpdatePasswordComponent {
       return;
     }
 
-    const result = this.serviceService.updatePasswordByEmail(this.email, this.newPassword);
+    this.serviceService.updatePasswordByEmail(this.email, this.newPassword);
     // this.setMessage(result.message, !result.success);
-    //
+
     // if (result.success) {
     //   this.email = '';
     //   this.newPassword = '';

@@ -10,7 +10,7 @@ import {Attendance} from '../model/attendance ';
   providedIn: 'root'
 })
 export class ServiceService {
-  private baseUrl = 'http://localhost:8080/api';
+  private baseUrl = 'http://localhost:8080/api/v1';
   private loggedInUser$ = new BehaviorSubject<User | undefined>(undefined);
 
   constructor(private http: HttpClient) {}
@@ -31,7 +31,7 @@ export class ServiceService {
   }
 
   updateUser(user: User): Observable<User> {
-    return this.http.put<User>(`${this.baseUrl}/users/${user.id}`, user);
+    return this.http.patch<User>(`${this.baseUrl}/users/${user.id}`, user);
   }
 
   removeUser(id: string): Observable<void> {
@@ -71,30 +71,39 @@ export class ServiceService {
     });
   }
 
-  addClubWithInstructor(club: Partial<Club>, instructor: Partial<User>): void {
-    // const clubId = this.generateMemberId();
-    // const instructorId = this.generateStudentId();
+addClubWithInstructor(club: Partial<Club>, instructor: Partial<User>): void {
+  const newInstructor: User = {
+    ...(instructor as User),
+    firstName: instructor.firstName ?? '', // Default to empty string if undefined
+    lastName: instructor.lastName ?? '',   // Default to empty string if undefined
+    email: instructor.email ?? '',         // Default to empty string if undefined
+  };
+
+  this.addUser(newInstructor).subscribe(createdInstructor => {
     const newClub: Club = {
       ...(club as Club),
-      // id: clubId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    } as Club;
-    const newInstructor: User = {
-      ...(instructor as User),
-      // id: instructorId,
-      // memberId: instructorId,
-      // clubId: clubId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    } as User;
-    this.addClub(newClub).subscribe();
-    this.addUser(newInstructor).subscribe();
-  }
+      name: club.name ?? '',               // Default to empty string if undefined
+      address: club.address ?? '',         // Default to empty string if undefined
+      description: club.description ?? '', // Default to empty string if undefined
+      contactNumber: club.contactNumber ?? '', // Default to empty string if undefined
+      establishedDate: club.establishedDate ?? new Date(), // Default to current date if undefined
+      instructorId: createdInstructor.id,       // Set the instructor here
+    };
+
+    this.addClub(newClub).subscribe(createdClub => {
+      const updatedInstructor: User = {
+        ...createdInstructor,
+        club: {id:createdClub.id} as Club, // Use `clubId` instead of `club` to match the `User` type
+      };
+      this.updateUser(updatedInstructor).subscribe();
+    });
+  });
+}
+
 
   getStudentsByClub(clubId: string): Observable<User[]> {
     return this.getUsers().pipe(
-      map(users => users.filter(u => u.clubId === clubId && u.roles?.includes(Role.STUDENT)))
+      map(users => users.filter(u => u.club.id === clubId && u.roles?.includes(Role.STUDENT)))
     );
   }
 
@@ -137,9 +146,9 @@ export class ServiceService {
   }
 
   getClubNameForUser(user: User | undefined): string | undefined {
-    if (!user || !user.clubId) return undefined;
+    if (!user || !user.club) return undefined;
     let name: string | undefined;
-    this.getClubById(user.clubId).subscribe(c => name = c?.name);
+    this.getClubById(user.club.id).subscribe(c => name = c?.name);
     return name;
   }
 
@@ -150,7 +159,7 @@ export class ServiceService {
   }
 
   saveAttendanceRecords(records: Attendance[]): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/attendance`, records);
+    return this.http.post<void>(`${this.baseUrl}/attendance/bulk`, records);
   }
 
   getAttendanceByStudent(studentId: string): Observable<Attendance[]> {
