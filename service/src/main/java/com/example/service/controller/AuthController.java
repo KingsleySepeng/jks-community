@@ -5,13 +5,14 @@ import com.example.service.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
     private final UserRepository userRepository;
@@ -23,11 +24,10 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody Map<String, String> body) {
-        String email = body.get("email");
+        String email = body.get("email"); //TODO ONLY GET USERS THAT ARE ACTIVE
         String password = body.get("password");
-        log.info("User '{}' logged in successfully", email);
         return userRepository.findByEmail(email)
-                .filter(u -> u.getPassword().equals(password))
+                .filter(u -> new BCryptPasswordEncoder().matches(password,u.getPassword()))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(401).build());
     }

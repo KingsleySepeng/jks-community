@@ -3,20 +3,22 @@ package com.example.service.model;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users")
+@Table(name = "\"user\"")
 public class User {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     private String memberId;
     private String email;
     private String firstName;
     private String lastName;
-    private String clubId;
     private String profileImageUrl;
 
     @Enumerated(EnumType.STRING)
@@ -27,14 +29,28 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "club_id")
+    private Club club;
+
     private String password;
     private boolean isActive;
     private Instant createdAt;
     private Instant updatedAt;
+// TODO ADD DOB if under 18 parent is user else student
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = this.updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
 
     // getters and setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
     public String getMemberId() { return memberId; }
     public void setMemberId(String memberId) { this.memberId = memberId; }
     public String getEmail() { return email; }
@@ -43,8 +59,6 @@ public class User {
     public void setFirstName(String firstName) { this.firstName = firstName; }
     public String getLastName() { return lastName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
-    public String getClubId() { return clubId; }
-    public void setClubId(String clubId) { this.clubId = clubId; }
     public String getProfileImageUrl() { return profileImageUrl; }
     public void setProfileImageUrl(String profileImageUrl) { this.profileImageUrl = profileImageUrl; }
     public Belt getBelt() { return belt; }
@@ -53,6 +67,12 @@ public class User {
     public void setRoles(Set<Role> roles) { this.roles = roles; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+    public Club getClub() {
+        return club;
+    }
+    public void setClub(Club club) {
+        this.club = club;
+    }
     public boolean isActive() { return isActive; }
     public void setActive(boolean active) { isActive = active; }
     public Instant getCreatedAt() { return createdAt; }
