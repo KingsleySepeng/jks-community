@@ -67,8 +67,8 @@ export class AddUserComponent implements OnInit {
       ...this.user,
       club: { id: this.currentInstructor.club.id },
       roles: [Role.STUDENT],
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       attendance: [],
     };
 
@@ -106,10 +106,13 @@ export class AddUserComponent implements OnInit {
 
   private loadClubStudents(clubId: string): void {
     this.serviceService.getUsersByClub(clubId).pipe(first()).subscribe({
-      next: (students) => (this.clubStudents = students),
+      next: (students: User[]) => {
+        this.clubStudents = students.filter(u => u.roles.includes(Role.STUDENT)) as Student[];
+      },
       error: () => (this.errorMessage = 'Error loading student list'),
     });
   }
+
 
   private getEmptyUser(): Student {
     return {
@@ -120,10 +123,11 @@ export class AddUserComponent implements OnInit {
       email: '',
       profileImageUrl: '',
       club: { id: '' },
+      clubId:'',
       belt: Belt.WHITE,
       roles: [],
       password: 'karate',
-      isActive: true,
+      active: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       attendance: [],

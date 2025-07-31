@@ -12,7 +12,7 @@ import { Belt } from '../model/belt';
 import { NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 import { MockDataService } from '../mock-service/mock-data.service';
-import {Observable, tap} from 'rxjs';
+import {catchError, finalize, Observable, of, tap} from 'rxjs';
 import {ServiceService} from '../services/service.service';
 
 @Component({

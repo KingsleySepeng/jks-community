@@ -4,6 +4,8 @@ import {NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {Role} from '../model/role';
 import {MockDataService} from '../mock-service/mock-data.service';
+import {ServiceService} from '../services/service.service';
+import {first} from 'rxjs';
 
 @Component({
   selector: 'app-club-profile',

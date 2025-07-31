@@ -43,6 +43,11 @@ export class ServiceService {
     return this.http.delete<void>(`${this.baseUrl}/users/${id}`);
   }
 
+  getUserByEmail(email: string): Observable<User> {
+    return this.http.get<User>(`${this.baseUrl}/users/email/${email}`);
+  }
+
+
   getStudentsByClub(clubId: string): Observable<User[]> {
     return this.getUsers().pipe(
       map(users =>
@@ -53,7 +58,7 @@ export class ServiceService {
     );
   }
 
-  toggleSubInstructorRole(user: User): void {
+  toggleSubInstructorRole(user: User): Observable<User> {
     const roles = [...user.roles];
     const index = roles.indexOf(Role.SUB_INSTRUCTOR);
 
@@ -64,8 +69,13 @@ export class ServiceService {
     }
 
     const updated: User = { ...user, roles };
-    this.updateUser(updated).subscribe();
+    return this.updateUser(updated); // Return the Observable
   }
+
+  getUsersByClub(clubId: string): Observable<User[]> {
+    return this.http.get<User[]>(`/api/users/club/${clubId}`);
+  }
+
 
   addClubWithInstructor(club: Partial<Club>, instructor: Partial<User>): void {
     const newInstructor: Partial<User> = {

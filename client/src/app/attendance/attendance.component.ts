@@ -94,8 +94,8 @@ export class AttendanceComponent implements OnInit {
   }
 
   onSaveAttendance(): void {
-    if (!this.loggedInUser) {
-      this.setError('No instructor is logged in.');
+    if (!this.loggedInUser || !this.loggedInUser.club?.id) {
+      this.setError('No instructor is logged in or club is missing.');
       return;
     }
 
@@ -106,14 +106,14 @@ export class AttendanceComponent implements OnInit {
       if (state.status) {
         return [{
           id: '',
-          date: this.selectedDate,
+          date: this.selectedDate.toISOString(),
           status: state.status,
           instructorId: this.loggedInUser!.id,
           userId: student.id,
-          clubId: this.loggedInUser!.club.id,
+          clubId: this.loggedInUser!.club!.id,
           comments: state.comment,
-          createdAt: new Date(),
-          updatedAt: new Date()
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         }];
       }
       return [];
@@ -132,6 +132,7 @@ export class AttendanceComponent implements OnInit {
       }
     });
   }
+
 
   getAttendanceSummary(student: Student): AttendanceSummary {
     const start = new Date(this.aggregationStartDate);

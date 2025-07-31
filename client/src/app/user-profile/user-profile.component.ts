@@ -4,6 +4,8 @@ import {Belt} from '../model/belt';
 import {MockDataService} from '../mock-service/mock-data.service';
 import {NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
+import {ServiceService} from '../services/service.service';
+import {first} from 'rxjs';
 
 @Component({
   selector: 'app-user-profile',
