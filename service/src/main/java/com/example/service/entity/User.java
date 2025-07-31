@@ -1,11 +1,9 @@
-package com.example.service.model;
+package com.example.service.entity;
 
 import jakarta.persistence.*;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,7 +32,7 @@ public class User {
     private Club club;
 
     private String password;
-    private boolean isActive;
+    private boolean active;
     private Instant createdAt;
     private Instant updatedAt;
 // TODO ADD DOB if under 18 parent is user else student
@@ -73,8 +71,8 @@ public class User {
     public void setClub(Club club) {
         this.club = club;
     }
-    public boolean isActive() { return isActive; }
-    public void setActive(boolean active) { isActive = active; }
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }

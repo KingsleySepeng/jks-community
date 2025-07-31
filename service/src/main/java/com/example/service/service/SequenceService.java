@@ -1,6 +1,6 @@
 package com.example.service.service;
 
-import com.example.service.model.Sequence;
+import com.example.service.entity.Sequence;
 import com.example.service.repository.SequenceRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

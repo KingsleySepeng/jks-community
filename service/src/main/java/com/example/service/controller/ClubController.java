@@ -1,9 +1,14 @@
 package com.example.service.controller;
 
-import com.example.service.model.Club;
+import com.example.service.dto.ClubRequestDto;
+import com.example.service.dto.ClubResponseDto;
+import com.example.service.entity.Club;
 import com.example.service.repository.ClubRepository;
-import com.example.service.repository.SequenceRepository;
+import com.example.service.service.ClubService;
 import com.example.service.service.SequenceService;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
@@ -14,51 +19,36 @@ import java.util.List;
 @RequestMapping("/api/v1/clubs")
 public class ClubController {
 
-    private final ClubRepository clubRepository;
-    private final SequenceService sequenceService;
+    private final ClubService clubService;
+    private static final Logger log = LoggerFactory.getLogger(ClubController.class);
 
-    public ClubController(ClubRepository clubRepository, SequenceService sequenceService) {
-        this.clubRepository = clubRepository;
-        this.sequenceService = sequenceService;
+    public ClubController(ClubService clubService) {
+        this.clubService = clubService;
     }
 
     @GetMapping
-    public List<Club> all() {
-        return clubRepository.findAll();
+    public List<ClubResponseDto> getAll() {
+        return clubService.getAllClubs();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Club> one(@PathVariable UUID id) {
-        return clubRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ClubResponseDto> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(clubService.getClubById(id));
     }
 
     @PostMapping
-    public Club create(@RequestBody Club club) { //TODO CREATE DTOS
-        // Generate a new ID using the sequence repository
-        long nextValue = sequenceService.getNextValue("club_seq");
-        club.setClubCode("CLUB-" + nextValue); // Example club code generation
-        // Set other fields as necessary
-        return clubRepository.save(club);
+    public ResponseEntity<ClubResponseDto> create(@Valid @RequestBody ClubRequestDto clubRequest) {
+        return ResponseEntity.ok(clubService.createClub(clubRequest));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Club> update(@PathVariable UUID id, @RequestBody Club club) {
-        return clubRepository.findById(id)
-                .map(existing -> {
-                    club.setId(existing.getId());
-                    return ResponseEntity.ok(clubRepository.save(club));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ClubResponseDto> update(@PathVariable UUID id, @Valid @RequestBody ClubRequestDto clubRequest) {
+        return ResponseEntity.ok(clubService.updateClub(id, clubRequest));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        if (clubRepository.existsById(id)) {
-            clubRepository.setInactive(id);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        clubService.deactivateClub(id);
+        return ResponseEntity.noContent().build();
     }
 }

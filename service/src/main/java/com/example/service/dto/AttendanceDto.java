@@ -1,44 +1,21 @@
-package com.example.service.model;
+package com.example.service.dto;
 
-import jakarta.persistence.*;
+import com.example.service.entity.AttendanceStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
-@Table(name = "attendance")
-public class Attendance {
+public class AttendanceDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
     private LocalDateTime date;
-
-    @Enumerated(EnumType.STRING)
     private AttendanceStatus status;
-
-    private UUID instructorId;
-
     private String comments;
-
     private UUID userId;
-
     private UUID clubId;
-
+    private UUID instructorId;
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = this.updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
 
     public UUID getId() {
         return id;
@@ -64,14 +41,6 @@ public class Attendance {
         this.status = status;
     }
 
-    public UUID getInstructorId() {
-        return instructorId;
-    }
-
-    public void setInstructorId(UUID instructorId) {
-        this.instructorId = instructorId;
-    }
-
     public String getComments() {
         return comments;
     }
@@ -94,6 +63,14 @@ public class Attendance {
 
     public void setClubId(UUID clubId) {
         this.clubId = clubId;
+    }
+
+    public UUID getInstructorId() {
+        return instructorId;
+    }
+
+    public void setInstructorId(UUID instructorId) {
+        this.instructorId = instructorId;
     }
 
     public LocalDateTime getCreatedAt() {

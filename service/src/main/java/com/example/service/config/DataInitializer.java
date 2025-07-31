@@ -1,6 +1,6 @@
 package com.example.service.config;
 
-import com.example.service.model.*;
+import com.example.service.entity.*;
 import com.example.service.repository.ClubRepository;
 import com.example.service.repository.UserRepository;
 import com.example.service.service.SequenceService;

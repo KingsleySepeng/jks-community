@@ -1,19 +1,8 @@
-package com.example.service.model;
+package com.example.service.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
-@Entity
-@Table(name = "sequence_generator")
-public class Sequence {
-
-    @Id
+public class SequenceDto {
     private String seqName;
-
     private Long seqValue;
-
-    // Getters & Setters
 
     public String getSeqName() {
         return seqName;
@@ -31,4 +20,3 @@ public class Sequence {
         this.seqValue = seqValue;
     }
 }
-

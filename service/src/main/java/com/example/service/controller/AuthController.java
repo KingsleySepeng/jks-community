@@ -1,7 +1,10 @@
 package com.example.service.controller;
 
-import com.example.service.model.User;
+import com.example.service.dto.LoginRequestDto;
+import com.example.service.dto.LoginResponseDto;
+import com.example.service.entity.User;
 import com.example.service.repository.UserRepository;
+import com.example.service.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -15,20 +18,15 @@ import java.util.Map;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    private final UserRepository userRepository;
+    private final AuthService authService;
 
-    public AuthController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
-    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody Map<String, String> body) {
-        String email = body.get("email"); //TODO ONLY GET USERS THAT ARE ACTIVE
-        String password = body.get("password");
-        return userRepository.findByEmail(email)
-                .filter(u -> new BCryptPasswordEncoder().matches(password,u.getPassword()))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(401).build());
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto requestDto) {
+        LoginResponseDto response = authService.login(requestDto);
+        return ResponseEntity.ok(response);
     }
 }

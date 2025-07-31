@@ -1,10 +1,8 @@
-package com.example.service.model;
+package com.example.service.entity;
 
 import jakarta.persistence.*;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -22,7 +20,7 @@ public class Club {
     private Instant createdAt;
     private Instant updatedAt;
     private String logoUrl;
-    private boolean isActive;
+    private boolean active;
     private UUID instructorId;  // store UUID only instead of User entity
 
     @PrePersist
@@ -124,10 +122,10 @@ public class Club {
     }
 
     public boolean isActive() {
-        return isActive;
+        return active;
     }
 
     public void setActive(boolean active) {
-        isActive = active;
+        this.active = active;
     }
 }

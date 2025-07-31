@@ -1,4 +1,4 @@
-package com.example.service.model;
+package com.example.service.entity;
 
 public enum Role {
     SYSTEM_ADMIN,

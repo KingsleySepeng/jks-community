@@ -1,9 +1,8 @@
 package com.example.service.repository;
 
-import com.example.service.model.Attendance;
+import com.example.service.entity.Attendance;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;

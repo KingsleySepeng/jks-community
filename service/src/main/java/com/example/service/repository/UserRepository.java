@@ -1,6 +1,6 @@
 package com.example.service.repository;
 
-import com.example.service.model.User;
+import com.example.service.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,6 +13,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
 
     @Modifying
-    @Query("UPDATE User u SET u.isActive = false WHERE u.id = :id")
+    @Query("UPDATE User u SET u.active = false WHERE u.id = :id")
     void setInactive(@Param("id") UUID id);
 }
