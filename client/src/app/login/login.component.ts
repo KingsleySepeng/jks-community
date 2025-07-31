@@ -53,18 +53,17 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.invalid) return;
 
     this.isLoading = true;
+    this.errorMessage = '';
     const { email, password } = this.loginForm.value;
 
     this.serviceService.authenticateUser(email, password).pipe(
       tap(user => {
-        this.isLoading = false;
-
         if (!user) {
           this.errorMessage = 'Invalid credentials. Please try again.';
           return;
         }
 
-        // 🧠 Routing based on role priority
+        // 🎯 Redirect based on role
         if (user.roles.includes(Role.SYSTEM_ADMIN)) {
           this.router.navigate(['/add-club']);
         } else if (user.roles.includes(Role.INSTRUCTOR) || user.roles.includes(Role.SUB_INSTRUCTOR)) {
@@ -72,9 +71,16 @@ export class LoginComponent implements OnInit {
         } else if (user.roles.includes(Role.STUDENT)) {
           this.router.navigate(['/resource-list']);
         } else {
-          // Optional fallback
           this.router.navigate(['/']);
         }
+      }),
+      catchError(error => {
+        console.error('Login error:', error);
+        this.errorMessage = 'Login failed. Please check your credentials or try again later.';
+        return of(undefined);
+      }),
+      finalize(() => {
+        this.isLoading = false;
       })
     ).subscribe();
   }

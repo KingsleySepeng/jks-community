@@ -1,6 +1,6 @@
-import { Attendance } from "./attendance ";
-import { Role } from "./role";
-import {Belt} from './belt';
+import { Attendance } from './attendance ';
+import { Role } from './role';
+import { Belt } from './belt';
 
 export interface BaseUser {
   id: string;
@@ -8,32 +8,29 @@ export interface BaseUser {
   email: string;
   firstName: string;
   lastName: string;
-  club: { id:string };
-  profileImageUrl: string,
+  profileImageUrl: string;
   belt: Belt;
-  roles: Role[]; // ✅ keep this consistent
-  password: string;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  roles: Role[];
+  clubId: string; // changed from club object to ID
+  password?: string; // optional if not coming from backend
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  club?: { id: string };
 }
 
-// Instructor Interface
+// Specialized User Types
 export interface Instructor extends BaseUser {
-  // No override for roles — keep Role[] type
-  // You may add instructor-specific properties if needed
+  // Add instructor-specific fields here later
 }
 
-// Student Interface
 export interface Student extends BaseUser {
   attendance: Attendance[];
-  // Student-specific properties
 }
 
-// Admin Interface
 export interface SystemAdmin extends BaseUser {
-  // Admin-specific properties
+  // Add admin-specific fields here later
 }
 
-// Union Type for User
+// Unified Type
 export type User = Instructor | Student | SystemAdmin;

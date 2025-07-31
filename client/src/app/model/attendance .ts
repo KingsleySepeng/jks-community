@@ -1,20 +1,19 @@
 export interface Attendance {
-    id: string;
-    date: Date;
-    status: AttendanceStatus;
-    instructorId:string;
-    comments?:string;
-    userId: string; // The user whose attendance is being recorded
-    clubId: string; // Reference to the club/session
-    createdAt: Date;
-    updatedAt: Date;
-
+  id: string;
+  date: string; // Use ISO string for LocalDateTime
+  status: AttendanceStatus;
+  instructorId: string;
+  comments?: string;
+  userId: string;
+  clubId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export enum AttendanceStatus {
-  PRESENT = 'present',
-  ABSENT = 'absent',
-  EXCUSED = 'excused',
+  PRESENT = 'PRESENT',
+  ABSENT = 'ABSENT',
+  EXCUSED = 'EXCUSED',
 }
 
 export interface AttendanceSummary {

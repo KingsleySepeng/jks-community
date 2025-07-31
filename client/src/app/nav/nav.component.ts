@@ -23,7 +23,8 @@ export class NavComponent implements OnInit {
   menuOpen = false;
   loggedInUser?: User;
   hasClub = false;
-  clubName :string | undefined = ''
+  clubName :string | undefined = '';
+  loading = true;
   appRoutes = [
     { path: 'attendance-tracker', name: 'Track Attendance', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR] },
     { path: 'add-user', name: 'Manage Students', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR] },
@@ -37,6 +38,7 @@ export class NavComponent implements OnInit {
   ngOnInit(): void {
     this.serviceService.getLoggedInUser().subscribe(user => {
       this.loggedInUser = user;
+      this.loading = false;
       this.updateNavLabels();
     });
   }
@@ -61,8 +63,19 @@ export class NavComponent implements OnInit {
 
   updateNavLabels(): void {
     if (this.loggedInUser) {
-      this.clubName = this.serviceService.getClubNameForUser(this.loggedInUser);
+      this.serviceService.getClubNameForUser(this.loggedInUser).subscribe(name => {
+        this.clubName = name ?? '';
+      });
     } else {
+      this.clubName = '';
     }
+  }
+
+  bootstrap: any;
+  errorMessage = '';
+  private showError(message: string): void {
+    this.errorMessage = message;
+    const modal = new this.bootstrap.Modal(document.getElementById('errorModal'));
+    modal.show();
   }
 }

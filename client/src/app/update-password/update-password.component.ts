@@ -15,11 +15,12 @@ import {ServiceService} from '../services/service.service';
   styleUrl: './update-password.component.scss'
 })
 export class UpdatePasswordComponent {
-  email: string = '';
-  newPassword: string = '';
-  confirmPassword: string = '';
-  message: string = '';
-  isError: boolean = false;
+  email = '';
+  newPassword = '';
+  confirmPassword = '';
+  message = '';
+  isError = false;
+  isLoading = false;
 
   constructor(private serviceService: ServiceService) {}
 
@@ -29,18 +30,24 @@ export class UpdatePasswordComponent {
       return;
     }
 
-    this.serviceService.updatePasswordByEmail(this.email, this.newPassword);
-    // this.setMessage(result.message, !result.success);
-
-    // if (result.success) {
-    //   this.email = '';
-    //   this.newPassword = '';
-    //   this.confirmPassword = '';
-    // }
+    this.isLoading = true;
+    this.serviceService.updatePasswordByEmail(this.email, this.newPassword)
+      .pipe(first())
+      .subscribe({
+        next: () => {
+          this.setMessage('Password updated successfully.', false);
+          this.email = '';
+          this.newPassword = '';
+          this.confirmPassword = '';
+        },
+        error: () => {
+          this.setMessage('Failed to update password. Try again later.', true);
+        },
+        complete: () => this.isLoading = false
+      });
   }
 
-  private setMessage(message: string, isError: boolean): void {
-    this.message = message;
-    this.isError = isError;
+  private setMessage(msg: string, error: boolean): void {
+    this.message = msg;
+    this.isError = error;
   }
-}

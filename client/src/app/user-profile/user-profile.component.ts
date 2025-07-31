@@ -16,31 +16,40 @@ import {FormsModule} from '@angular/forms';
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.scss'
 })
-export class UserProfileComponent  implements OnInit {
+export class UserProfileComponent implements OnInit {
   currentUser?: User;
   isEditing = false;
-  belts = Object.values(Belt); // if Belt is an enum
+  belts = Object.values(Belt);
 
-  constructor(
-    private mockDataService: MockDataService,
-  ) {}
+  constructor(private serviceService: ServiceService) {}
 
   ngOnInit(): void {
-
-    const userId = this.mockDataService.getLoggedInUser()?.id;
-    if (userId) {
-      this.currentUser = this.mockDataService.getUserById(userId);
-    }
+    // Fetch logged-in user and get updated details
+    this.serviceService.getLoggedInUser().pipe(first()).subscribe(user => {
+      if (user?.id) {
+        this.serviceService.getUserById(user.id).pipe(first()).subscribe(fullUser => {
+          this.currentUser = fullUser;
+        });
+      }
+    });
   }
 
-  onEditToggle() {
+  onEditToggle(): void {
     this.isEditing = !this.isEditing;
   }
 
-  onSaveChanges() {
+  onSaveChanges(): void {
     if (!this.currentUser) return;
-    // Pass updated user to the service
-    this.mockDataService.updateUser(this.currentUser);
-    this.isEditing = false;
+
+    this.serviceService.updateUser(this.currentUser).pipe(first()).subscribe({
+      next: () => {
+        this.isEditing = false;
+        // Optionally show a success alert/toast
+      },
+      error: (err) => {
+        console.error('Error updating user:', err);
+        // Optionally show error alert
+      }
+    });
   }
 }

@@ -18,66 +18,98 @@ import {first} from 'rxjs';
   templateUrl: './add-user.component.html',
   styleUrl: './add-user.component.scss'
 })
-export class AddUserComponent implements OnInit{
+export class AddUserComponent implements OnInit {
   belts = Object.values(Belt);
   user: Student = this.getEmptyUser();
   clubStudents: Student[] = [];
   currentInstructor?: User;
+  isLoading = false;
+  errorMessage = '';
 
   constructor(private serviceService: ServiceService) {}
 
   ngOnInit(): void {
-    this.serviceService.getLoggedInUser().pipe(first()).subscribe(user => {
-      if (user && user.roles.includes(Role.INSTRUCTOR)) {
-        this.currentInstructor = user;
-          if (user.club?.id) {
-          this.serviceService.getClubById(user.club.id).pipe(first()).subscribe(club => {
-              if (club) {
-            this.currentInstructor!.club = {id: club.id};
-              }
-          });
+    this.isLoading = true;
+    this.serviceService.getLoggedInUser().pipe(first()).subscribe({
+      next: (user) => {
+        if (user?.roles.includes(Role.INSTRUCTOR)) {
+          this.currentInstructor = user;
+          const clubId = user.club?.id;
+          if (clubId) {
+            this.serviceService.getClubById(clubId).pipe(first()).subscribe({
+              next: (club) => {
+                if (club) {
+                  this.currentInstructor!.club = { id: club.id };
+                  this.loadClubStudents(club.id);
+                }
+              },
+              error: () => (this.errorMessage = 'Error loading club data'),
+              complete: () => (this.isLoading = false),
+            });
           }
-    }});
-    }
+        }
+      },
+      error: () => {
+        this.errorMessage = 'Failed to load instructor info';
+        this.isLoading = false;
+      },
+    });
+  }
 
   addStudent(): void {
-    if (!this.currentInstructor || !this.currentInstructor.club?.id) {
-      console.error('Instructor or club ID is missing.'); //TODO: THIS IS ALWAYS TRU
+    if (!this.currentInstructor?.club?.id) {
+      this.errorMessage = 'Instructor or Club not fully loaded.';
       return;
     }
 
+    this.isLoading = true;
     const newStudent: Student = {
       ...this.user,
-      club: { id: this.currentInstructor.club.id }, // Ensure ID is set
+      club: { id: this.currentInstructor.club.id },
       roles: [Role.STUDENT],
       createdAt: new Date(),
       updatedAt: new Date(),
+      attendance: [],
     };
 
     this.serviceService.addUser(newStudent).pipe(first()).subscribe({
-      next: (student) => {
-        console.log('Student added:', student);
-        this.user = this.getEmptyUser(); // Reset form
+      next: () => {
+        this.user = this.getEmptyUser();
+        this.loadClubStudents(this.currentInstructor!.club!.id);
       },
-      error: (err) => console.error('Error adding student:', err)
+      error: () => (this.errorMessage = 'Failed to add student'),
+      complete: () => (this.isLoading = false),
     });
-
-    this.serviceService.addUser(newStudent);
-    this.user = this.getEmptyUser(); // Reset form
   }
 
   removeStudent(studentId: string): void {
-    this.serviceService.removeUser(studentId);
-    if (this.currentInstructor) {
-      // this.loadClubStudents(this.currentInstructor.club.id);
-    }
+    if (!confirm('Are you sure you want to remove this student?')) return;
+
+    this.serviceService.removeUser(studentId).pipe(first()).subscribe({
+      next: () => this.loadClubStudents(this.currentInstructor!.club!.id),
+      error: () => (this.errorMessage = 'Failed to remove student'),
+    });
   }
 
   toggleSubInstructor(user: User): void {
-    this.serviceService.toggleSubInstructorRole(user);
-    // this.loadClubStudents(user.club.id);
+    const confirmText = user.roles.includes(Role.SUB_INSTRUCTOR)
+      ? 'Demote this user to Student?'
+      : 'Promote this user to Sub-Instructor?';
+
+    if (!confirm(confirmText)) return;
+
+    this.serviceService.toggleSubInstructorRole(user).pipe(first()).subscribe({
+      next: () => this.loadClubStudents(this.currentInstructor!.club!.id),
+      error: () => (this.errorMessage = 'Failed to toggle role'),
+    });
   }
 
+  private loadClubStudents(clubId: string): void {
+    this.serviceService.getUsersByClub(clubId).pipe(first()).subscribe({
+      next: (students) => (this.clubStudents = students),
+      error: () => (this.errorMessage = 'Error loading student list'),
+    });
+  }
 
   private getEmptyUser(): Student {
     return {
@@ -87,14 +119,14 @@ export class AddUserComponent implements OnInit{
       lastName: '',
       email: '',
       profileImageUrl: '',
-      club: { id: '' }, // Initialize with empty club
+      club: { id: '' },
       belt: Belt.WHITE,
       roles: [],
       password: 'karate',
       isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      attendance: []
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      attendance: [],
     };
   }
 

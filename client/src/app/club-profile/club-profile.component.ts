@@ -19,30 +19,40 @@ import {MockDataService} from '../mock-service/mock-data.service';
 export class ClubProfileComponent implements OnInit {
   currentClub?: Club;
   isEditing = false;
-  canEdit: boolean | undefined = false;
+  canEdit = false;
 
-  constructor(private mockDataService: MockDataService) {}
+  constructor(private serviceService: ServiceService) {}
 
   ngOnInit(): void {
-    // Get logged-in user
-    const user = this.mockDataService.getLoggedInUser();
-    if (user?.club) {
-      this.currentClub = this.mockDataService.getClubById(user.club);
-    }
+    this.serviceService.getLoggedInUser().pipe(first()).subscribe(user => {
+      if (user?.club?.id) {
+        this.canEdit = user.roles.includes(Role.INSTRUCTOR) || user.roles.includes(Role.SYSTEM_ADMIN);
 
-    // Only Admins & Instructors can edit
-    this.canEdit = user?.roles.includes(Role.INSTRUCTOR);
+        this.serviceService.getClubById(user.club.id).pipe(first()).subscribe(club => {
+          this.currentClub = club;
+        });
+      }
+    });
   }
 
-  onEditToggle() {
+  onEditToggle(): void {
     if (this.canEdit) {
       this.isEditing = !this.isEditing;
     }
   }
 
-  onSaveChanges() {
+  onSaveChanges(): void {
     if (!this.currentClub) return;
-    this.mockDataService.updateClub(this.currentClub);
-    this.isEditing = false;
+
+    this.serviceService.updateClub(this.currentClub).pipe(first()).subscribe({
+      next: () => {
+        this.isEditing = false;
+        // Optionally show a success toast/modal
+      },
+      error: err => {
+        console.error('Failed to update club:', err);
+        // Optionally show an error alert
+      }
+    });
   }
 }

@@ -23,12 +23,21 @@ import {Role} from '../model/role';
 export class AttendanceComponent implements OnInit {
   students: Student[] = [];
   loggedInUser?: User;
-  attendanceState: { [userId: string]: { status: AttendanceStatus | undefined; comment: string; showHistory: boolean } } = {};
+  attendanceState: {
+    [userId: string]: {
+      status: AttendanceStatus | undefined;
+      comment: string;
+      showHistory: boolean;
+    };
+  } = {};
 
   selectedDate: Date = new Date();
   selectedDateString: string = this.formatDateForInput(this.selectedDate);
   isSaving = false;
   showModal = false;
+
+  successMessage = '';
+  errorMessage = '';
 
   aggregationStartDate: string = new Date().toISOString().split('T')[0];
   aggregationEndDate: string = new Date().toISOString().split('T')[0];
@@ -44,10 +53,10 @@ export class AttendanceComponent implements OnInit {
       return;
     }
 
-    const userClubId = this.loggedInUser.club;
+    const userClubId = this.loggedInUser.club?.id;
     this.serviceService.getUsers().subscribe(users => {
       this.students = users.filter(
-        u => u.club === userClubId && u.roles.includes(Role.STUDENT)
+        u => u.club?.id === userClubId && u.roles.includes(Role.STUDENT)
       ) as Student[];
       this.initializeAttendanceState();
     });
@@ -56,7 +65,11 @@ export class AttendanceComponent implements OnInit {
   private initializeAttendanceState(): void {
     this.students.forEach(student => {
       if (!this.attendanceState[student.id]) {
-        this.attendanceState[student.id] = { showHistory: false, status: undefined, comment: '' };
+        this.attendanceState[student.id] = {
+          showHistory: false,
+          status: undefined,
+          comment: ''
+        };
       }
     });
   }
@@ -82,7 +95,7 @@ export class AttendanceComponent implements OnInit {
 
   onSaveAttendance(): void {
     if (!this.loggedInUser) {
-      alert('No instructor is logged in.');
+      this.setError('No instructor is logged in.');
       return;
     }
 
@@ -92,8 +105,7 @@ export class AttendanceComponent implements OnInit {
       const state = this.attendanceState[student.id];
       if (state.status) {
         return [{
-          // id: this.generateUniqueId(),
-          id: "",
+          id: '',
           date: this.selectedDate,
           status: state.status,
           instructorId: this.loggedInUser!.id,
@@ -107,11 +119,19 @@ export class AttendanceComponent implements OnInit {
       return [];
     });
 
-    this.serviceService.saveAttendanceRecords(attendanceRecords);
-    this.isSaving = false;
-    this.openModal();
+    this.serviceService.saveAttendanceRecords(attendanceRecords).subscribe({
+      next: () => {
+        this.setSuccess('Attendance saved successfully!');
+        this.isSaving = false;
+        this.openModal();
+      },
+      error: (err) => {
+        console.error('Save failed:', err);
+        this.setError('Failed to save attendance. Please try again.');
+        this.isSaving = false;
+      }
+    });
   }
-
 
   getAttendanceSummary(student: Student): AttendanceSummary {
     const start = new Date(this.aggregationStartDate);
@@ -145,10 +165,6 @@ export class AttendanceComponent implements OnInit {
     return student ? `${student.firstName} ${student.lastName}` : userId;
   }
 
-  private generateUniqueId(): string {
-    return Math.random().toString(36).substr(2, 9);
-  }
-
   private formatDateForInput(date: Date): string {
     return date.toISOString().split('T')[0];
   }
@@ -161,6 +177,17 @@ export class AttendanceComponent implements OnInit {
     this.showModal = false;
   }
 
-  updateAggregates(): void {}
+  updateAggregates(): void {
+    // In the future, fetch updated records if needed
+  }
 
+  private setSuccess(msg: string): void {
+    this.successMessage = msg;
+    this.errorMessage = '';
+  }
+
+  private setError(msg: string): void {
+    this.errorMessage = msg;
+    this.successMessage = '';
+  }
 }
