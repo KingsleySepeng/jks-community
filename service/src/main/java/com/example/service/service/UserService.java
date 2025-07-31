@@ -24,13 +24,11 @@ public class UserService {
     private final SequenceService sequenceService;
     private final UserMapper userMapper;
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
-    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, SequenceService sequenceService, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, SequenceService sequenceService, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.sequenceService = sequenceService;
         this.userMapper = userMapper;
-        this.passwordEncoder = passwordEncoder;
     }
 
     public List<UserResponseDto> getAllUsers() {
@@ -87,7 +85,7 @@ public class UserService {
             if (userDto.getFirstName() != null) existingUser.setFirstName(userDto.getFirstName());
             if (userDto.getLastName() != null) existingUser.setLastName(userDto.getLastName());
             if (userDto.getPassword() != null) {
-                existingUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
+                existingUser.setPassword((new BCryptPasswordEncoder().encode(userDto.getPassword())));
             }
 
             // Add additional fields as necessary
