@@ -1,10 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Student, User} from '../model/user';
+import { User} from '../model/user';
 import {Attendance, AttendanceStatus, AttendanceSummary} from '../model/attendance ';
 import {DatePipe, NgForOf, NgIf, NgClass, DecimalPipe} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ServiceService} from '../services/service.service';
-import {Role} from '../model/role';
+
 
 @Component({
   selector: 'app-attendance',
@@ -21,8 +21,8 @@ import {Role} from '../model/role';
   styleUrls: ['./attendance.component.scss']
 })
 export class AttendanceComponent implements OnInit {
-  students: Student[] = [];
   loggedInUser?: User;
+  students: User[] = [];
   attendanceState: {
     [userId: string]: {
       status: AttendanceStatus | undefined;
@@ -39,8 +39,9 @@ export class AttendanceComponent implements OnInit {
   successMessage = '';
   errorMessage = '';
 
-  aggregationStartDate: string = new Date().toISOString().split('T')[0];
-  aggregationEndDate: string = new Date().toISOString().split('T')[0];
+  aggregationStartDate: string = this.formatDateForInput(new Date());
+  aggregationEndDate: string = this.formatDateForInput(new Date());
+
 
   protected readonly AttendanceStatus = AttendanceStatus;
 
@@ -53,13 +54,12 @@ export class AttendanceComponent implements OnInit {
       return;
     }
 
-    const userClubId = this.loggedInUser.club?.id;
-    this.serviceService.getUsers().subscribe(users => {
-      this.students = users.filter(
-        u => u.club?.id === userClubId && u.roles.includes(Role.STUDENT)
-      ) as Student[];
+    const instructorClubId = this.loggedInUser.clubId;
+    this.serviceService.getUsersByClub(instructorClubId).subscribe(users =>{
+      this.students = users;
       this.initializeAttendanceState();
-    });
+    })
+
   }
 
   private initializeAttendanceState(): void {
@@ -94,7 +94,7 @@ export class AttendanceComponent implements OnInit {
   }
 
   onSaveAttendance(): void {
-    if (!this.loggedInUser || !this.loggedInUser.club?.id) {
+    if (!this.loggedInUser || !this.loggedInUser.clubId) {
       this.setError('No instructor is logged in or club is missing.');
       return;
     }
@@ -110,7 +110,7 @@ export class AttendanceComponent implements OnInit {
           status: state.status,
           instructorId: this.loggedInUser!.id,
           userId: student.id,
-          clubId: this.loggedInUser!.club!.id,
+          clubId: this.loggedInUser!.clubId!,
           comments: state.comment,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
@@ -124,17 +124,19 @@ export class AttendanceComponent implements OnInit {
         this.setSuccess('Attendance saved successfully!');
         this.isSaving = false;
         this.openModal();
+        this.updateAggregates(); // ← this will refresh detailed & aggregate views
       },
       error: (err) => {
         console.error('Save failed:', err);
-        this.setError('Failed to save attendance. Please try again.');
+        this.setError(err.error?.message || 'Failed to save attendance. Please try again.');
         this.isSaving = false;
       }
     });
   }
 
 
-  getAttendanceSummary(student: Student): AttendanceSummary {
+
+  getAttendanceSummary(student: User): AttendanceSummary {
     const start = new Date(this.aggregationStartDate);
     const end = new Date(this.aggregationEndDate);
     const records = (student.attendance || []).filter(record => {
@@ -147,6 +149,7 @@ export class AttendanceComponent implements OnInit {
     const percentage = total > 0 ? (presentCount / total) * 100 : 0;
     return { total, present: presentCount, notAttended, percentage };
   }
+
 
   getDetailedAttendance(): Attendance[] {
     const start = new Date(this.aggregationStartDate);
@@ -161,10 +164,6 @@ export class AttendanceComponent implements OnInit {
     }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }
 
-  getStudentName(userId: string): string {
-    const student = this.students.find(s => s.id === userId);
-    return student ? `${student.firstName} ${student.lastName}` : userId;
-  }
 
   private formatDateForInput(date: Date): string {
     return date.toISOString().split('T')[0];
@@ -179,8 +178,26 @@ export class AttendanceComponent implements OnInit {
   }
 
   updateAggregates(): void {
-    // In the future, fetch updated records if needed
+    if (!this.loggedInUser?.clubId) return;
+
+    this.serviceService.getDetailedAttendance(
+      this.loggedInUser.clubId,
+      this.aggregationStartDate,
+      this.aggregationEndDate
+    ).subscribe({
+      next: (records) => {
+        // Clear all previous attendance first
+        this.students.forEach(student => {
+          student.attendance = records.filter(r => r.userId === student.id);
+        });
+      },
+      error: (err) => {
+        console.error('Failed to fetch detailed attendance', err);
+        this.setError('Could not load detailed attendance records.');
+      }
+    });
   }
+
 
   private setSuccess(msg: string): void {
     this.successMessage = msg;

@@ -2,7 +2,8 @@ import { Attendance } from './attendance ';
 import { Role } from './role';
 import { Belt } from './belt';
 
-export interface BaseUser {
+
+export interface User {
   id: string;
   memberId: string;
   email: string;
@@ -16,21 +17,8 @@ export interface BaseUser {
   active: boolean;
   createdAt: string;
   updatedAt: string;
-  club?: { id: string };
+  attendance?: Attendance[];
+
 }
 
-// Specialized User Types
-export interface Instructor extends BaseUser {
-  // Add instructor-specific fields here later
-}
 
-export interface Student extends BaseUser {
-  attendance: Attendance[];
-}
-
-export interface SystemAdmin extends BaseUser {
-  // Add admin-specific fields here later
-}
-
-// Unified Type
-export type User = Instructor | Student | SystemAdmin;

@@ -1,5 +1,5 @@
 <div class="container mt-4">
-  <h2>Add New Club</h2>
+  <h2>Add New Club With Instructor</h2>
   <div *ngIf="loading" class="alert alert-info">
     Processing request...
   </div>
@@ -12,15 +12,16 @@
     {{ errorMessage }}
   </div>
 
-  <form (ngSubmit)="addClub()">
+  <form (ngSubmit)="addClubAndInstructor()">
     <!-- Club Info -->
     <div class="card mb-3">
       <div class="card-header">Club Information</div>
       <div class="card-body">
         <input class="form-control mb-2" [(ngModel)]="newClub.name" name="clubName" placeholder="Club Name" required />
         <input class="form-control mb-2" [(ngModel)]="newClub.address" name="clubAddress" placeholder="Club Address" required />
-        <input class="form-control mb-2" [(ngModel)]="newClub.contactNumber" name="contactNumber" placeholder="Contact Number" />
-        <textarea class="form-control mb-2" [(ngModel)]="newClub.description" name="description" placeholder="Description"></textarea>
+        <input class="form-control mb-2" [(ngModel)]="newClub.contactNumber" name="contactNumber" placeholder="Contact Number" required/>
+        <textarea class="form-control mb-2" [(ngModel)]="newClub.description" name="description" placeholder="Description" required></textarea>
+        <input class="form-control mb-2" [(ngModel)]="newClub.establishedDate" name="establisedDate" type="date" placeholder="Established Date" required />
       </div>
     </div>
 
@@ -29,13 +30,9 @@
       <div class="card-header">Instructor Information</div>
       <div class="card-body">
         <input class="form-control mb-2" [(ngModel)]="newInstructor.firstName" name="instructorFirstName" placeholder="First Name" required />
-        <input class="form-control mb-2" [(ngModel)]="newInstructor.lastName" name="instructorLastName" placeholder="Last Name" />
+        <input class="form-control mb-2" [(ngModel)]="newInstructor.lastName" name="instructorLastName" placeholder="Last Name" required />
         <input class="form-control mb-2" [(ngModel)]="newInstructor.email" name="instructorEmail" placeholder="Email" required />
 
-        <label for="belt">Belt</label>
-        <select class="form-select mb-2" [(ngModel)]="newInstructor.belt" name="belt" required>
-          <option *ngFor="let belt of ['WHITE','YELLOW','ORANGE','GREEN','BLUE','PURPLE','BROWN','BLACK']" [value]="belt">{{ belt }}</option>
-        </select>
       </div>
     </div>
 

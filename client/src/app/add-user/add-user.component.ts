@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {Student, User} from '../model/user';
+import { User} from '../model/user';
 import {Role} from '../model/role';
 import {Belt} from '../model/belt';
-import {NgForOf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {ServiceService} from '../services/service.service';
-import {first} from 'rxjs';
+import {finalize, first, of, switchMap, tap} from 'rxjs';
 
 @Component({
   selector: 'app-add-user',
@@ -13,69 +13,68 @@ import {first} from 'rxjs';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    NgForOf
+    NgForOf,
+    NgIf
   ],
   templateUrl: './add-user.component.html',
   styleUrl: './add-user.component.scss'
 })
 export class AddUserComponent implements OnInit {
   belts = Object.values(Belt);
-  user: Student = this.getEmptyUser();
-  clubStudents: Student[] = [];
+  user: User = this.getEmptyUser();
+  clubStudents: User[] = [];
   currentInstructor?: User;
   isLoading = false;
   errorMessage = '';
-
+  activeStudents: User[] = [];
+  inactiveStudents: User[] = [];
   constructor(private serviceService: ServiceService) {}
+
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.serviceService.getLoggedInUser().pipe(first()).subscribe({
-      next: (user) => {
-        if (user?.roles.includes(Role.INSTRUCTOR)) {
-          this.currentInstructor = user;
-          const clubId = user.club?.id;
-          if (clubId) {
-            this.serviceService.getClubById(clubId).pipe(first()).subscribe({
-              next: (club) => {
-                if (club) {
-                  this.currentInstructor!.club = { id: club.id };
-                  this.loadClubStudents(club.id);
-                }
-              },
-              error: () => (this.errorMessage = 'Error loading club data'),
-              complete: () => (this.isLoading = false),
-            });
-          }
+
+    this.serviceService.getLoggedInUser().pipe(
+      first(),
+      switchMap(user => {
+        console.log('Logged in user:', user);
+        console.log('User roles:', user?.roles);
+        console.log('User club ID:', user?.clubId);
+        if (!user?.roles.includes(Role.INSTRUCTOR) || !user.clubId) {
+          this.errorMessage = 'User is not a valid instructor or has no club';
+          return of(null);
         }
-      },
-      error: () => {
-        this.errorMessage = 'Failed to load instructor info';
-        this.isLoading = false;
-      },
+        this.currentInstructor = user;
+        return this.serviceService.getUsersByClub(user.clubId).pipe(
+          first(),
+          tap(students => {
+            this.clubStudents = (students || []).filter(u => u.roles.includes(Role.STUDENT) || u.roles.includes(Role.SUB_INSTRUCTOR)) as User[];
+            this.activeStudents = this.clubStudents.filter(s => s.active);
+            this.inactiveStudents = this.clubStudents.filter(s => !s.active);
+          }));
+      }),
+      finalize(() => this.isLoading = false)
+    ).subscribe({
+      error: (error) => {
+        console.error("Failed to load club students",error);
+        this.errorMessage = 'Failed to load instructor or club data';
+      }
     });
+
   }
 
-  addStudent(): void {
-    if (!this.currentInstructor?.club?.id) {
-      this.errorMessage = 'Instructor or Club not fully loaded.';
-      return;
-    }
 
+addStudent(): void {
     this.isLoading = true;
-    const newStudent: Student = {
+    const newStudent: User = {
       ...this.user,
-      club: { id: this.currentInstructor.club.id },
-      roles: [Role.STUDENT],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      attendance: [],
+    clubId: this.currentInstructor?.clubId || '',
     };
-
+  console.log('Adding new student:', newStudent);
     this.serviceService.addUser(newStudent).pipe(first()).subscribe({
       next: () => {
         this.user = this.getEmptyUser();
-        this.loadClubStudents(this.currentInstructor!.club!.id);
+        this.loadClubStudents(this.currentInstructor!.clubId);
       },
       error: () => (this.errorMessage = 'Failed to add student'),
       complete: () => (this.isLoading = false),
@@ -86,7 +85,13 @@ export class AddUserComponent implements OnInit {
     if (!confirm('Are you sure you want to remove this student?')) return;
 
     this.serviceService.removeUser(studentId).pipe(first()).subscribe({
-      next: () => this.loadClubStudents(this.currentInstructor!.club!.id),
+      next: () => {
+        if (this.currentInstructor?.clubId) {
+          this.loadClubStudents(this.currentInstructor.clubId);
+        } else {
+          this.errorMessage = 'Club ID is undefined';
+        }
+      },
       error: () => (this.errorMessage = 'Failed to remove student'),
     });
   }
@@ -99,7 +104,7 @@ export class AddUserComponent implements OnInit {
     if (!confirm(confirmText)) return;
 
     this.serviceService.toggleSubInstructorRole(user).pipe(first()).subscribe({
-      next: () => this.loadClubStudents(this.currentInstructor!.club!.id),
+      next: () => this.loadClubStudents(this.currentInstructor!.clubId),
       error: () => (this.errorMessage = 'Failed to toggle role'),
     });
   }
@@ -107,14 +112,14 @@ export class AddUserComponent implements OnInit {
   private loadClubStudents(clubId: string): void {
     this.serviceService.getUsersByClub(clubId).pipe(first()).subscribe({
       next: (students: User[]) => {
-        this.clubStudents = students.filter(u => u.roles.includes(Role.STUDENT)) as Student[];
+        this.clubStudents = students.filter(u => u.roles.includes(Role.STUDENT)) as User[];
       },
       error: () => (this.errorMessage = 'Error loading student list'),
     });
   }
 
 
-  private getEmptyUser(): Student {
+  private getEmptyUser(): User {
     return {
       id: '',
       memberId: '',
@@ -122,7 +127,6 @@ export class AddUserComponent implements OnInit {
       lastName: '',
       email: '',
       profileImageUrl: '',
-      club: { id: '' },
       clubId:'',
       belt: Belt.WHITE,
       roles: [],
@@ -135,4 +139,13 @@ export class AddUserComponent implements OnInit {
   }
 
   protected readonly Role = Role;
+
+  activateStudent(id: string) {
+    this.serviceService.activateStudent(id).pipe(first()).subscribe({
+      next: () => {
+        this.loadClubStudents(this.currentInstructor!.clubId);
+      },
+      error: () => (this.errorMessage = 'Failed to activate student'),
+    });
+  }
 }

@@ -34,17 +34,7 @@ export class UpdatePasswordComponent {
     }
 
     this.isLoading = true;
-
-    this.serviceService.getUserByEmail(this.email)
-      .pipe(first())
-      .subscribe({
-        next: (user) => {
-          const updatedUser: Partial<User> = {
-            id: user.id,
-            password: this.newPassword,
-          };
-
-          this.serviceService.updateUser(updatedUser)
+          this.serviceService.updateUserPassword(this.email,this.newPassword)
             .pipe(first())
             .subscribe({
               next: () => {
@@ -58,14 +48,7 @@ export class UpdatePasswordComponent {
               },
               complete: () => this.isLoading = false,
             });
-        },
-        error: () => {
-          this.setMessage('User not found with this email.', true);
-          this.isLoading = false;
-        }
-      });
-  }
-
+}
 
   private setMessage(msg: string, error: boolean): void {
     this.message = msg;

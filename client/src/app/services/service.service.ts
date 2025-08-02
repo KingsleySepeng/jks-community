@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, map, tap } from 'rxjs';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {BehaviorSubject, Observable, of, map, tap, catchError, throwError} from 'rxjs';
 import { User } from '../model/user';
 import { Club } from '../model/club';
 import { Role } from '../model/role';
@@ -35,28 +35,15 @@ export class ServiceService {
     return this.http.post<User>(`${this.baseUrl}/users`, user);
   }
 
-  updateUser(user: Partial<User>): Observable<User> {
-    return this.http.patch<User>(`${this.baseUrl}/users/${user.id}`, user);
+  updateUserPassword(email:string, password:string): Observable<User> {
+    const user: Partial<User> = { email, password };
+    return this.http.patch<User>(`${this.baseUrl}/users`, user);
   }
 
   removeUser(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/users/${id}`);
   }
 
-  getUserByEmail(email: string): Observable<User> {
-    return this.http.get<User>(`${this.baseUrl}/users/email/${email}`);
-  }
-
-
-  getStudentsByClub(clubId: string): Observable<User[]> {
-    return this.getUsers().pipe(
-      map(users =>
-        users.filter(
-          u => u.clubId === clubId && u.roles.includes(Role.STUDENT)
-        )
-      )
-    );
-  }
 
   toggleSubInstructorRole(user: User): Observable<User> {
     const roles = [...user.roles];
@@ -69,40 +56,19 @@ export class ServiceService {
     }
 
     const updated: User = { ...user, roles };
-    return this.updateUser(updated); // Return the Observable
-  }
+    // return this.updateUser(updated); // Return the Observable
+    return of({} as User); // Return an empty User observable
 
+    }
   getUsersByClub(clubId: string): Observable<User[]> {
-    return this.http.get<User[]>(`/api/users/club/${clubId}`);
+    return this.http.get<User[]>(`${this.baseUrl}/clubs/${clubId}/users`);
   }
 
 
-  addClubWithInstructor(club: Partial<Club>, instructor: Partial<User>): void {
-    const newInstructor: Partial<User> = {
-      ...instructor,
-      firstName: instructor.firstName ?? '',
-      lastName: instructor.lastName ?? '',
-      email: instructor.email ?? '',
-    };
-
-    this.addUser(newInstructor).subscribe(createdInstructor => {
-      const newClub: Partial<Club> = {
-        ...club,
-        name: club.name ?? '',
-        address: club.address ?? '',
-        description: club.description ?? '',
-        contactNumber: club.contactNumber ?? '',
-        establishedDate: club.establishedDate ?? new Date().toISOString(),
-        instructorId: createdInstructor.id,
-      };
-
-      this.addClub(newClub as Club).subscribe(createdClub => {
-        const updatedInstructor: Partial<User> = {
-          ...createdInstructor,
-          clubId: createdClub.id,
-        };
-        this.updateUser(updatedInstructor as User).subscribe();
-      });
+  addClubWithInstructor(club: Partial<Club>, instructor: Partial<User>): Observable<Club> {
+    return this.http.post<Club>(`${this.baseUrl}/clubs`, {
+      club,
+      instructor
     });
   }
 
@@ -117,9 +83,6 @@ export class ServiceService {
     return this.http.get<Club>(`${this.baseUrl}/clubs/${id}`);
   }
 
-  addClub(club: Partial<Club>): Observable<Club> {
-    return this.http.post<Club>(`${this.baseUrl}/clubs`, club);
-  }
 
   updateClub(club: Club): Observable<Club> {
     return this.http.put<Club>(`${this.baseUrl}/clubs/${club.id}`, club);
@@ -134,24 +97,25 @@ export class ServiceService {
     return this.getClubById(user.clubId).pipe(map(club => club.name));
   }
 
-  getClubByIdValue(id: string): Observable<Club | undefined> {
-    return this.getClubById(id);
-  }
 
   // ------------------------------------
   // Attendance
   // ------------------------------------
   saveAttendanceRecords(records: Attendance[]): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/attendance`, records);
+    return this.http.post<void>(`${this.baseUrl}/attendance`, records).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Attendance save failed', error);
+        return throwError(() => new Error('Failed to save attendance.'));
+      })
+    );
   }
 
-  getAttendanceByStudent(studentId: string): Observable<Attendance[]> {
-    return this.http.get<Attendance[]>(`${this.baseUrl}/attendance/student/${studentId}`);
+  getDetailedAttendance(clubId: string, start: string, end: string): Observable<Attendance[]> {
+    return this.http.get<Attendance[]>(
+      `${this.baseUrl}/attendance/club/${clubId}/records?start=${start}&end=${end}`
+    );
   }
 
-  getAttendanceBetween(clubId: string, start: string, end: string): Observable<Attendance[]> {
-    return this.http.get<Attendance[]>(`${this.baseUrl}/attendance/club/${clubId}?start=${start}&end=${end}`);
-  }
 
   // ------------------------------------
   // Authentication
@@ -180,15 +144,13 @@ export class ServiceService {
   // ------------------------------------
   // Utility
   // ------------------------------------
-  generateStudentId(): string {
-    return 'S' + Math.floor(Math.random() * 1000);
+
+  canUserAccessRoute(user: User | undefined, routeRoles: Role[] | undefined): boolean {
+    if (!user?.roles || !routeRoles) return false;
+    return user.roles.some(role => routeRoles.includes(role));
   }
 
-  generateMemberId(): string {
-    return 'M' + Math.floor(Math.random() * 1000);
-  }
-
-  canUserAccessRoute(user: User | undefined, roles: Role[]): boolean {
-    return !!user && roles.some(r => user.roles.includes(r));
+  activateStudent(id: string):Observable<void> {
+    return this.http.patch<User>(`${this.baseUrl}/users/${id}/activate`, {}).pipe(map(() => {}));
   }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Student, User } from '../model/user';
+import { User } from '../model/user';
 import { Belt } from '../model/belt';
 import { Technique } from '../model/technique';
 import { SyllabusMap } from '../model/SyllabusMap';
@@ -21,10 +21,10 @@ declare var gapi: any;
 })
 export class GradingFormComponent implements OnInit {
   belt?: Belt;
-  allStudents: Student[] = [];
-  selectedStudents: Student[] = [];
+  allStudents: User[] = [];
+  selectedStudents: User[] = [];
   studentSearchTerm: string = '';
-  filteredStudents: Student[] = [];
+  filteredStudents: User[] = [];
   techniques: { kihon: Technique[]; kata: Technique[]; kumite: Technique[] } = { kihon: [], kata: [], kumite: [] };
   multiEvaluations: MultiStudentEvaluation[] = [];
   instructor?: User;
@@ -44,7 +44,7 @@ export class GradingFormComponent implements OnInit {
       console.error('No instructor is logged in!');
       return;
     }
-    this.allStudents = this.mockDataService.getUsers().filter(user => user.roles.includes(Role.STUDENT) ) as Student[];
+    this.allStudents = this.mockDataService.getUsers().filter(user => user.roles.includes(Role.STUDENT) ) as User[];
     await this.initializeGapiClient();
   }
 
@@ -81,7 +81,7 @@ export class GradingFormComponent implements OnInit {
     );
   }
 
-  addStudent(student: Student) {
+  addStudent(student: User) {
     this.selectedStudents.push(student);
     // Initialize final decision for the new student.
     this.finalDecisions[student.id] = { decision: 'pass', comment: '' };

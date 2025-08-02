@@ -30,9 +30,9 @@ export class ClubProfileComponent implements OnInit {
       if (user?.club?.id) {
         this.canEdit = user.roles.includes(Role.INSTRUCTOR) || user.roles.includes(Role.SYSTEM_ADMIN);
 
-        this.serviceService.getClubById(user.club.id).pipe(first()).subscribe(club => {
-          this.currentClub = club;
-        });
+        // this.serviceService.getClubById(user.club.id).pipe(first()).subscribe(club => {
+        //   this.currentClub = club;
+        // });
       }
     });
   }

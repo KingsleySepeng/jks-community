@@ -20,24 +20,29 @@
   </div>
 
   <!-- Global Aggregation Date Range for History -->
+  <!-- History Date Filters -->
   <div class="row justify-content-center mb-4">
     <div class="col-auto">
       <label for="aggregationStart" class="form-label">History Start Date:</label>
       <input type="date" id="aggregationStart" class="form-control"
-             [(ngModel)]="aggregationStartDate" (change)="updateAggregates()">
+             [(ngModel)]="aggregationStartDate">
     </div>
     <div class="col-auto">
       <label for="aggregationEnd" class="form-label">History End Date:</label>
       <input type="date" id="aggregationEnd" class="form-control"
-             [(ngModel)]="aggregationEndDate" (change)="updateAggregates()">
+             [(ngModel)]="aggregationEndDate">
+    </div>
+    <div class="col-auto d-flex align-items-end">
+      <button class="btn btn-outline-primary" (click)="updateAggregates()">Update History</button>
     </div>
   </div>
+
 
   <h2 class="mb-4">Students</h2>
   <div class="list-group">
     <div *ngFor="let student of students" class="list-group-item">
       <div class="d-flex justify-content-between align-items-center">
-        <strong>{{ student.firstName }} {{ student.lastName }}</strong>
+        <strong>{{ student.firstName }} {{ student.lastName }} {{student.roles}}</strong>
         <!-- Toggle Aggregated Attendance History -->
         <button type="button" class="btn btn-link" (click)="toggleHistory(student.id)">
           {{ attendanceState[student.id]?.showHistory ? 'Hide Aggregated History' : 'View Aggregated History' }}
@@ -106,16 +111,21 @@
         </thead>
         <tbody>
         <tr *ngFor="let record of getDetailedAttendance()">
-          <td>{{ record.date | date: 'yyyy-MM-dd' }}</td>
-          <td>{{ getStudentName(record.userId) }}</td>
-          <td [ngClass]="{
-              'text-success': record.status === AttendanceStatus.PRESENT,
-              'text-danger': record.status === AttendanceStatus.ABSENT,
-              'text-warning': record.status === AttendanceStatus.EXCUSED
-            }">{{ record.status }}</td>
-          <td>{{ record.comments }}</td>
+          <ng-container *ngFor="let student of students">
+            <ng-container *ngIf="student.id === record.userId">
+              <td>{{ record.date | date: 'yyyy-MM-dd' }}</td>
+              <td>{{ student.firstName }} {{ student.lastName }}</td>
+              <td [ngClass]="{
+            'text-success': record.status === AttendanceStatus.PRESENT,
+            'text-danger': record.status === AttendanceStatus.ABSENT,
+            'text-warning': record.status === AttendanceStatus.EXCUSED
+          }">{{ record.status }}</td>
+              <td>{{ record.comments }}</td>
+            </ng-container>
+          </ng-container>
         </tr>
         </tbody>
+
       </table>
     </div>
   </div>

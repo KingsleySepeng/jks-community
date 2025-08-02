@@ -43,15 +43,15 @@ export class UserProfileComponent implements OnInit {
   onSaveChanges(): void {
     if (!this.currentUser) return;
 
-    this.serviceService.updateUser(this.currentUser).pipe(first()).subscribe({
-      next: () => {
-        this.isEditing = false;
-        // Optionally show a success alert/toast
-      },
-      error: (err) => {
-        console.error('Error updating user:', err);
-        // Optionally show error alert
-      }
-    });
+    // this.serviceService.updateUser(this.currentUser).pipe(first()).subscribe({
+    //   next: () => {
+    //     this.isEditing = false;
+    //     // Optionally show a success alert/toast
+    //   },
+    //   error: (err) => {
+    //     console.error('Error updating user:', err);
+    //     // Optionally show error alert
+    //   }
+    // });
   }
 }

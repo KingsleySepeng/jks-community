@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SystemAdmin, Instructor, Student, User } from '../model/user';
+import {User } from '../model/user';
 import { Club } from '../model/club';
 import { Attendance, AttendanceStatus } from '../model/attendance ';
 import { Belt } from '../model/belt';
@@ -110,7 +110,7 @@ export class MockDataService {
   // -------------------------------------------------------
   // 9. Belt Requirements & Eligibility
   // -------------------------------------------------------
-  public isEligibleForBelt(student: Student, belt: Belt): boolean {
+  public isEligibleForBelt(student: User, belt: Belt): boolean {
     const req = BeltRequirements.find(r => r.belt === belt);
     if (!req) return false; // no belt requirement found
     return true;

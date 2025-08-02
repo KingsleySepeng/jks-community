@@ -43,11 +43,11 @@
   <!-- List of Students in the Club -->
   <div class="card">
     <div class="card-header">
-      <h5 class="mb-0">Students in Your Club</h5>
+      <h5 class="mb-0">Active Students in Your Club</h5>
     </div>
     <div class="card-body">
       <ul class="list-group">
-        <li *ngFor="let student of clubStudents" class="list-group-item d-flex justify-content-between align-items-center">
+        <li *ngFor="let student of activeStudents" class="list-group-item d-flex justify-content-between align-items-center">
           {{ student.firstName }} {{ student.lastName }}
           <div>
             <button type="button"
@@ -58,6 +58,24 @@
             <button type="button" class="btn btn-sm btn-danger"
                     (click)="removeStudent(student.id)">
               Remove
+            </button>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">Inactive Students in Your Club</h5>
+    </div>
+    <div class="card-body">
+      <ul class="list-group">
+        <li *ngFor="let student of inactiveStudents" class="list-group-item d-flex justify-content-between align-items-center">
+          {{ student.firstName }} {{ student.lastName }}
+          <div>
+            <button type="button" class="btn btn-sm btn-danger"
+                    (click)="activateStudent(student.id)">
+              Add
             </button>
           </div>
         </li>

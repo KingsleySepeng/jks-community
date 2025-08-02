@@ -59,7 +59,7 @@ export class LoginComponent implements OnInit {
     this.serviceService.authenticateUser(email, password).pipe(
       tap(user => {
         if (!user) {
-          this.errorMessage = 'Invalid credentials. Please try again.';
+          // Don't try to access user.roles if user is undefined
           return;
         }
 
@@ -76,7 +76,7 @@ export class LoginComponent implements OnInit {
       }),
       catchError(error => {
         console.error('Login error:', error);
-        this.errorMessage = 'Login failed. Please check your credentials or try again later.';
+        this.errorMessage = 'Login failed, try again later.';
         return of(undefined);
       }),
       finalize(() => {
