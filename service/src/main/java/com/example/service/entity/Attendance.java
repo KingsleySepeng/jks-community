@@ -2,6 +2,7 @@ package com.example.service.entity;
 
 import jakarta.persistence.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -13,7 +14,7 @@ public class Attendance {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private LocalDateTime date;
+    private Instant date;
 
     @Enumerated(EnumType.STRING)
     private AttendanceStatus status;
@@ -22,22 +23,34 @@ public class Attendance {
 
     private String comments;
 
-    private UUID userId;
-
     private UUID clubId;
 
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
-    private LocalDateTime updatedAt;
+    private Instant updatedAt;
+
+
+    // Attendance.java
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    private User user;
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = this.updatedAt = LocalDateTime.now();
+        this.createdAt = this.updatedAt = Instant.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = Instant.now();
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public UUID getId() {
@@ -48,11 +61,11 @@ public class Attendance {
         this.id = id;
     }
 
-    public LocalDateTime getDate() {
+    public Instant getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(Instant date) {
         this.date = date;
     }
 
@@ -80,13 +93,6 @@ public class Attendance {
         this.comments = comments;
     }
 
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
 
     public UUID getClubId() {
         return clubId;
@@ -96,19 +102,19 @@ public class Attendance {
         this.clubId = clubId;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+    public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
     }
 }

@@ -1,16 +1,18 @@
 package com.example.service.controller;
 
+import com.example.service.dto.AttendanceRequestDto;
+import com.example.service.dto.AttendanceResponseDto;
 import com.example.service.dto.AttendanceSummary;
 import com.example.service.entity.Attendance;
-import com.example.service.repository.AttendanceRepository;
+import com.example.service.service.AttendanceMapper;
 import com.example.service.service.AttendanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -24,29 +26,31 @@ public class AttendanceController {
         this.attendanceService = attendanceService;
     }
 
-    @PostMapping()
-    public ResponseEntity<Void> saveAttendance(@RequestBody List<Attendance> records) {
-        log.info("Saving {} attendance records", records.size());
-        attendanceService.saveAll(records);
-        return ResponseEntity.ok().build();
+    @PostMapping
+    public ResponseEntity<?> saveAttendance(@RequestBody List<AttendanceRequestDto> attendanceRequestDtos) {
+        log.info("Received {} attendance records", attendanceRequestDtos.size());
+        try {
+            attendanceService.saveAll(attendanceRequestDtos);
+            return ResponseEntity.ok().build();
+        } catch (Exception ex) {
+            log.error("Failed to save attendance", ex);
+            return ResponseEntity.internalServerError().body("Failed to save attendance records.");
+        }
     }
 
-    @GetMapping("/student/{studentId}")
-    public ResponseEntity<List<Attendance>> getByStudent(@PathVariable UUID studentId) {
-        log.info("Fetching attendance for student ID {}", studentId);
-        return ResponseEntity.ok(attendanceService.getByStudentId(studentId));
-    }
-
-    @GetMapping("/club/{clubId}")
-    public ResponseEntity<AttendanceSummary> getAttendanceSummaryForClub(
+    @GetMapping("/club/{clubId}/records")
+    public ResponseEntity<List<AttendanceResponseDto>> getAttendanceRecordsForClub(
             @PathVariable UUID clubId,
             @RequestParam String start,
-            @RequestParam String end) {
-
-        LocalDate startDate = LocalDate.parse(start);
-        LocalDate endDate = LocalDate.parse(end);
-        log.info("Generating attendance summary for club {} from {} to {}", clubId, startDate, endDate);
-        AttendanceSummary summary = attendanceService.getSummaryForClub(clubId, startDate, endDate);
-        return ResponseEntity.ok(summary);
+            @RequestParam String end
+    ) {
+        try {
+            List<AttendanceResponseDto> response = attendanceService.findByClubIdAndDateBetween(clubId, start, end);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Failed to fetch detailed attendance", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
+
 }

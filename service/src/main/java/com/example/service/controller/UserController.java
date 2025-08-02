@@ -1,6 +1,5 @@
 package com.example.service.controller;
 
-import com.example.service.dto.UserDto;
 import com.example.service.dto.UserRequestDto;
 import com.example.service.dto.UserResponseDto;
 import com.example.service.service.UserService;
@@ -30,16 +29,16 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/users/email/{email}")
+    @GetMapping("/email/{email}")
     public ResponseEntity<UserResponseDto> getUserByEmail(@PathVariable String email) {
         return userService.getUserByEmail(email)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PatchMapping("/users/{id}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable UUID id, @RequestBody UserRequestDto userDto) {
-        UserResponseDto updatedUser = userService.updateUser(id, userDto);
+    @PatchMapping()
+    public ResponseEntity<UserResponseDto> updateUserPassword(@RequestBody UserRequestDto userDto) {
+        UserResponseDto updatedUser = userService.updateUserPassword(userDto);
         if (updatedUser != null) {
             return ResponseEntity.ok(updatedUser);
         } else {
@@ -55,17 +54,23 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserResponseDto> create(@Valid @RequestBody UserRequestDto userRequest) {
-        return ResponseEntity.ok(userService.createUser(userRequest));
+        return ResponseEntity.ok(userService.createStudent(userRequest));
     }
+
+//    @PatchMapping("/{id}")
+//    public ResponseEntity<UserResponseDto> update(@PathVariable UUID id, @Valid @RequestBody UserRequestDto userRequest) {
+//        return ResponseEntity.ok(userService.updateUser(id, userRequest));
+//    }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserResponseDto> update(@PathVariable UUID id, @Valid @RequestBody UserRequestDto userRequest) {
-        return ResponseEntity.ok(userService.updateUser(id, userRequest));
-    }
-
-    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         userService.deactivateUser(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("{id}/activate")
+    public ResponseEntity<Void> activate(@PathVariable UUID id) {
+        userService.activateUser(id);
         return ResponseEntity.noContent().build();
     }
 }

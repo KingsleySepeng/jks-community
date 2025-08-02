@@ -27,7 +27,7 @@ public class AuthService {
                 .filter(user -> passwordEncoder.matches(loginRequest.getPassword(), user.getPassword()))
                 .map(user -> {
                     log.info("Login successful for user: {}", user.getEmail());
-                    return new LoginResponseDto(user.getId(), user.getEmail(), user.getFirstName(), user.getLastName());
+                    return new LoginResponseDto(user.getId(), user.getEmail(), user.getFirstName(), user.getLastName(),user.getRoles(),user.getClub().getId());
                 })
                 .orElseThrow(() -> {
                     log.warn("Login failed for email: {}", loginRequest.getEmail());

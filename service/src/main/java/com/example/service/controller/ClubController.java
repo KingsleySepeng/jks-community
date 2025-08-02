@@ -1,11 +1,11 @@
 package com.example.service.controller;
 
-import com.example.service.dto.ClubRequestDto;
-import com.example.service.dto.ClubResponseDto;
+import com.example.service.dto.*;
 import com.example.service.entity.Club;
 import com.example.service.repository.ClubRepository;
 import com.example.service.service.ClubService;
 import com.example.service.service.SequenceService;
+import com.example.service.service.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +20,12 @@ import java.util.List;
 public class ClubController {
 
     private final ClubService clubService;
+    private final UserService userService;
     private static final Logger log = LoggerFactory.getLogger(ClubController.class);
 
-    public ClubController(ClubService clubService) {
+    public ClubController(ClubService clubService,UserService userService) {
         this.clubService = clubService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -36,9 +38,17 @@ public class ClubController {
         return ResponseEntity.ok(clubService.getClubById(id));
     }
 
+    @GetMapping("/{clubId}/users")
+    public ResponseEntity<List<UserResponseDto>> getUsersByClub(@PathVariable UUID clubId) {
+        List<UserResponseDto> users = userService.getUsersByClub(clubId);
+        return ResponseEntity.ok(users != null ? users : List.of());
+    }
+
     @PostMapping
-    public ResponseEntity<ClubResponseDto> create(@Valid @RequestBody ClubRequestDto clubRequest) {
-        return ResponseEntity.ok(clubService.createClub(clubRequest));
+    public ResponseEntity<ClubResponseDto> createClubAndInstructor(@Valid @RequestBody ClubInstructorRequestDto clubInstructorRequestDto) {
+        ClubRequestDto clubRequest = clubInstructorRequestDto.getClub();
+        UserRequestDto userRequestDto = clubInstructorRequestDto.getInstructor();
+        return ResponseEntity.ok(clubService.createClubAndInstructor(clubRequest, userRequestDto));
     }
 
     @PutMapping("/{id}")

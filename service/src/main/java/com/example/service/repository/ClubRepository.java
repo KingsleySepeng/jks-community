@@ -12,4 +12,8 @@ public interface ClubRepository extends JpaRepository<Club, UUID> {
     @Modifying
     @Query("UPDATE Club u SET u.active = false WHERE u.id = :id")
     void setInactive(@Param("id") UUID id);
+
+    @Modifying
+    @Query("UPDATE Club u SET u.instructorId = :id1 WHERE u.id = :id")
+    void setInstructor(UUID id, UUID id1);
 }

@@ -19,6 +19,15 @@ public class UserResponseDto {
     private boolean isActive;
     private List<Role> roles;
     private UUID clubId;
+    private List<AttendanceResponseDto> attendance;
+
+    public List<AttendanceResponseDto> getAttendance() {
+        return attendance;
+    }
+
+    public void setAttendance(List<AttendanceResponseDto> attendance) {
+        this.attendance = attendance;
+    }
 
     public UUID getId() {
         return id;

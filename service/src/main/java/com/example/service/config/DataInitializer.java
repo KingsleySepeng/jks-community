@@ -66,13 +66,13 @@ public class DataInitializer {
                 admin.setActive(true);
                 admin.setCreatedAt(Instant.now());
                 admin.setUpdatedAt(Instant.now());
-
                 // Encode password
                 BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
                 String hashedPassword = passwordEncoder.encode("admin123");
                 admin.setPassword(hashedPassword);
-
-                userRepository.save(admin);
+                User adminEntity = userRepository.save(admin);
+                userClub.setInstructorId(adminEntity.getId());
+                clubRepository.save(userClub);
             }
         };
     }
