@@ -135,22 +135,6 @@ export class AttendanceComponent implements OnInit {
   }
 
 
-
-  getAttendanceSummary(student: User): AttendanceSummary {
-    const start = new Date(this.aggregationStartDate);
-    const end = new Date(this.aggregationEndDate);
-    const records = (student.attendance || []).filter(record => {
-      const recDate = new Date(record.date);
-      return recDate >= start && recDate <= end;
-    });
-    const total = records.length;
-    const presentCount = records.filter(r => r.status.toLowerCase() === AttendanceStatus.PRESENT.toLowerCase()).length;
-    const notAttended = total - presentCount;
-    const percentage = total > 0 ? (presentCount / total) * 100 : 0;
-    return { total, present: presentCount, notAttended, percentage };
-  }
-
-
   getDetailedAttendance(): Attendance[] {
     const start = new Date(this.aggregationStartDate);
     const end = new Date(this.aggregationEndDate);
@@ -186,14 +170,29 @@ export class AttendanceComponent implements OnInit {
       this.aggregationEndDate
     ).subscribe({
       next: (records) => {
-        // Clear all previous attendance first
         this.students.forEach(student => {
           student.attendance = records.filter(r => r.userId === student.id);
         });
+        records.forEach(r => {
+          const student = this.students.find(s => s.id === r.userId);
+          r.fullName = student ? `${student.firstName} ${student.lastName}` : 'Unknown';
+        });
+
+        this.serviceService.getAttendanceSummary(
+          this.loggedInUser!.clubId,
+          this.aggregationStartDate,
+          this.aggregationEndDate
+        ).subscribe(summaryList => {
+          this.students.forEach(student => {
+            student.attendanceSummary = summaryList.find(s => s.userId === student.id) || {
+             userId:student.id, total: 0, present: 0, notAttended: 0, percentage: 0
+            };
+          });
+        });
       },
       error: (err) => {
-        console.error('Failed to fetch detailed attendance', err);
-        this.setError('Could not load detailed attendance records.');
+        console.error('Failed to fetch data', err);
+        this.setError('Could not load attendance data.');
       }
     });
   }

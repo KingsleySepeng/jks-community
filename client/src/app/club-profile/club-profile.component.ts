@@ -27,7 +27,7 @@ export class ClubProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.serviceService.getLoggedInUser().pipe(first()).subscribe(user => {
-      if (user?.club?.id) {
+      if (user?.clubId) {
         this.canEdit = user.roles.includes(Role.INSTRUCTOR) || user.roles.includes(Role.SYSTEM_ADMIN);
 
         // this.serviceService.getClubById(user.club.id).pipe(first()).subscribe(club => {
@@ -46,7 +46,7 @@ export class ClubProfileComponent implements OnInit {
   onSaveChanges(): void {
     if (!this.currentClub) return;
 
-    this.serviceService.updateClub(this.currentClub).pipe(first()).subscribe({
+    this.serviceService.updateClubProfile(this.currentClub).pipe(first()).subscribe({
       next: () => {
         this.isEditing = false;
         // Optionally show a success toast/modal

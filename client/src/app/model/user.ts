@@ -1,4 +1,4 @@
-import { Attendance } from './attendance ';
+import {Attendance, AttendanceSummary} from './attendance ';
 import { Role } from './role';
 import { Belt } from './belt';
 
@@ -18,6 +18,7 @@ export interface User {
   createdAt: string;
   updatedAt: string;
   attendance?: Attendance[];
+  attendanceSummary?: AttendanceSummary;
 
 }
 

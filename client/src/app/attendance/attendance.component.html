@@ -16,7 +16,7 @@
   <div class="d-flex justify-content-center mb-3">
     <input type="date" class="form-control w-auto"
            [value]="selectedDateString"
-           (change)="onDateChange($event)" />
+           (change)="onDateChange($event)"/>
   </div>
 
   <!-- Global Aggregation Date Range for History -->
@@ -42,7 +42,7 @@
   <div class="list-group">
     <div *ngFor="let student of students" class="list-group-item">
       <div class="d-flex justify-content-between align-items-center">
-        <strong>{{ student.firstName }} {{ student.lastName }} {{student.roles}}</strong>
+        <strong>{{ student.firstName }} {{ student.lastName }} {{ student.roles }}</strong>
         <!-- Toggle Aggregated Attendance History -->
         <button type="button" class="btn btn-link" (click)="toggleHistory(student.id)">
           {{ attendanceState[student.id]?.showHistory ? 'Hide Aggregated History' : 'View Aggregated History' }}
@@ -56,21 +56,21 @@
                  [name]="student.id + 'attendance'" id="{{student.id}}present"
                  [value]="AttendanceStatus.PRESENT"
                  [checked]="attendanceState[student.id]?.status === AttendanceStatus.PRESENT"
-                 (change)="onAttendanceRadioChange(student.id, AttendanceStatus.PRESENT)" />
+                 (change)="onAttendanceRadioChange(student.id, AttendanceStatus.PRESENT)"/>
           <label class="btn btn-outline-success" [for]="student.id + 'present'">Present</label>
 
           <input type="radio" class="btn-check"
                  [name]="student.id + 'attendance'" id="{{student.id}}absent"
                  [value]="AttendanceStatus.ABSENT"
                  [checked]="attendanceState[student.id]?.status === AttendanceStatus.ABSENT"
-                 (change)="onAttendanceRadioChange(student.id, AttendanceStatus.ABSENT)" />
+                 (change)="onAttendanceRadioChange(student.id, AttendanceStatus.ABSENT)"/>
           <label class="btn btn-outline-danger" [for]="student.id + 'absent'">Absent</label>
 
           <input type="radio" class="btn-check"
                  [name]="student.id + 'attendance'" id="{{student.id}}excused"
                  [value]="AttendanceStatus.EXCUSED"
                  [checked]="attendanceState[student.id]?.status === AttendanceStatus.EXCUSED"
-                 (change)="onAttendanceRadioChange(student.id, AttendanceStatus.EXCUSED)" />
+                 (change)="onAttendanceRadioChange(student.id, AttendanceStatus.EXCUSED)"/>
           <label class="btn btn-outline-warning" [for]="student.id + 'excused'">Excused</label>
         </div>
       </div>
@@ -85,11 +85,12 @@
 
       <!-- Aggregated Attendance History -->
       <div *ngIf="attendanceState[student.id]?.showHistory" class="mt-3">
-        <h5>Aggregated Attendance ({{ aggregationStartDate | date:'yyyy-MM-dd' }} to {{ aggregationEndDate | date:'yyyy-MM-dd' }})</h5>
-        <p><strong>Total Classes:</strong> {{ getAttendanceSummary(student).total }}</p>
-        <p><strong>Attended:</strong> {{ getAttendanceSummary(student).present }} classes</p>
-        <p><strong>Not Attended:</strong> {{ getAttendanceSummary(student).notAttended }} classes</p>
-        <p><strong>Attendance Percentage:</strong> {{ getAttendanceSummary(student).percentage | number:'1.0-2' }}%</p>
+        <h5>Aggregated Attendance ({{ aggregationStartDate | date:'yyyy-MM-dd' }}
+          to {{ aggregationEndDate | date:'yyyy-MM-dd' }})</h5>
+        <p><strong>Total Classes:</strong> {{ student.attendanceSummary?.total ?? 0 }}</p>
+        <p><strong>Attended:</strong> {{ student.attendanceSummary?.present ?? 0 }} classes</p>
+        <p><strong>Not Attended:</strong> {{ student.attendanceSummary?.notAttended ?? 0 }} classes</p>
+        <p><strong>Attendance Percentage:</strong> {{ student.attendanceSummary?.percentage | number:'1.0-2' }}%</p>
       </div>
     </div>
   </div>
@@ -97,7 +98,8 @@
   <!-- Detailed Attendance Table for the Specified Date Range -->
   <div class="card shadow-sm mt-4">
     <div class="card-header">
-      <h5 class="mb-0">Detailed Attendance ({{ aggregationStartDate | date:'yyyy-MM-dd' }} to {{ aggregationEndDate | date:'yyyy-MM-dd' }})</h5>
+      <h5 class="mb-0">Detailed Attendance ({{ aggregationStartDate | date:'yyyy-MM-dd' }}
+        to {{ aggregationEndDate | date:'yyyy-MM-dd' }})</h5>
     </div>
     <div class="card-body p-0">
       <table class="table table-bordered table-striped">
@@ -111,18 +113,15 @@
         </thead>
         <tbody>
         <tr *ngFor="let record of getDetailedAttendance()">
-          <ng-container *ngFor="let student of students">
-            <ng-container *ngIf="student.id === record.userId">
-              <td>{{ record.date | date: 'yyyy-MM-dd' }}</td>
-              <td>{{ student.firstName }} {{ student.lastName }}</td>
-              <td [ngClass]="{
+          <td>{{ record.date | date: 'yyyy-MM-dd' }}</td>
+          <td>{{ record.fullName }}</td>
+          <td [ngClass]="{
             'text-success': record.status === AttendanceStatus.PRESENT,
             'text-danger': record.status === AttendanceStatus.ABSENT,
             'text-warning': record.status === AttendanceStatus.EXCUSED
-          }">{{ record.status }}</td>
-              <td>{{ record.comments }}</td>
-            </ng-container>
-          </ng-container>
+          }">{{ record.status }}
+          </td>
+          <td>{{ record.comments }}</td>
         </tr>
         </tbody>
 

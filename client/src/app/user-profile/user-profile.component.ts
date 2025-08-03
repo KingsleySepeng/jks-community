@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {User} from '../model/user';
 import {Belt} from '../model/belt';
-import {MockDataService} from '../mock-service/mock-data.service';
 import {NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ServiceService} from '../services/service.service';
@@ -43,15 +42,15 @@ export class UserProfileComponent implements OnInit {
   onSaveChanges(): void {
     if (!this.currentUser) return;
 
-    // this.serviceService.updateUser(this.currentUser).pipe(first()).subscribe({
-    //   next: () => {
-    //     this.isEditing = false;
-    //     // Optionally show a success alert/toast
-    //   },
-    //   error: (err) => {
-    //     console.error('Error updating user:', err);
-    //     // Optionally show error alert
-    //   }
-    // });
+    this.serviceService.updateUserProfile(this.currentUser).pipe(first()).subscribe({
+      next: () => {
+        this.isEditing = false;
+        // Optionally show a success alert/toast
+      },
+      error: (err) => {
+        console.error('Error updating user:', err);
+        // Optionally show error alert
+      }
+    });
   }
 }

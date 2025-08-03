@@ -4,7 +4,7 @@ import {BehaviorSubject, Observable, of, map, tap, catchError, throwError} from 
 import { User } from '../model/user';
 import { Club } from '../model/club';
 import { Role } from '../model/role';
-import { Attendance } from '../model/attendance ';
+import {Attendance, AttendanceSummary} from '../model/attendance ';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +37,10 @@ export class ServiceService {
     return this.http.patch<User>(`${this.baseUrl}/users`, user);
   }
 
+  updateUserProfile(user:Partial<User>):Observable<User>{
+    return this.http.patch<User>(`${this.baseUrl}/users/profile`, user);
+
+  }
   removeUser(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/users/${id}`);
   }
@@ -81,8 +85,8 @@ export class ServiceService {
   }
 
 
-  updateClub(club: Club): Observable<Club> {
-    return this.http.put<Club>(`${this.baseUrl}/clubs/${club.id}`, club);
+  updateClubProfile(club: Club): Observable<Club> {
+    return this.http.patch<Club>(`${this.baseUrl}/clubs/${club.id}`, club);
   }
 
   removeClub(id: string): Observable<void> {
@@ -113,6 +117,11 @@ export class ServiceService {
     );
   }
 
+  getAttendanceSummary(clubId: string, start: string, end: string): Observable<AttendanceSummary[]> {
+    return this.http.get<AttendanceSummary[]>(`${this.baseUrl}/attendance/club/${clubId}/summary`, {
+      params: { start, end }
+    });
+  }
 
   // ------------------------------------
   // Authentication

@@ -8,6 +8,7 @@ export interface Attendance {
   clubId: string;
   createdAt: string;
   updatedAt: string;
+  fullName?: string;
 }
 
 export enum AttendanceStatus {
@@ -17,6 +18,7 @@ export enum AttendanceStatus {
 }
 
 export interface AttendanceSummary {
+  userId: string;
   total: number;
   present: number;
   notAttended: number;
