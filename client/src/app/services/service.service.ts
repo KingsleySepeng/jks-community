@@ -86,7 +86,7 @@ export class ServiceService {
 
 
   updateClubProfile(club: Club): Observable<Club> {
-    return this.http.patch<Club>(`${this.baseUrl}/clubs/${club.id}`, club);
+    return this.http.patch<Club>(`${this.baseUrl}/profile}`, club);
   }
 
   removeClub(id: string): Observable<void> {
