@@ -21,6 +21,7 @@ public class Club {
     private Instant updatedAt;
     private String logoUrl;
     private boolean active;
+    private String martialArtsType;
     private UUID instructorId;  // store UUID only instead of User entity
 
     @PrePersist
@@ -34,6 +35,15 @@ public class Club {
     }
 
     // getters and setters
+
+    public String getMartialArtsType() {
+        return martialArtsType;
+    }
+
+    public void setMartialArtsType(String martialArtsType) {
+        this.martialArtsType = martialArtsType;
+    }
+
     public UUID getId() {
         return id;
     }
@@ -93,6 +103,7 @@ public class Club {
     public UUID getInstructorId() {
         return instructorId;
     }
+
     public void setInstructorId(UUID instructorId) {
         this.instructorId = instructorId;
     }
