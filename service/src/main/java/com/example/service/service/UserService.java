@@ -110,6 +110,7 @@ public class UserService {
         existingUser.setFirstName(userDto.getFirstName());
         existingUser.setLastName(userDto.getLastName());
         existingUser.setBelt(userDto.getBelt());
+        existingUser.setRoles(userDto.getRoles());
         existingUser.setUpdatedAt(Instant.now());
 
         // Save and return updated user

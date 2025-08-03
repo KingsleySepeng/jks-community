@@ -84,14 +84,19 @@ public class ClubService {
     public ClubResponseDto updateClubProfile(ClubRequestDto dto) {
         Club existing = clubRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Club not found"));
-        Club updated = clubMapper.toEntity(dto);
+        // Update fields directly on the managed entity
         existing.setName(dto.getName());
         existing.setContactNumber(dto.getContactNumber());
         existing.setDescription(dto.getDescription());
         existing.setAddress(dto.getAddress());
         existing.setLogoUrl(dto.getLogoUrl());
-        return clubMapper.toDto(clubRepository.save(updated));
+
+        // Save the updated managed entity
+        Club saved = clubRepository.save(existing);
+
+        return clubMapper.toDto(saved);
     }
+
 
     public void deactivateClub(UUID id) {
         if (!clubRepository.existsById(id)) {
