@@ -1,35 +1,47 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Resource } from '../model/resource';
 import { FormsModule } from '@angular/forms';
-import {NgIf, NgForOf, AsyncPipe} from '@angular/common';
+import { NgForOf, AsyncPipe, NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
 import { Chart, registerables } from 'chart.js';
 import {ServiceService} from '../services/service.service';
-import {Observable} from 'rxjs';
+import {first, Observable} from 'rxjs';
+import {ActivatedRoute} from '@angular/router';
+import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-resource-list',
   standalone: true,
-  imports: [FormsModule, NgIf, NgForOf, AsyncPipe],
+  imports: [FormsModule, NgForOf, AsyncPipe, NgSwitch, NgSwitchCase, NgSwitchDefault],
   templateUrl: './resource-list.component.html',
   styleUrls: ['./resource-list.component.scss']
 })
 export class ResourceListComponent implements OnInit {
   filteredResources$!: Observable<Resource[]>;
-  categories: string[] = ['All', 'Syllabus', 'SeminarVideo', 'PDF', 'Other', 'GoogleDrive'];
-  selectedCategory: string = 'All';
+  private clubId!:string | undefined
+  constructor(private serviceService: ServiceService, private route: ActivatedRoute,private sanitizer: DomSanitizer
+  ) {}
 
-  constructor(private serviceService: ServiceService) {}
-
+  // ngOnInit & deleteResource implementations
   ngOnInit(): void {
-    // this.filteredResources$ = this.serviceService.getFilteredResources();
+    // this.clubId = this.route.snapshot.paramMap.get('clubId')!;
+    this.clubId = this.serviceService.getLoggedInUserValue()?.clubId;
+    this.load();
   }
 
-  onCategoryChange(): void {
-    // this.serviceService.setSelectedCategory(this.selectedCategory);
+
+  load() {
+    this.filteredResources$ = this.serviceService.getResourcesByClub(this.clubId);
   }
 
   deleteResource(id: string): void {
-    // this.serviceService.deleteResourceAndRefresh(id);
+    this.serviceService.deleteResourceAndRefresh(id).pipe(first())
+      .subscribe(() => this.load());
   }
+
+  getSafeUrl(r: Resource): SafeResourceUrl {
+    const dataUrl = `data:${r.contentType};base64,${r.base64Data}`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(dataUrl);
+  }
+
 }

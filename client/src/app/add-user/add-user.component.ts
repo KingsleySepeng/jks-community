@@ -97,17 +97,26 @@ addStudent(): void {
   }
 
   toggleSubInstructor(user: User): void {
-    const confirmText = user.roles.includes(Role.SUB_INSTRUCTOR)
+    const isSubInstructor = user.roles.includes(Role.SUB_INSTRUCTOR);
+    const confirmText = isSubInstructor
       ? 'Demote this user to Student?'
       : 'Promote this user to Sub-Instructor?';
 
     if (!confirm(confirmText)) return;
 
-    this.serviceService.toggleSubInstructorRole(user).pipe(first()).subscribe({
+    // 🔁 Toggle the role before sending to backend
+    if (isSubInstructor) {
+      user.roles = user.roles.filter(role => role !== Role.SUB_INSTRUCTOR);
+    } else {
+      user.roles.push(Role.SUB_INSTRUCTOR);
+    }
+
+    this.serviceService.updateUserProfile(user).pipe(first()).subscribe({
       next: () => this.loadClubStudents(this.currentInstructor!.clubId),
       error: () => (this.errorMessage = 'Failed to toggle role'),
     });
   }
+
 
   private loadClubStudents(clubId: string): void {
     this.serviceService.getUsersByClub(clubId).pipe(first()).subscribe({

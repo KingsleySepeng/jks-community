@@ -4,19 +4,18 @@ import {NgForOf} from '@angular/common';
 import {Resource} from '../model/resource';
 import {Router} from '@angular/router';
 import {ServiceService} from '../services/service.service';
+import {first} from 'rxjs';
 
 @Component({
   selector: 'app-upload-resource',
   standalone: true,
-  imports: [FormsModule, NgForOf],
+  imports: [FormsModule],
   templateUrl: './upload-resource.component.html',
   styleUrls: ['./upload-resource.component.scss']
 })
 export class UploadResourceComponent {
   title = '';
   description = '';
-  category = 'Syllabus';
-  categories = ['Syllabus', 'SeminarVideo', 'PDF', 'Other'];
   uploadedFile: File | null = null;
 
   constructor(
@@ -41,21 +40,17 @@ export class UploadResourceComponent {
     }
   }
 
+  // upload-resource.component.ts (key bits)
   onUploadResource(): void {
-    if (!this.uploadedFile) {
-      alert('Please select a file.');
-      return;
-    }
-    try {
-      // this.serviceService.createAndAddResource({
-      //   title: this.title,
-      //   description: this.description,
-      //   category: this.category,
-      //   uploadedFile: this.uploadedFile,
-      // });
-      this.router.navigate(['/resource-list']);
-    } catch (e: any) {
-      alert(e.message);
-    }
+    const clubId = this.serviceService.getLoggedInUserValue()?.clubId!;
+    this.serviceService.createResource({
+      clubId,
+      title: this.title,
+      description: this.description,
+      file: this.uploadedFile!
+    }).subscribe(() => this.router.navigate(['/resource-list', { clubId }]));
   }
+
+
+
 }

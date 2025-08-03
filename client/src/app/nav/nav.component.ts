@@ -30,7 +30,13 @@ export class NavComponent implements OnInit {
     { path: 'add-user', name: 'Manage Students', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR] },
     { path: 'upload-resource', name: 'Upload Resources', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR] },
     { path: 'resource-list', name: 'View Resources', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR, Role.STUDENT] },
-    { path: 'add-club', name: 'Manage Clubs', roles: [Role.SYSTEM_ADMIN] }
+    { path: 'grading-form', name: 'Grading Form', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR] },
+    { path: 'grading-report', name: 'Grading Report', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR,Role.STUDENT] },
+    { path: 'grading-detail/:id', name: 'Grading Detailed Report', roles: [Role.SUB_INSTRUCTOR, Role.INSTRUCTOR,Role.STUDENT] },
+    { path: 'add-club', name: 'Manage System Users', roles: [Role.SYSTEM_ADMIN] },
+    { path: 'club-profile', name: 'Manage club profile', roles: [Role.INSTRUCTOR] },
+    { path: 'user-profile', name: 'Manage user profile', roles: [Role.SYSTEM_ADMIN,Role.SUB_INSTRUCTOR,Role.INSTRUCTOR,Role.STUDENT] },
+
   ];
 
   constructor(private serviceService: ServiceService, private router: Router) {}

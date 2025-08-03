@@ -11,6 +11,8 @@ import {AddClubComponent} from './add-club/add-club.component';
 import {UpdatePasswordComponent} from './update-password/update-password.component';
 import {AuthGuard} from './utils/auth.guard';
 import {Role} from './model/role';
+import {ClubProfileComponent} from './club-profile/club-profile.component';
+import {UserProfileComponent} from './user-profile/user-profile.component';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -34,6 +36,8 @@ export const routes: Routes = [
   },
   {path: 'logout', component: LoginComponent},
   {path: 'update-password', component: UpdatePasswordComponent},
+  {path: 'club-profile', component: ClubProfileComponent},
+  {path: 'user-profile', component: UserProfileComponent},
   {path: 'grading-form', component: GradingFormComponent},
   {path: 'grading-report', component: GradingReportComponent},
   {path: 'grading-detail/:id', component: GradingDetailComponent},

@@ -6,6 +6,7 @@ import {Role} from '../model/role';
 import {MockDataService} from '../mock-service/mock-data.service';
 import {ServiceService} from '../services/service.service';
 import {first} from 'rxjs';
+import {User} from '../model/user';
 
 @Component({
   selector: 'app-club-profile',
@@ -20,15 +21,34 @@ import {first} from 'rxjs';
 })
 export class ClubProfileComponent implements OnInit {
   currentClub?: Club;
+  clubId?: string;
+  clubName: string = '';
+  instructors: User[] = [];
+  students: User[] = [];
   isEditing = false;
   canEdit = false;
 
   constructor(private serviceService: ServiceService) {}
 
+
   ngOnInit(): void {
     this.serviceService.getLoggedInUser().pipe(first()).subscribe(user => {
       if (user?.clubId) {
+        this.clubId = user.clubId;
         this.canEdit = user.roles.includes(Role.INSTRUCTOR) || user.roles.includes(Role.SYSTEM_ADMIN);
+
+        // Get club name if needed
+        this.serviceService.getClubById(user.clubId).pipe(first()).subscribe(club => {
+         this.currentClub = club;
+        });
+
+        // Get users
+        this.serviceService.getUsersByClub(user.clubId).pipe(first()).subscribe(users => {
+          this.instructors = users.filter(u =>
+            u.roles.includes(Role.INSTRUCTOR) || u.roles.includes(Role.SUB_INSTRUCTOR)
+          );
+          this.students = users.filter(u => u.roles.includes(Role.STUDENT));
+        });
       }
     });
   }

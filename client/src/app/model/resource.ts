@@ -1,10 +1,17 @@
+// resource.ts
 export interface Resource {
   id: string;
+  clubId: string;
   title: string;
   description: string;
-  fileUrl?: string;    // e.g. link to PDF or doc
-  videoUrl?: string;   // e.g. link to YouTube or stored video
-  category?: string;   // e.g. "Syllabus", "SeminarVideo"
-  dateCreated: Date;
-  clubId: string;
+  contentType: string;
+  base64Data: string;
+  uploadedAt: string;
+}
+
+export interface ResourceRequest {
+  clubId:string,
+  title: string;
+  description: string;
+  file: File;
 }

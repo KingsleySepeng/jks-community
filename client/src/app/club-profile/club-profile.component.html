@@ -2,7 +2,7 @@
   <div *ngIf="currentClub; else noClub">
     <div class="card shadow-sm">
       <div class="card-header bg-success text-white">
-        <h2 class="h5 mb-0">Club Profile</h2>
+        <h2 class="text-center mt-3">Club Profile: {{ clubName }}</h2>
       </div>
       <div class="card-body">
         <!-- Club Logo and Basic Info -->
@@ -34,7 +34,7 @@
           <div class="mt-4">
             <h4>Instructors</h4>
             <ul class="list-group list-group-flush">
-              <li class="list-group-item" *ngFor="let instructor of currentClub.instructors">
+              <li class="list-group-item" *ngFor="let instructor of instructors">
                 {{ instructor.firstName }} {{ instructor.lastName }}
               </li>
             </ul>
@@ -44,7 +44,7 @@
           <div class="mt-4">
             <h4>Students</h4>
             <ul class="list-group list-group-flush">
-              <li class="list-group-item" *ngFor="let student of currentClub.students">
+              <li class="list-group-item" *ngFor="let student of students">
                 {{ student.firstName }} {{ student.lastName }}
               </li>
             </ul>

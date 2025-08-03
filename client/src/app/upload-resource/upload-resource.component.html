@@ -15,13 +15,6 @@
           <textarea id="description" class="form-control" rows="3" [(ngModel)]="description" name="description" placeholder="Enter description"></textarea>
         </div>
 
-        <div class="mb-3">
-          <label for="category" class="form-label">Category:</label>
-          <select id="category" class="form-select" [(ngModel)]="category" name="category">
-            <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
-          </select>
-        </div>
-
         <div class="mb-3 border border-secondary rounded p-3 text-center"
              (dragover)="onDragOver($event)"
              (drop)="onFileDrop($event)">

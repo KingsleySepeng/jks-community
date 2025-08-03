@@ -5,6 +5,7 @@ import { User } from '../model/user';
 import { Club } from '../model/club';
 import { Role } from '../model/role';
 import {Attendance, AttendanceSummary} from '../model/attendance ';
+import {Resource, ResourceRequest} from '../model/resource';
 
 @Injectable({
   providedIn: 'root'
@@ -45,22 +46,6 @@ export class ServiceService {
     return this.http.delete<void>(`${this.baseUrl}/users/${id}`);
   }
 
-
-  toggleSubInstructorRole(user: User): Observable<User> {
-    const roles = [...user.roles];
-    const index = roles.indexOf(Role.SUB_INSTRUCTOR);
-
-    if (index >= 0) {
-      roles.splice(index, 1);
-    } else {
-      roles.push(Role.SUB_INSTRUCTOR);
-    }
-
-    const updated: User = { ...user, roles };
-    // return this.updateUser(updated); // Return the Observable
-    return of({} as User); // Return an empty User observable
-
-    }
   getUsersByClub(clubId: string): Observable<User[]> {
     return this.http.get<User[]>(`${this.baseUrl}/clubs/${clubId}/users`);
   }
@@ -86,7 +71,7 @@ export class ServiceService {
 
 
   updateClubProfile(club: Club): Observable<Club> {
-    return this.http.patch<Club>(`${this.baseUrl}/profile}`, club);
+    return this.http.patch<Club>(`${this.baseUrl}/clubs/profile`, club);
   }
 
   removeClub(id: string): Observable<void> {
@@ -159,4 +144,27 @@ export class ServiceService {
   activateStudent(id: string):Observable<void> {
     return this.http.patch<User>(`${this.baseUrl}/users/${id}/activate`, {}).pipe(map(() => {}));
   }
+
+  // ------------------------------------
+  // Resource
+  // ------------------------------------
+  getResourcesByClub(clubId: string | undefined): Observable<Resource[]> {
+    return this.http.get<Resource[]>(`${this.baseUrl}/resources/club/${clubId}`);
+  }
+
+  deleteResourceAndRefresh(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/resources/${id}`);
+  }
+
+  createResource(req: ResourceRequest): Observable<Resource> {
+    const form = new FormData();
+    form.append('info', new Blob([JSON.stringify({
+      clubId: req.clubId,
+      title: req.title,
+      description: req.description
+    })], { type: 'application/json' }));
+    form.append('file', req.file, req.file.name);
+    return this.http.post<Resource>(`${this.baseUrl}/resources`, form);
+  }
+
 }
