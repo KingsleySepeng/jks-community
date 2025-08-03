@@ -53,4 +53,20 @@ public class AttendanceController {
         }
     }
 
+    @GetMapping("/club/{clubId}/summary")
+    public ResponseEntity<List<AttendanceSummary>> getAttendanceSummaryForClub(
+            @PathVariable UUID clubId,
+            @RequestParam String start,
+            @RequestParam String end
+    ) {
+        try {
+            List<AttendanceSummary> summary = attendanceService.getAttendanceSummaries(clubId, start, end);
+            return ResponseEntity.ok(summary);
+        } catch (Exception e) {
+            log.error("Failed to fetch attendance summary", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
 }

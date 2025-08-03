@@ -46,6 +46,15 @@ public class UserController {
         }
     }
 
+    @PatchMapping("/profile")
+    public ResponseEntity<UserResponseDto> updateUserProfile(@RequestBody UserRequestDto userDto) {
+        UserResponseDto updatedUser = userService.updateUserProfile(userDto);
+        if (updatedUser != null) {
+            return ResponseEntity.ok(updatedUser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> one(@PathVariable UUID id) {
@@ -57,10 +66,6 @@ public class UserController {
         return ResponseEntity.ok(userService.createStudent(userRequest));
     }
 
-//    @PatchMapping("/{id}")
-//    public ResponseEntity<UserResponseDto> update(@PathVariable UUID id, @Valid @RequestBody UserRequestDto userRequest) {
-//        return ResponseEntity.ok(userService.updateUser(id, userRequest));
-//    }
 
     @PatchMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {

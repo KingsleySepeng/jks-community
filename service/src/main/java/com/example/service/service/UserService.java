@@ -96,25 +96,23 @@ public class UserService {
                 .map(userMapper::toDto);
     }
 
-    public Optional<UserResponseDto> partiallyUpdateUser(UUID id, UserRequestDto userDto) {
-        return userRepository.findById(id).map(existingUser -> {
-            if (userDto.getFirstName() != null) existingUser.setFirstName(userDto.getFirstName());
-            if (userDto.getLastName() != null) existingUser.setLastName(userDto.getLastName());
-            if (userDto.getPassword() != null) {
-                existingUser.setPassword((new BCryptPasswordEncoder().encode(userDto.getPassword())));
-            }
-
-            // Add additional fields as necessary
-            existingUser.setUpdatedAt(Instant.now());
-            userRepository.save(existingUser);
-            return userMapper.toDto(existingUser);
-        });
-    }
-
     public List<UserResponseDto> getUsersByClub(UUID clubId) {
         return userRepository.findActiveStudentsByClub(clubId).stream()
                 .map(userMapper::toDto)
                 .toList();
     }
 
+    public UserResponseDto updateUserProfile(UserRequestDto userDto) {
+        User existingUser = userRepository.findById(userDto.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // Update fields from DTO
+        existingUser.setFirstName(userDto.getFirstName());
+        existingUser.setLastName(userDto.getLastName());
+        existingUser.setBelt(userDto.getBelt());
+        existingUser.setUpdatedAt(Instant.now());
+
+        // Save and return updated user
+        return userMapper.toDto(userRepository.save(existingUser));
+    }
 }

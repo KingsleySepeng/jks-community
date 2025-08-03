@@ -1,10 +1,7 @@
 package com.example.service.controller;
 
 import com.example.service.dto.*;
-import com.example.service.entity.Club;
-import com.example.service.repository.ClubRepository;
 import com.example.service.service.ClubService;
-import com.example.service.service.SequenceService;
 import com.example.service.service.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -51,9 +48,9 @@ public class ClubController {
         return ResponseEntity.ok(clubService.createClubAndInstructor(clubRequest, userRequestDto));
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ClubResponseDto> update(@PathVariable UUID id, @Valid @RequestBody ClubRequestDto clubRequest) {
-        return ResponseEntity.ok(clubService.updateClub(id, clubRequest));
+        return ResponseEntity.ok(clubService.updateClubProfile(id, clubRequest));
     }
 
     @DeleteMapping("/{id}")

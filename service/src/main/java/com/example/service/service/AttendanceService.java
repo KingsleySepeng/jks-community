@@ -13,9 +13,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class AttendanceService {
@@ -55,25 +57,31 @@ public class AttendanceService {
         }
     }
 
-
-
-    public List<AttendanceResponseDto> findByClubIdAndDateBetween(UUID clubId, String startInstant, String endInstant) {
-        Instant start = Instant.parse(startInstant);
-        Instant end = Instant.parse(endInstant).plus(1, ChronoUnit.DAYS); // make it inclusive
+    public List<AttendanceResponseDto> findByClubIdAndDateBetween(UUID clubId, String startDate, String endDate) {
+        Instant start = LocalDate.parse(startDate).atStartOfDay().toInstant(ZoneOffset.UTC);
+        Instant end = LocalDate.parse(endDate).plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC);
         List<Attendance> records = attendanceRepository.findByClubIdAndDateBetween(clubId, start, end);
         return records.stream().map(attendanceMapper::toDto).toList();
     }
 
-//    public AttendanceSummary getAttendanceRange(UUID clubId, LocalDate start, LocalDate end) {
-//        Instant startInstant = start.atStartOfDay().toInstant(ChronoUnit.DAYS.getBaseUnit().getRules().getOffset(start));
-//        Instant endInstant = end.atTime(23, 59, 59).toInstant(ChronoUnit.DAYS.getBaseUnit().getRules().getOffset(end));
-//
-//        List<Attendance> records = attendanceRepository.findByClubIdAndDateBetween(clubId, startInstant, endInstant);
-//
-//        long totalRecords = records.size();
-//        long presentCount = records.stream().filter(a -> a.getStatus() == AttendanceStatus.PRESENT).count();
-//        long absentCount = records.stream().filter(a -> a.getStatus() == AttendanceStatus.ABSENT).count();
-//
-//        return new AttendanceSummary(totalRecords, presentCount, absentCount);
-//    }
+    public List<AttendanceSummary> getAttendanceSummaries(UUID clubId, String startDate, String endDate) {
+        Instant start = LocalDate.parse(startDate).atStartOfDay().toInstant(ZoneOffset.UTC);
+        Instant end = LocalDate.parse(endDate).plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC);
+        List<Attendance> records = attendanceRepository.findByClubIdAndDateBetween(clubId, start, end);
+        return records.stream()
+                .collect(Collectors.groupingBy(Attendance::getUser)) // Group by User
+                .entrySet().stream()
+                .map(entry -> {
+                    User user = entry.getKey();
+                    List<Attendance> userRecords = entry.getValue();
+                    long total = userRecords.size();
+                    long present = userRecords.stream().filter(r -> r.getStatus() == AttendanceStatus.PRESENT).count();
+                    long notAttended = total - present;
+                    double percentage = total > 0 ? (present * 100.0) / total : 0;
+
+                    return new AttendanceSummary(user.getId(), (int) total, (int) present, (int) notAttended, percentage);
+                })
+                .toList();
+    }
+
 }
