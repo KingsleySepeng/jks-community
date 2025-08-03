@@ -81,8 +81,8 @@ public class ClubService {
     }
 
 
-    public ClubResponseDto updateClubProfile(UUID id, ClubRequestDto dto) {
-        Club existing = clubRepository.findById(id)
+    public ClubResponseDto updateClubProfile(ClubRequestDto dto) {
+        Club existing = clubRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Club not found"));
         Club updated = clubMapper.toEntity(dto);
         existing.setName(dto.getName());

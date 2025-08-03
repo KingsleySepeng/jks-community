@@ -18,7 +18,6 @@ public class ClubController {
 
     private final ClubService clubService;
     private final UserService userService;
-    private static final Logger log = LoggerFactory.getLogger(ClubController.class);
 
     public ClubController(ClubService clubService,UserService userService) {
         this.clubService = clubService;
@@ -48,9 +47,9 @@ public class ClubController {
         return ResponseEntity.ok(clubService.createClubAndInstructor(clubRequest, userRequestDto));
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<ClubResponseDto> update(@PathVariable UUID id, @Valid @RequestBody ClubRequestDto clubRequest) {
-        return ResponseEntity.ok(clubService.updateClubProfile(id, clubRequest));
+    @PatchMapping("/profile")
+    public ResponseEntity<ClubResponseDto> update(@Valid @RequestBody ClubRequestDto clubRequest) {
+        return ResponseEntity.ok(clubService.updateClubProfile(clubRequest));
     }
 
     @DeleteMapping("/{id}")

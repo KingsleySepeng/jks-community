@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 public class ClubRequestDto {
+    private UUID id;
     private String name;
     private String address;
     private String contactNumber;
@@ -12,6 +13,14 @@ public class ClubRequestDto {
     private String logoUrl;
     private UUID instructorId;
     private boolean active;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
