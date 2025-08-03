@@ -6,6 +6,7 @@ import { Club } from '../model/club';
 import { Role } from '../model/role';
 import {Attendance, AttendanceSummary} from '../model/attendance ';
 import {Resource, ResourceRequest} from '../model/resource';
+import {GradingRecord} from '../model/grading-record';
 
 @Injectable({
   providedIn: 'root'
@@ -167,4 +168,19 @@ export class ServiceService {
     return this.http.post<Resource>(`${this.baseUrl}/resources`, form);
   }
 
+  // ------------------------------------
+  // Grading
+  // ------------------------------------
+  saveGradingRecord(records: GradingRecord[]): Observable<GradingRecord[]> {
+    return this.http.post<GradingRecord[]>(`${this.baseUrl}/grading-records`, records);
+  }
+
+  // optionally fetch past records:
+  getGradingByClub(clubId: string): Observable<GradingRecord[]> {
+    return this.http.get<GradingRecord[]>(`${this.baseUrl}/grading-records/club/${clubId}`);
+  }
+
+  getTechniquesForBelt(belt: Belt) {
+    
+  }
 }

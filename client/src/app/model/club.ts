@@ -7,6 +7,7 @@ export interface Club {
   establishedDate?: string; // ISO format for Instant
   description?: string;
   instructorId?: string;
+  martialArtsType:string;
   logoUrl?: string;
   createdAt: string;
   updatedAt: string;

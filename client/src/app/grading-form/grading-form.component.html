@@ -4,16 +4,17 @@
   <!-- Belt Selection -->
   <div class="mb-4">
     <label for="beltSelect" class="form-label">Select Belt for Grading:</label>
-    <select id="beltSelect" class="form-select" (change)="onBeltChange($event)">
+    <select id="beltSelect" class="form-select" [(ngModel)]="belt" (change)="onBeltChange($event)">
       <option value="">-- Select Belt --</option>
-      <option *ngFor="let beltOption of allBelts" [value]="beltOption">{{ beltOption }}</option>
+      <option *ngFor="let beltOption of allBelts" [ngValue]="beltOption">{{ beltOption }}</option>
     </select>
   </div>
 
   <!-- Student Search and Selection -->
   <div class="mb-4">
     <label for="studentSearch" class="form-label">Search for Students:</label>
-    <input type="text" id="studentSearch" class="form-control" [(ngModel)]="studentSearchTerm" (input)="filterStudents()" placeholder="Type student name...">
+    <input type="text" id="studentSearch" class="form-control" [(ngModel)]="studentSearchTerm"
+           (input)="filterStudents()" placeholder="Type student name...">
     <ul class="list-group mt-2" *ngIf="filteredStudents.length > 0">
       <li class="list-group-item" *ngFor="let student of filteredStudents" (click)="addStudent(student)" style="cursor: pointer;">
         {{ student.firstName }} {{ student.lastName }} (Current Belt: {{ student.belt }})
@@ -21,7 +22,7 @@
     </ul>
   </div>
 
-  <!-- Selected Students List -->
+  <!-- Selected Students -->
   <div class="mb-4" *ngIf="selectedStudents.length > 0">
     <h5>Selected Students:</h5>
     <ul class="list-group">
@@ -33,16 +34,18 @@
   </div>
 
   <!-- Evaluation Matrix -->
-  <div *ngIf="selectedStudents.length > 0 && belt" class="mb-4">
+  <div class="mb-4" *ngIf="selectedStudents.length > 0 && belt">
     <h3>Evaluation Matrix</h3>
+
     <div *ngFor="let category of categories">
-      <div *ngIf="techniques[category].length > 0" class="mb-3">
-        <h4 class="mb-3 text-capitalize">
+      <div *ngIf="techniques[category]?.length > 0" class="mb-3">
+        <h4 class="text-capitalize">
           {{ category }}
-          <small *ngIf="category==='kihon'">(Basic Techniques)</small>
-          <small *ngIf="category==='kata'">(Forms)</small>
-          <small *ngIf="category==='kumite'">(Sparring)</small>
+          <small *ngIf="category === 'kihon'">(Basic Techniques)</small>
+          <small *ngIf="category === 'kata'">(Forms)</small>
+          <small *ngIf="category === 'kumite'">(Sparring)</small>
         </h4>
+
         <div class="table-responsive">
           <table class="table table-bordered table-striped">
             <thead>
@@ -58,27 +61,28 @@
               <td>{{ tech.name }}</td>
               <ng-container *ngFor="let student of selectedStudents">
                 <td>
-                  <!-- Rating Button Group -->
+                  <!-- Rating Options -->
                   <div class="btn-group mb-2" role="group">
-                    <input type="radio" class="btn-check" name="rating-{{ student.id }}-{{ tech.id }}" id="good-{{ student.id }}-{{ tech.id }}"
-                           [value]="'good'"
-                           [checked]="getEvaluation(student.id, tech.id).rating === 'good'"
+                    <input type="radio" class="btn-check" [name]="'rating-' + student.id + '-' + tech.id'"
+                           [id]="'good-' + student.id + '-' + tech.id" [value]="'good'"
+                           [checked]="getEvaluation(student.id, tech.id)?.rating === 'good'"
                            (change)="updateRating(student.id, tech.id, 'good')" />
-                    <label class="btn btn-outline-success" [for]="'good-'+student.id+'-'+tech.id">Good</label>
+                    <label class="btn btn-outline-success" [for]="'good-' + student.id + '-' + tech.id">Good</label>
 
-                    <input type="radio" class="btn-check" name="rating-{{ student.id }}-{{ tech.id }}" id="average-{{ student.id }}-{{ tech.id }}"
-                           [value]="'average'"
-                           [checked]="getEvaluation(student.id, tech.id).rating === 'average'"
+                    <input type="radio" class="btn-check" [name]="'rating-' + student.id + '-' + tech.id'"
+                           [id]="'average-' + student.id + '-' + tech.id" [value]="'average'"
+                           [checked]="getEvaluation(student.id, tech.id)?.rating === 'average'"
                            (change)="updateRating(student.id, tech.id, 'average')" />
-                    <label class="btn btn-outline-warning" [for]="'average-'+student.id+'-'+tech.id">Average</label>
+                    <label class="btn btn-outline-warning" [for]="'average-' + student.id + '-' + tech.id">Average</label>
 
-                    <input type="radio" class="btn-check" name="rating-{{ student.id }}-{{ tech.id }}" id="bad-{{ student.id }}-{{ tech.id }}"
-                           [value]="'bad'"
-                           [checked]="getEvaluation(student.id, tech.id).rating === 'bad'"
+                    <input type="radio" class="btn-check" [name]="'rating-' + student.id + '-' + tech.id'"
+                           [id]="'bad-' + student.id + '-' + tech.id" [value]="'bad'"
+                           [checked]="getEvaluation(student.id, tech.id)?.rating === 'bad'"
                            (change)="updateRating(student.id, tech.id, 'bad')" />
-                    <label class="btn btn-outline-danger" [for]="'bad-'+student.id+'-'+tech.id">Bad</label>
+                    <label class="btn btn-outline-danger" [for]="'bad-' + student.id + '-' + tech.id">Bad</label>
                   </div>
-                  <!-- Comment Input -->
+
+                  <!-- Comment Box -->
                   <input type="text" class="form-control form-control-sm" placeholder="Comment"
                          [value]="getEvaluation(student.id, tech.id)?.comment"
                          (input)="updateComment(student.id, tech.id, $event)" />
@@ -92,7 +96,7 @@
     </div>
   </div>
 
-  <!-- Final Decision Section for Each Student -->
+  <!-- Final Decisions -->
   <div class="mb-4" *ngIf="selectedStudents.length > 0 && belt">
     <h4>Final Decisions</h4>
     <div *ngFor="let student of selectedStudents" class="mb-3 border rounded p-3">
@@ -103,18 +107,23 @@
           <select class="form-select" [(ngModel)]="finalDecisions[student.id].decision">
             <option value="pass">Pass</option>
             <option value="fail">Fail</option>
-            <option value="regrade">Regrade (in a couple of months - small stuff to fix)</option>
+            <option value="regrade">Regrade (in a couple of months)</option>
           </select>
         </div>
         <div class="col-md-8">
           <label class="form-label">Comment:</label>
-          <textarea class="form-control" rows="2" [(ngModel)]="finalDecisions[student.id].comment" placeholder="Enter final comment for this student"></textarea>
+          <textarea class="form-control" rows="2"
+                    [(ngModel)]="finalDecisions[student.id].comment"
+                    placeholder="Enter final comment for this student"></textarea>
         </div>
       </div>
     </div>
   </div>
 
-  <button class="btn btn-primary" (click)="submitGrading()">Submit Batch Grading</button>
+  <!-- Submit Button -->
+  <div class="mb-4">
+    <button class="btn btn-primary" (click)="submitGrading()">Submit Batch Grading</button>
+  </div>
 
   <!-- Submission Modal -->
   <div class="modal fade show" *ngIf="showModal" style="display: block;" tabindex="-1" role="dialog">
@@ -122,7 +131,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Grading Submitted</h5>
-          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+          <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
         </div>
         <div class="modal-body">
           <p>Grading has been successfully submitted for the selected students!</p>
