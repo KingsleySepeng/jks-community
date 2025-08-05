@@ -2,6 +2,7 @@ package com.example.service.config;
 
 import com.example.service.entity.*;
 import com.example.service.repository.ClubRepository;
+import com.example.service.repository.TechniqueRepository;
 import com.example.service.repository.UserRepository;
 import com.example.service.service.SequenceService;
 import org.springframework.boot.CommandLineRunner;
@@ -11,6 +12,7 @@ import com.example.service.repository.SequenceRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -20,6 +22,7 @@ public class DataInitializer {
     CommandLineRunner init(UserRepository userRepository,
                            ClubRepository clubRepository,
                            SequenceRepository sequenceRepository,
+                           TechniqueRepository techniqueRepository,
                            SequenceService sequenceService) {
         return args -> {
             // Create club_seq and member_seq if not present
@@ -74,6 +77,28 @@ public class DataInitializer {
                 userClub.setInstructorId(adminEntity.getId());
                 clubRepository.save(userClub);
             }
+            // Preload techniques (if not already present)
+            if (techniqueRepository.count() == 0) {
+                List<Technique> techniques = List.of(
+                        createTechnique("Tsuki", "kihon", "WHITE"),
+                        createTechnique( "Gedan Barai", "kihon", "WHITE"),
+                        createTechnique("Age Uke", "kihon", "YELLOW"),
+                        createTechnique( "Heian Shodan", "kata", "WHITE"),
+                        createTechnique( "Heian Nidan", "kata", "YELLOW"),
+                        createTechnique( "Ippon Kumite", "kumite", "WHITE"),
+                        createTechnique("Sanbon Kumite", "kumite", "YELLOW")
+                );
+
+                techniqueRepository.saveAll(techniques);
+            }
         };
+    }
+
+    private Technique createTechnique(String name, String category, String belt) {
+        Technique t = new Technique();
+        t.setName(name);
+        t.setCategory(category);
+        t.setBelt(belt);
+        return t;
     }
 }

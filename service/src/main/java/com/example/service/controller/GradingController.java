@@ -27,4 +27,5 @@ public class GradingController {
     public ResponseEntity<List<GradingRecordResponseDto>> listByClub(@PathVariable UUID clubId) {
         return ResponseEntity.ok(gradingService.findByClub(clubId));
     }
+
 }
