@@ -63,19 +63,19 @@
                 <td>
                   <!-- Rating Options -->
                   <div class="btn-group mb-2" role="group">
-                    <input type="radio" class="btn-check" [name]="'rating-' + student.id + '-' + tech.id'"
+                    <input type="radio" class="btn-check" [name]="'rating-' + student.id + '-' + tech.id"
                            [id]="'good-' + student.id + '-' + tech.id" [value]="'good'"
                            [checked]="getEvaluation(student.id, tech.id)?.rating === 'good'"
                            (change)="updateRating(student.id, tech.id, 'good')" />
                     <label class="btn btn-outline-success" [for]="'good-' + student.id + '-' + tech.id">Good</label>
 
-                    <input type="radio" class="btn-check" [name]="'rating-' + student.id + '-' + tech.id'"
+                    <input type="radio" class="btn-check" [name]="'rating-' + student.id + '-' + tech.id"
                            [id]="'average-' + student.id + '-' + tech.id" [value]="'average'"
                            [checked]="getEvaluation(student.id, tech.id)?.rating === 'average'"
                            (change)="updateRating(student.id, tech.id, 'average')" />
                     <label class="btn btn-outline-warning" [for]="'average-' + student.id + '-' + tech.id">Average</label>
 
-                    <input type="radio" class="btn-check" [name]="'rating-' + student.id + '-' + tech.id'"
+                    <input type="radio" class="btn-check" [name]="'rating-' + student.id + '-' + tech.id"
                            [id]="'bad-' + student.id + '-' + tech.id" [value]="'bad'"
                            [checked]="getEvaluation(student.id, tech.id)?.rating === 'bad'"
                            (change)="updateRating(student.id, tech.id, 'bad')" />

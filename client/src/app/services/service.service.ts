@@ -7,6 +7,8 @@ import { Role } from '../model/role';
 import {Attendance, AttendanceSummary} from '../model/attendance ';
 import {Resource, ResourceRequest} from '../model/resource';
 import {GradingRecord} from '../model/grading-record';
+import {Belt} from '../model/belt';
+import {Technique} from '../model/technique';
 
 @Injectable({
   providedIn: 'root'
@@ -180,7 +182,8 @@ export class ServiceService {
     return this.http.get<GradingRecord[]>(`${this.baseUrl}/grading-records/club/${clubId}`);
   }
 
-  getTechniquesForBelt(belt: Belt) {
-    
+  getTechniquesForBelt(belt: Belt):Observable<Technique[]> {
+    return this.http.get<Technique[]>(`${this.baseUrl}/techniques/${belt}`);
+
   }
 }

@@ -82,7 +82,10 @@ export class GradingFormComponent implements OnInit {
     this.showModal = false;
   }
 
-  getEvaluation(studentId: string, techniqueId: string): { rating: 'good' | 'average' | 'bad', comment: string } {
+  getEvaluation(studentId: string, techniqueId: string): {
+    rating: "good" | "average" | "bad";
+    comment: string | undefined
+  } {
     let evalRecord = this.multiEvaluations.find(
       m => m.studentId === studentId && m.techniqueId === techniqueId
     );
